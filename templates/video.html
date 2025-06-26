@@ -172,18 +172,39 @@
 
 
 
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
 <script>
-    function playVideo(link) {
-        var video = document.getElementById('live');
-        var videoSource = document.getElementById('video-source');
-        var videoContainer = document.getElementById('video-container');
-        
-        videoSource.setAttribute('src', link);
-        video.load();
+  function playVideo(link) {
+    const video = document.getElementById('live');
+    const videoContainer = document.getElementById('video-container');
+    const proxied = `/proxy?url=${encodeURIComponent(link)}`;
+
+    if (Hls.isSupported()) {
+      const hls = new Hls();
+      hls.loadSource(proxied);
+      hls.attachMedia(video);
+
+
+
+      hls.on(Hls.Events.MANIFEST_PARSED, function () {
         video.play();
-        videoContainer.style.display = 'block';
+      });
+    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+      video.src = proxied;
+      video.addEventListener('loadedmetadata', function () {
+        video.play();
+      });
+    } else {
+      alert("Your browser doesn't support HLS.");
     }
+
+    videoContainer.style.display = 'block';
+  }
 </script>
+
+<!-- End Play Code -->
+
 
 
 
