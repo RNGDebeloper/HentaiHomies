@@ -173,25 +173,21 @@
 
 
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-
 <script>
   function playVideo(link) {
     const video = document.getElementById('live');
     const videoContainer = document.getElementById('video-container');
-    const proxied = `/proxy?url=${encodeURIComponent(link)}`;
 
     if (Hls.isSupported()) {
       const hls = new Hls();
-      hls.loadSource(proxied);
+      hls.loadSource(link);  // 🔁 Direct link used here
       hls.attachMedia(video);
-
-
 
       hls.on(Hls.Events.MANIFEST_PARSED, function () {
         video.play();
       });
     } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-      video.src = proxied;
+      video.src = link;  // 🔁 No /proxy
       video.addEventListener('loadedmetadata', function () {
         video.play();
       });
@@ -202,6 +198,7 @@
     videoContainer.style.display = 'block';
   }
 </script>
+
 
 <!-- End Play Code -->
 
