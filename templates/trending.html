@@ -9,23 +9,32 @@
 <div class="container px-4 px-lg-5 mt-5">
 
     <!-- Trending Slide Bar Start -->
-    <div id="trendingCarousel" class="carousel slide mb-4" data-bs-ride="carousel">
+    <div id="trendingCarousel" class="carousel slide mb-5" data-bs-ride="carousel" data-bs-interval="4000">
         <div class="carousel-inner">
-            {% for v in videos[:5] %}  <!-- limit to first 5 trending -->
+            {% for v in videos[:10] %}
             <div class="carousel-item {% if loop.first %}active{% endif %}">
-                <img src="{{ v['cover_url'] }}" class="d-block w-100" alt="{{ v['name'] }}" style="height: 400px; object-fit: cover;">
-                <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 p-2 rounded">
-                    <h5>{{ v['name'] }}</h5>
+                <div class="row d-flex align-items-center">
+                    <!-- Left Side Image -->
+                    <div class="col-md-6">
+                        <img src="{{ v['cover_url'] }}" class="d-block w-100" alt="{{ v['name'] }}" style="height: 400px; object-fit: cover; border-radius: 8px;">
+                    </div>
+                    <!-- Right Side Content -->
+                    <div class="col-md-6 text-white p-4 bg-dark bg-opacity-75" style="height: 400px; display: flex; flex-direction: column; justify-content: center;">
+                        <h3>{{ v['name'] }}</h3>
+                        <p>{{ v['description'] or 'No description available.' }}</p>
+                        <p><i class="fa-solid fa-eye"></i> {{ v['views'] }} views</p>
+                        <a href="{{ v['url'] }}" class="btn btn-primary mt-auto align-self-start">Watch Now</a>
+                    </div>
                 </div>
             </div>
             {% endfor %}
         </div>
         <button class="carousel-control-prev" type="button" data-bs-target="#trendingCarousel" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="carousel-control-prev-icon"></span>
             <span class="visually-hidden">Previous</span>
         </button>
         <button class="carousel-control-next" type="button" data-bs-target="#trendingCarousel" data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="carousel-control-next-icon"></span>
             <span class="visually-hidden">Next</span>
         </button>
     </div>
