@@ -1,8 +1,10 @@
-from flask import Flask, Response, jsonify, render_template, request, redirect, url_for
+from flask import Flask, jsonify, render_template, request, redirect, url_for, Response, stream_with_context
 import requests
 import secrets
 import json
+from fake_useragent import UserAgent
 import os
+from urllib.parse import urlparse, urljoin
 
 
 api_base = "https://searchmangabot.onrender.com"
