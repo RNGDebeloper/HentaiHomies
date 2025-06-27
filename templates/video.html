@@ -177,7 +177,7 @@
   function playVideo(link) {
     const video = document.getElementById('live');
     const videoContainer = document.getElementById('video-container');
-    const proxied = `/play?url=${encodeURIComponent(link)}`; // 👈 Use your Base API proxy
+    const proxied = `/proxy?url=${encodeURIComponent(link)}`; // 👈 Use your Base API proxy
 
     if (Hls.isSupported()) {
       const hls = new Hls();
