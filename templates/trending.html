@@ -6,84 +6,142 @@
 {% block title %}Trending | HanimeBeast{% endblock %}
 {% block content %}
 
+<style>
+  .trending-slide {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    min-height: 300px;
+    background: #000;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .trending-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .slide-left {
+    flex: 1 1 50%;
+    min-height: 300px;
+  }
+
+  .slide-right {
+    flex: 1 1 50%;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: #111;
+    color: #fff;
+  }
+
+  .slide-right h3 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+  }
+
+  .slide-right p {
+    flex-grow: 1;
+  }
+
+  .slide-right a.btn {
+    margin-top: 10px;
+    width: fit-content;
+  }
+
+  @media(max-width: 768px) {
+    .trending-slide {
+      flex-direction: column;
+    }
+    .slide-left, .slide-right {
+      flex: 1 1 100%;
+    }
+    .slide-left {
+      min-height: 200px;
+    }
+  }
+</style>
+
 <div class="container px-4 px-lg-5 mt-5">
 
-    <!-- Trending Slide Bar Start -->
-    <div id="trendingCarousel" class="carousel slide mb-5" data-bs-ride="carousel" data-bs-interval="4000">
-        <div class="carousel-inner">
-            {% for v in videos[:10] %}
-            <div class="carousel-item {% if loop.first %}active{% endif %}">
-                <div class="row d-flex align-items-center">
-                    <!-- Left Side Image -->
-                    <div class="col-md-6">
-                        <img src="{{ v['cover_url'] }}" class="d-block w-100" alt="{{ v['name'] }}" style="height: 400px; object-fit: cover; border-radius: 8px;">
-                    </div>
-                    <!-- Right Side Content -->
-                    <div class="col-md-6 text-white p-4 bg-dark bg-opacity-75" style="height: 400px; display: flex; flex-direction: column; justify-content: center;">
-                        <h3>{{ v['name'] }}</h3>
-                        <p>{{ v['description'] or 'No description available.' }}</p>
-                        <p><i class="fa-solid fa-eye"></i> {{ v['views'] }} views</p>
-                        <a href="{{ v['url'] }}" class="btn btn-primary mt-auto align-self-start">Watch Now</a>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
+  <!-- Trending Slide Bar -->
+  <div id="trendingCarousel" class="carousel slide mb-5" data-bs-ride="carousel" data-bs-interval="4000">
+    <div class="carousel-inner">
+      {% for v in videos[:10] %}
+      <div class="carousel-item {% if loop.first %}active{% endif %}">
+        <div class="trending-slide">
+          <div class="slide-left">
+            <img src="{{ v['cover_url'] }}" alt="{{ v['name'] }}">
+          </div>
+          <div class="slide-right">
+            <h3>{{ v['name'] }}</h3>
+            <p>{{ v['description'] | default('No description available.') }}</p>
+            <p><i class="fa-solid fa-eye"></i> {{ v['views'] }} views</p>
+            <a href="{{ v['url'] }}" class="btn btn-primary">Watch Now</a>
+          </div>
         </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#trendingCarousel" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon"></span>
-            <span class="visually-hidden">Previous</span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#trendingCarousel" data-bs-slide="next">
-            <span class="carousel-control-next-icon"></span>
-            <span class="visually-hidden">Next</span>
-        </button>
-    </div>
-    <!-- Trending Slide Bar End -->
-
-    <div class="navbar navbar-expand-lg">
-        <button class="btn-success btn btn-sm m-3">Trending : {{ time }}</button>
-        <a class="btn-primary btn btn-sm m-3" href="{{ request.url }}/playlist.m3u"> Playlist m3u </a>
-        <div class="btn-group" role="group">
-            <a href="/trending/day/0" class="btn btn-black btn-sm">Daily</a>
-            <a href="/trending/week/0" class="btn btn-black btn-sm">Weekly</a>
-            <a href="/trending/month/0" class="btn btn-black btn-sm">Monthly</a>
-            <a href="/trending/year/0" class="btn btn-black btn-sm">Yearly</a>
-        </div>
+      </div>
+      {% endfor %}
     </div>
 
-    <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
-        {% for v in videos %}
-        <div class="col mb-5 ">
-            <div class="card h-100 bg-black text-white shadow-5-strong">
-                <div class="badge bg-black text-white position-absolute" style="top: 0.5rem; right: 0.5rem">
-                    <i class="fa-solid fa-eye"></i>{{ v['views'] }}
-                </div>
-                <img class="card-img-top" src={{ v['cover_url'] }} alt={{ v['name'] }} />
-                <div class="card-body p-4 ">
-                    <div class="text-center">
-                        <h5 class="fw-bolder">{{ v['name'] }}</h5>
-                    </div>
-                </div>
-                <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                    <div class="text-center">
-                        <a class="btn btn-outline-info" href="{{ v['url'] }}">
-                            <i class="fa-solid fa-fire fa-xl"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#trendingCarousel" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon"></span>
+      <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#trendingCarousel" data-bs-slide="next">
+      <span class="carousel-control-next-icon"></span>
+      <span class="visually-hidden">Next</span>
+    </button>
+  </div>
 
-    <div class="text-center">
-        <button onclick="history.back()" class="btn btn-white mx-2">
-            <i class="fa-solid fa-backward"></i>
-        </button>
-        <a href="{{ next_page }}" class="btn btn-white mx-2">
-            <i class="fa-solid fa-forward"></i>
-        </a>
+  <!-- Trending Filter & Video Grid -->
+  <div class="navbar navbar-expand-lg">
+    <button class="btn-success btn btn-sm m-3">Trending : {{ time }}</button>
+    <a class="btn-primary btn btn-sm m-3" href="{{ request.url }}/playlist.m3u"> Playlist m3u </a>
+    <div class="btn-group" role="group">
+      <a href="/trending/day/0" class="btn btn-black btn-sm">Daily</a>
+      <a href="/trending/week/0" class="btn btn-black btn-sm">Weekly</a>
+      <a href="/trending/month/0" class="btn btn-black btn-sm">Monthly</a>
+      <a href="/trending/year/0" class="btn btn-black btn-sm">Yearly</a>
     </div>
+  </div>
+
+  <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+    {% for v in videos %}
+    <div class="col mb-5 ">
+      <div class="card h-100 bg-black text-white shadow-5-strong">
+        <div class="badge bg-black text-white position-absolute" style="top: 0.5rem; right: 0.5rem">
+          <i class="fa-solid fa-eye"></i>{{ v['views'] }}
+        </div>
+        <img class="card-img-top" src="{{ v['cover_url'] }}" alt="{{ v['name'] }}">
+        <div class="card-body p-4 ">
+          <div class="text-center">
+            <h5 class="fw-bolder">{{ v['name'] }}</h5>
+          </div>
+        </div>
+        <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+          <div class="text-center">
+            <a class="btn btn-outline-info" href="{{ v['url'] }}">
+              <i class="fa-solid fa-fire fa-xl"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="text-center">
+    <button onclick="history.back()" class="btn btn-white mx-2">
+      <i class="fa-solid fa-backward"></i>
+    </button>
+    <a href="{{ next_page }}" class="btn btn-white mx-2">
+      <i class="fa-solid fa-forward"></i>
+    </a>
+  </div>
 
 </div>
 
