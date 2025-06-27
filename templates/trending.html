@@ -7,22 +7,48 @@
 {% block content %}
 
 <div class="container px-4 px-lg-5 mt-5">
+
+    <!-- Trending Slide Bar Start -->
+    <div id="trendingCarousel" class="carousel slide mb-4" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            {% for v in videos[:5] %}  <!-- limit to first 5 trending -->
+            <div class="carousel-item {% if loop.first %}active{% endif %}">
+                <img src="{{ v['cover_url'] }}" class="d-block w-100" alt="{{ v['name'] }}" style="height: 400px; object-fit: cover;">
+                <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 p-2 rounded">
+                    <h5>{{ v['name'] }}</h5>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#trendingCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#trendingCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+    <!-- Trending Slide Bar End -->
+
     <div class="navbar navbar-expand-lg">
         <button class="btn-success btn btn-sm m-3">Trending : {{ time }}</button>
         <a class="btn-primary btn btn-sm m-3" href="{{ request.url }}/playlist.m3u"> Playlist m3u </a>
         <div class="btn-group" role="group">
-        <a href="/trending/day/0" class="btn btn-black btn-sm">Daily</a>
-        <a href="/trending/week/0" class="btn btn-black btn-sm">Weekly</a>
-        <a href="/trending/month/0" class="btn btn-black btn-sm">monthly</a>
-        <a href="/trending/year/0" class="btn btn-black btn-sm">yearly</a>
+            <a href="/trending/day/0" class="btn btn-black btn-sm">Daily</a>
+            <a href="/trending/week/0" class="btn btn-black btn-sm">Weekly</a>
+            <a href="/trending/month/0" class="btn btn-black btn-sm">Monthly</a>
+            <a href="/trending/year/0" class="btn btn-black btn-sm">Yearly</a>
+        </div>
     </div>
-    </div>
+
     <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
         {% for v in videos %}
         <div class="col mb-5 ">
             <div class="card h-100 bg-black text-white shadow-5-strong">
-                <div class="badge bg-black text-white position-absolute" style="top: 0.5rem; right: 0.5rem"><i
-                        class="fa-solid fa-eye"></i>{{ v['views'] }}</div>
+                <div class="badge bg-black text-white position-absolute" style="top: 0.5rem; right: 0.5rem">
+                    <i class="fa-solid fa-eye"></i>{{ v['views'] }}
+                </div>
                 <img class="card-img-top" src={{ v['cover_url'] }} alt={{ v['name'] }} />
                 <div class="card-body p-4 ">
                     <div class="text-center">
@@ -30,16 +56,24 @@
                     </div>
                 </div>
                 <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                    <div class="text-center"><a class="btn btn-outline-info" href="{{ v['url'] }}"><i
-                                class="fa-solid fa-fire fa-xl"></i></a></div>
+                    <div class="text-center">
+                        <a class="btn btn-outline-info" href="{{ v['url'] }}">
+                            <i class="fa-solid fa-fire fa-xl"></i>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
         {% endfor %}
     </div>
+
     <div class="text-center">
-        <button onclick="history.back()" class="btn btn-white mx-2"><i class="fa-solid fa-backward"></i></button><a
-            href="{{ next_page }}" class="btn btn-white mx-2"><i class="fa-solid fa-forward"></i></a>
+        <button onclick="history.back()" class="btn btn-white mx-2">
+            <i class="fa-solid fa-backward"></i>
+        </button>
+        <a href="{{ next_page }}" class="btn btn-white mx-2">
+            <i class="fa-solid fa-forward"></i>
+        </a>
     </div>
 
 </div>
