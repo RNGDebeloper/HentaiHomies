@@ -32,12 +32,7 @@
   }
 </style>
 
-<body style="
-  background: rgb(43, 43, 43);
-  background: -moz-radial-gradient(circle, rgba(238,174,202,1) 0%, rgba(0,35,75,1) 100%);
-  background: -webkit-radial-gradient(circle, rgba(238,174,202,1) 0%, rgba(0,35,75,1) 100%);
-  background: radial-gradient(circle, rgba(238,174,202,1) 0%, rgba(0,35,75,1) 100%);
-  font-family: system-ui; "> 
+<body> 
     
 <!-- Above Bacground: Belwo Nav Links -->    
     
@@ -48,7 +43,7 @@
     <div class="container-fluid">
 
       <!-- LEFT: Toggler + Logo -->
-      <a href="/" target="_blank" class="navbar-brand fw-bold me-2">
+      <a class="navbar-brand fw-bold me-2">        <!-- HentaiHomies Text -->
         <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse"
           data-bs-target="#navbarNav" aria-controls="navbarNav"
           aria-expanded="false" aria-label="Toggle navigation">
@@ -69,10 +64,39 @@
       </div>
 
       <!-- RIGHT: Search Bar -->
-      <form class="d-flex ms-auto" method="post" action="/search">
-        <input class="form-control form-control-sm me-2" type="text" name="search_query" placeholder="Search anime...">
-        <button class="btn btn-sm btn-outline-light" type="submit">Search</button>
-      </form>
+    <!-- Search Form with Toggle -->
+    <form id="searchForm" class="d-flex align-items-center ms-auto position-relative" method="post" action="/search">
+      <!-- Search icon button -->
+      <button type="button" id="searchToggle" class="btn btn-sm btn-outline-light">
+        <i class="fas fa-search"></i>
+          </button>
+
+      <!-- Hidden input field -->
+      <input id="searchInput" class="form-control form-control-sm ms-2" type="text" name="search_query" placeholder="Search anime..." style="width: 0; opacity: 0; transition: width 0.3s, opacity 0.3s;">
+  
+      <!-- Submit button (hidden until input is open) -->
+      <button id="searchSubmit" class="btn btn-sm btn-outline-light ms-2" type="submit" style="display: none;">Go</button>
+    </form>
+
+    <!-- Toggle Script -->
+<script>
+  const toggle = document.getElementById('searchToggle');
+  const input = document.getElementById('searchInput');
+  const submit = document.getElementById('searchSubmit');
+
+  toggle.addEventListener('click', () => {
+    if (input.style.width === '0px' || input.style.width === '0') {
+      input.style.width = '200px';
+      input.style.opacity = '1';
+      submit.style.display = 'inline-block';
+      input.focus();
+    } else {
+      input.style.width = '0';
+      input.style.opacity = '0';
+      submit.style.display = 'none';
+    }
+  });
+</script>
 
     </div>
   </nav>
