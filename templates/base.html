@@ -33,7 +33,7 @@
 </style>
 
 <body style="
-  background: rgb(238,174,202);
+  background: rgb(43, 43, 43);
   background: -moz-radial-gradient(circle, rgba(238,174,202,1) 0%, rgba(0,35,75,1) 100%);
   background: -webkit-radial-gradient(circle, rgba(238,174,202,1) 0%, rgba(0,35,75,1) 100%);
   background: radial-gradient(circle, rgba(238,174,202,1) 0%, rgba(0,35,75,1) 100%);
@@ -41,13 +41,14 @@
     
 <!-- Above Bacground: Belwo Nav Links -->    
     
+<!-- ✅ Fixed, transparent, professional navbar -->
 <header>
-  <nav class="navbar navbar-expand-lg navbar-dark custom-navbar">
+  <nav class="navbar navbar-expand-lg navbar-dark custom-navbar fixed-top">
     <div class="container-fluid">
 
-      <!-- LEFT SIDE: Nav Links -->
+      <!-- LEFT: Nav links -->
       <div class="collapse navbar-collapse order-1 order-lg-0" id="navbarNav">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <ul class="navbar-nav mb-2 mb-lg-0">
           <li class="nav-item"><a class="nav-link active" href="/">Home</a></li>
           <li class="nav-item"><a class="nav-link" href="/trending/month/0">Trending</a></li>
           <li class="nav-item"><a class="nav-link" href="/browse">Browse</a></li>
@@ -56,21 +57,21 @@
         </ul>
       </div>
 
-      <!-- CENTER: Brand -->
+      <!-- MIDDLE: Brand -->
       <a href="https://animepixels.onrender.com" target="_blank" class="navbar-brand mx-auto order-0 fw-bold">
         AnimePixels
       </a>
 
-      <!-- RIGHT SIDE: Search -->
-      <div class="collapse navbar-collapse order-2 order-lg-1" id="navbarSearch">
-        <form class="d-flex ms-auto" method="post" action="/search">
+      <!-- RIGHT: Search bar -->
+      <div class="collapse navbar-collapse order-2 order-lg-1 justify-content-end" id="navbarSearch">
+        <form class="d-flex" method="post" action="/search">
           <input class="form-control form-control-sm me-2" type="text" name="search_query" placeholder="Search anime...">
           <button class="btn btn-sm btn-outline-light" type="submit">Search</button>
         </form>
       </div>
 
       <!-- Toggler -->
-      <button class="navbar-toggler ms-2" type="button" data-bs-toggle="collapse"
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
         data-bs-target="#navbarNav, #navbarSearch" aria-controls="navbarNav navbarSearch"
         aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -83,14 +84,16 @@
 <!-- ✅ Custom CSS -->
 <style>
   .custom-navbar {
-    background: linear-gradient(90deg, #111 0%, #222 100%);
-    border-bottom: 2px solid #444;
+    background: rgba(0, 0, 0, 0.85); /* semi-transparent black */
+    backdrop-filter: blur(4px);
+    border-bottom: 1px solid #333;
   }
 
   .custom-navbar .navbar-brand {
-    font-size: 1.75rem;
-    transition: color 0.3s ease;
+    font-size: 1.5rem;
     letter-spacing: 1px;
+    transition: color 0.3s ease;
+    z-index: 1050; /* always above collapses */
   }
 
   .custom-navbar .navbar-brand:hover {
@@ -99,7 +102,7 @@
 
   .custom-navbar .nav-link {
     position: relative;
-    margin-right: 10px;
+    margin-right: 15px;
     transition: color 0.3s ease;
   }
 
@@ -142,12 +145,12 @@
     border-color: #0dcaf0;
   }
 
-  /* Extra: ensure brand stays centered on mobile */
+  /* ✅ Ensure middle brand always stays visible on mobile */
   @media (max-width: 991.98px) {
     .custom-navbar .navbar-brand {
-      order: -1;
-      margin-left: auto;
-      margin-right: auto;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
     }
 
     .navbar-collapse {
