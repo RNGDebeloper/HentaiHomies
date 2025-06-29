@@ -63,38 +63,19 @@
         </ul>
       </div>
 
-      <!-- RIGHT: Search Bar --><!-- WRAP THIS IN YOUR NAVBAR/HEADER -->
-<div class="d-flex align-items-center justify-content-end" style="flex: 1;">
-  <form id="searchForm" class="d-flex align-items-center position-relative" method="post" action="/search">
-    <!-- Search Icon Button -->
-    <button type="button" id="searchToggle" class="btn btn-sm btn-outline-light">
-      <i class="fas fa-search"></i>
-    </button>
+      <!-- RIGHT: Search Bar --><!-- WRAP THIS IN YOUR NAVBAR/HEADER --><form id="searchForm" class="d-flex align-items-center ms-auto position-relative" method="post" action="/search">
+  <!-- Search icon -->
+  <button type="button" id="searchToggle" class="btn btn-sm text-white">
+    <i class="fas fa-search"></i>
+  </button>
 
-    <!-- Expandable Search Input -->
-    <input 
-      id="searchInput" 
-      class="form-control form-control-sm ms-2" 
-      type="text" 
-      name="search_query" 
-      placeholder="Search anime..." 
-      style="width: 0; opacity: 0; transition: width 0.3s ease, opacity 0.3s ease; border-radius: 20px;"
-    >
-
-    <!-- Submit Button -->
-    <button 
-      id="searchSubmit" 
-      class="btn btn-sm btn-outline-light ms-2" 
-      type="submit" 
-      style="display: none;"
-    >
-      Go
-    </button>
-  </form>
-</div>
-
-<!-- Font Awesome (for the search icon) -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <!-- Hidden input -->
+  <input id="searchInput" class="form-control form-control-sm ms-2" type="text" name="search_query" placeholder="Search anime..."
+    style="width: 0; opacity: 0; transition: width 0.3s ease, opacity 0.3s ease; background-color: #1f1f1f; color: #fff; border: none; border-bottom: 1px solid #555;">
+  
+  <!-- Submit button (optional) -->
+  <button id="searchSubmit" class="btn btn-sm btn-outline-light ms-2" type="submit" style="display: none;">Go</button>
+</form>
 
 <!-- Script -->
 <script>
@@ -104,7 +85,7 @@
 
   toggle.addEventListener('click', () => {
     if (input.style.width === '0px' || input.style.width === '0') {
-      input.style.width = '200px';
+      input.style.width = '180px';
       input.style.opacity = '1';
       submit.style.display = 'inline-block';
       input.focus();
@@ -115,6 +96,7 @@
     }
   });
 </script>
+
 
     </div>
   </nav>
