@@ -69,52 +69,11 @@
                     </div>
 
                     <!-- RIGHT: Search Bar --><!-- WRAP THIS IN YOUR NAVBAR/HEADER --><!-- RIGHT: Search Bar -->
-                    <div class="d-flex align-items-center justify-content-start" style="flex: 1;">
-                      <form id="searchForm" class="d-flex align-items-center" method="post" action="/search">
-                    <!-- Search Icon to the LEFT of input -->
-                    <button type="button" id="searchToggle" class="btn btn-sm btn-outline-light p-1 me-1">
-                      <i class="fas fa-search"></i>
-                    </button>
-
-                <!-- Expandable Search Input -->
-                <div class="position-relative" style="overflow: hidden;">
-                  <input
-                    id="searchInput"
-                    class="form-control form-control-sm"
-                    type="text"
-                    name="search_query"
-                    placeholder="Search anime..."
-                    style="width: 0; opacity: 0; transition: width 0.3s ease, opacity 0.3s ease; border-radius: 20px;"
-                          />
-                </div>
-
-    <!-- Submit Button -->
-    <button id="searchSubmit" class="btn btn-sm btn-outline-light ms-2" type="submit" style="display: none;">
-      Go
-    </button>
-  </form>
-</div>
-
-
-                    <!-- Toggle Script -->
-                    <script>
-                        const toggle = document.getElementById("searchToggle");
-                        const input = document.getElementById("searchInput");
-                        const submit = document.getElementById("searchSubmit");
-
-                        toggle.addEventListener("click", () => {
-                            if (input.style.width === "0px" || input.style.width === "0") {
-                                input.style.width = "200px";
-                                input.style.opacity = "1";
-                                submit.style.display = "inline-block";
-                                input.focus();
-                            } else {
-                                input.style.width = "0";
-                                input.style.opacity = "0";
-                                submit.style.display = "none";
-                            }
-                        });
-                    </script>
+                        <form method="post" action="/search">
+                            <input type="text" name="search_query" placeholder="Onii chan ...">
+                            <button type="submit" class="btn btn-sm btn-outline-success" >Search</button>
+                        </form><i class="fa-brands fa-searchengin"></i>
+              
                 </div>
             </nav>
         </header>
