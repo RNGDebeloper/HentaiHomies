@@ -37,7 +37,7 @@
     </style>
 
     <body style="
-  background: #f8f9fa url('https://static-assets-44d.pages.dev/images/logo-100.png') no-repeat center center fixed;
+  background: #FFFFFF no-repeat center center fixed;
   background-size: cover;
   color: #000;
 ">
@@ -68,11 +68,59 @@
                         </ul>
                     </div>
 
-                    <!-- RIGHT: Search Bar --><!-- WRAP THIS IN YOUR NAVBAR/HEADER --><!-- RIGHT: Search Bar -->
-                        <form method="post" action="/search">
-                            <input type="text" name="search_query" placeholder="Onii chan ...">
-                            <button type="submit" class="btn btn-sm btn-outline-success" >Search</button>
-                        </form><i class="fa-brands fa-searchengin"></i>
+<!-- Container: align left -->
+<div class="d-flex align-items-center justify-content-start" style="flex: 1;">
+  <form id="searchForm" class="d-flex align-items-center position-relative" method="post" action="/search" style="position: relative;">
+    <!-- Search Icon fixed to LEFT -->
+    <button type="button" id="searchToggle" class="btn btn-sm btn-outline-light d-flex align-items-center p-2" style="position: absolute; left: 0; z-index: 2;">
+      <i class="fas fa-search"></i>
+    </button>
+
+    <!-- Expandable Search Input -->
+    <input 
+      id="searchInput" 
+      class="form-control form-control-sm" 
+      type="text" 
+      name="search_query" 
+      placeholder="Search anime..." 
+      style="width: 0; opacity: 0; padding-left: 35px; transition: width 0.3s ease, opacity 0.3s ease; border-radius: 20px; margin-left: 0;"
+    >
+
+    <!-- Submit Button -->
+    <button 
+      id="searchSubmit" 
+      class="btn btn-sm btn-outline-light ms-2" 
+      type="submit" 
+      style="display: none;"
+    >
+      Go
+    </button>
+  </form>
+</div>
+
+<!-- Font Awesome for icon -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+<!-- Toggle Script -->
+<script>
+  const toggle = document.getElementById('searchToggle');
+  const input = document.getElementById('searchInput');
+  const submit = document.getElementById('searchSubmit');
+
+  toggle.addEventListener('click', () => {
+    if (input.style.width === '0px' || input.style.width === '0') {
+      input.style.width = '200px';
+      input.style.opacity = '1';
+      submit.style.display = 'inline-block';
+      input.focus();
+    } else {
+      input.style.width = '0';
+      input.style.opacity = '0';
+      submit.style.display = 'none';
+    }
+  });
+</script>
+
               
                 </div>
             </nav>
