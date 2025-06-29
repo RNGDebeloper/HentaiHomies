@@ -24,47 +24,22 @@
     <title>{% block title %}{% endblock %} HANIME BEAST</title>
 </head>
 <style>
-  @keyframes neonGlow {
-    0%, 100% {
-      text-shadow:
-        0 0 10px #fff,
-        0 0 20px #fff,
-        0 0 30px #e60073,
-        0 0 40px #e60073,
-        0 0 50px #e60073,
-        0 0 60px #e60073,
-        0 0 70px #e60073;
-    }
-    50% {
-      text-shadow:
-        0 0 5px #fff,
-        0 0 10px #fff,
-        0 0 15px #e60073,
-        0 0 20px #e60073,
-        0 0 25px #e60073,
-        0 0 30px #e60073,
-        0 0 35px #e60073;
-    }
-  }
-
-  body {
-    background: linear-gradient(135deg, #f5f5f5, #e0e0e0);
-    font-family: system-ui, sans-serif;
-    margin: 0;
-    padding: 0;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+  /* Neon keyframes removed */
 
   .neon {
-    animation: neonGlow 1.5s infinite alternate;
-    font-size: 2rem;
-    color: #e60073;
+    /* Removed animation */
+    color: #2b2b2b; /* Optional: keep color if you want */
   }
 </style>
- <!-- Above Bacground: Belwo Nav Links -->    
+
+<body style="
+  background: rgb(238,174,202);
+  background: -moz-radial-gradient(circle, rgba(238,174,202,1) 0%, rgba(0,35,75,1) 100%);
+  background: -webkit-radial-gradient(circle, rgba(238,174,202,1) 0%, rgba(0,35,75,1) 100%);
+  background: radial-gradient(circle, rgba(238,174,202,1) 0%, rgba(0,35,75,1) 100%);
+  font-family: system-ui; "> 
+    
+<!-- Above Bacground: Belwo Nav Links -->    
     
 <header>
   <nav class="navbar navbar-expand-lg navbar-dark custom-navbar">
