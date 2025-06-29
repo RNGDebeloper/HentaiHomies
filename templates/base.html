@@ -48,7 +48,7 @@
     <div class="container-fluid">
 
       <!-- LEFT: Toggler + Logo -->
-      <a href="https://animepixels.onrender.com" target="_blank" class="navbar-brand fw-bold me-2">
+      <a href="/" target="_blank" class="navbar-brand fw-bold me-2">
         <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse"
           data-bs-target="#navbarNav" aria-controls="navbarNav"
           aria-expanded="false" aria-label="Toggle navigation">
@@ -159,73 +159,48 @@
     
     <!-- ✅ Custom CSS ends here -->
     <div class="container m-10">
-<!-- ad -->
+    <!-- ad -->
 
-        <!--         main content  -->
+        <!--   main content  -->
         {% block content %}{% endblock %}
 
-        <div class="alert alert-info my-3" role="alert">
-            <strong>Help Us Bring Higher Quality Content!</strong> We're on a mission to enhance your viewing experience by offering 1080p quality videos. Your support can make this possible. Consider making a donation today to contribute towards this exciting upgrade.
-            <a class="neon btn btn-sm btn-black" href="https://www.buymeacoffee.com/immodded">Donate Now</a>
-        </div>
+<div class="alert alert-info my-3 p-4" role="alert" style="max-height: 150px; overflow-y: auto; border-radius: 8px; background: #e9f7fe; color: #005b7f;">
+  <strong>Help Us Bring Higher Quality Content!</strong><br>
+  We're on a mission to enhance your viewing experience by offering 1080p quality videos. Your support can make this possible. Consider making a donation today to contribute towards this exciting upgrade.
+  <br>
+  <a class="neon btn btn-sm btn-dark mt-2" href="https://www.buymeacoffee.com/immodded" target="_blank">Donate Now</a>
+</div>
+
 
     </div>
 
-
-    <style>
-
-        .floating-buttons {
-            position: fixed;
-            right: 20px;
-            bottom: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .floating-button {
-            background-color: #111;
-            color: #fff;
-            border: none;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-            cursor: pointer;
-            animation: neon-glow 2s infinite alternate;
-        }
-
-        @keyframes neon-glow {
-            0% {
-                box-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00, 0 0 30px #00ff00;
-            }
-            100% {
-                box-shadow: 0 0 20px #00ff00, 0 0 40px #00ff00, 0 0 60px #00ff00;
-            }
-        }
-    </style>
-    
-    <div class="floating-buttons">
-        <button class="floating-button"><a href="/trending/month/0" class="text-white neon"><i class="fa-solid fa-arrow-trend-up"></i></a></button>
-        <button class="floating-button"><a href="/browse" class="text-white neon"><i class="fa-brands fa-safari"></i></a></button>
+<!--   Footer content  -->
+<footer class="bg-black text-white text-center py-4 mt-5" style="width: 100%;">
+  <div class="container">
+    <p class="mb-2">
+      Made with 
+      <span class="text-danger neon">
+        <a href="https://t.me/Its_sasuke_uchiha" target="_blank" class="text-danger">&hearts;</a>
+      </span>
+      by 
+      <a href="https://github.com" class="text-white neon" target="_blank">HanimeBeast</a> 
+      &copy; <script>document.write(new Date().getFullYear())</script>
+    </p>
+    <div class="mb-2">
+      <a href="/terms" class="text-muted mx-2">Terms of Service</a> |
+      <a href="/privacy" class="text-muted mx-2">Privacy Policy</a> |
+      <a href="/contact" class="text-muted mx-2">Contact</a>
     </div>
-   
-
-
-
-
-
-
-
-
-    
-    
-<footer class="bg-black text-white text-center py-3 mt-3" style=" width: 100%;">
-        Made with <span class="text-danger neon"><a href="https://t.me/immodded" target="_blank">&hearts;</a></span> by <a href="https://github.com/hanimebeast/hanimeapi" class="text-white neon" target="_blank">HanimeBeast</a> &copy; <script>document.write(new Date().getFullYear())</script>
-    </footer>
+    <div>
+      <a href="https://t.me/its_sasuke_uchiha" target="_blank" class="text-white mx-2">
+        <i class="fab fa-telegram"></i>
+      </a>
+      <a href="https://Facebook.com/anitoonindiayt" target="_blank" class="text-white mx-2">
+        <i class="fab fa-facebook"></i>
+      </a>
+    </div>
+  </div>
+</footer>
 
     <!-- ✅ Bootstrap for Js here -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
