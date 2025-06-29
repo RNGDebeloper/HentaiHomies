@@ -40,19 +40,14 @@ background: -moz-radial-gradient(circle, rgba(238,174,202,1) 0%, rgba(0,35,75,1)
 background: -webkit-radial-gradient(circle, rgba(238,174,202,1) 0%, rgba(0,35,75,1) 100%);
 background: radial-gradient(circle, rgba(238,174,202,1) 0%, rgba(0,35,75,1) 100%);
 font-family: system-ui;" >
-    <!-- ✅ Navbar with gradient, hover effect, and subtle animation -->
+
+    
 <header>
   <nav class="navbar navbar-expand-lg navbar-dark custom-navbar">
     <div class="container-fluid">
-      <a href="https://animepixels.onrender.com" target="_blank" class="navbar-brand fw-bold">AnimePixels</a>
 
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-        data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-        aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <!-- LEFT SIDE: Nav Links -->
+      <div class="collapse navbar-collapse order-1 order-lg-0" id="navbarNav">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item"><a class="nav-link active" href="/">Home</a></li>
           <li class="nav-item"><a class="nav-link" href="/trending/month/0">Trending</a></li>
@@ -60,11 +55,28 @@ font-family: system-ui;" >
           <li class="nav-item"><a class="nav-link" href="https://www.buymeacoffee.com/immodded" target="_blank">Donate</a></li>
           <li class="nav-item"><a class="nav-link" href="https://t.me/immodded" target="_blank">Contact</a></li>
         </ul>
-        <form class="d-flex" method="post" action="/search">
-          <input class="form-control me-2" type="text" name="search_query" placeholder="Search anime...">
-          <button class="btn btn-outline-light" type="submit">Search</button>
+      </div>
+
+      <!-- CENTER: Brand -->
+      <a href="https://animepixels.onrender.com" target="_blank" class="navbar-brand mx-auto order-0 fw-bold">
+        AnimePixels
+      </a>
+
+      <!-- RIGHT SIDE: Search -->
+      <div class="collapse navbar-collapse order-2 order-lg-1" id="navbarSearch">
+        <form class="d-flex ms-auto" method="post" action="/search">
+          <input class="form-control form-control-sm me-2" type="text" name="search_query" placeholder="Search anime...">
+          <button class="btn btn-sm btn-outline-light" type="submit">Search</button>
         </form>
       </div>
+
+      <!-- Toggler -->
+      <button class="navbar-toggler ms-2" type="button" data-bs-toggle="collapse"
+        data-bs-target="#navbarNav, #navbarSearch" aria-controls="navbarNav navbarSearch"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
     </div>
   </nav>
 </header>
@@ -72,13 +84,14 @@ font-family: system-ui;" >
 <!-- ✅ Custom CSS -->
 <style>
   .custom-navbar {
-    background: linear-gradient(90deg, #111 0%, #333 100%);
-    border-bottom: 2px solid #555;
+    background: linear-gradient(90deg, #111 0%, #222 100%);
+    border-bottom: 2px solid #444;
   }
 
   .custom-navbar .navbar-brand {
-    font-size: 1.5rem;
+    font-size: 1.75rem;
     transition: color 0.3s ease;
+    letter-spacing: 1px;
   }
 
   .custom-navbar .navbar-brand:hover {
@@ -87,6 +100,7 @@ font-family: system-ui;" >
 
   .custom-navbar .nav-link {
     position: relative;
+    margin-right: 10px;
     transition: color 0.3s ease;
   }
 
@@ -119,13 +133,30 @@ font-family: system-ui;" >
     color: #aaa;
   }
 
+  .custom-navbar .btn-outline-light {
+    transition: all 0.3s ease;
+  }
+
   .custom-navbar .btn-outline-light:hover {
     background-color: #0dcaf0;
     color: #000;
     border-color: #0dcaf0;
   }
-</style>
 
+  /* Extra: ensure brand stays centered on mobile */
+  @media (max-width: 991.98px) {
+    .custom-navbar .navbar-brand {
+      order: -1;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .navbar-collapse {
+      text-align: center;
+    }
+  }
+</style>
+    
     <!-- ✅ Custom CSS ends here -->
     <div class="container m-10">
 <!-- ad -->
