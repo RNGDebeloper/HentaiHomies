@@ -9,66 +9,106 @@
 
 <div class="container px-4 px-lg-5 mt-5">
 <style>
-  .trending-slide {
-    position: relative;
-    width: 100%;
-    padding-top: 56.25%; /* 16:9 aspect ratio */
-    overflow: hidden;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-  }
+.trending-carousel .carousel-cards {
+  display: flex;
+  align-items: center;
+}
 
-  .trending-slide img {
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.5s ease;
-  }
+.trending-carousel .card {
+  background: #111;
+  border: none;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+  color: #fff;
+  text-align: center;
+  flex-shrink: 0;
+}
 
-  .trending-slide:hover img {
-    transform: scale(1.05);
-  }
+.trending-carousel .card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
 
-  .trending-caption {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    background: rgba(0,0,0,0.6);
-    color: #fff;
-    padding: 15px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
+.trending-carousel .big-card img {
+  height: 250px;
+}
 
-  .trending-caption h3 {
-    margin: 0;
-    font-size: 1.2rem;
-    font-weight: 600;
-  }
+.trending-carousel .card-info {
+  padding: 10px;
+}
 
-  .trending-caption a.btn {
-    background: #ff0055;
-    border: none;
-    font-size: 0.9rem;
-    padding: 6px 12px;
-  }
+.trending-carousel .big-card h5 {
+  font-size: 1.1rem;
+  margin-bottom: 5px;
+}
 
-  .trending-caption a.btn:hover {
-    background: #ff3366;
+.trending-carousel .small-card h6 {
+  font-size: 0.9rem;
+  margin-bottom: 4px;
+}
+
+.trending-carousel .big-card .btn {
+  margin-top: 5px;
+}
+
+.trending-carousel .small-card {
+  width: 120px;
+}
+
+.trending-carousel .big-card {
+  width: 200px;
+}
+
+@media(max-width: 768px) {
+  .trending-carousel .card img {
+    height: 150px;
   }
+  .trending-carousel .big-card img {
+    height: 200px;
+  }
+  .trending-carousel .small-card {
+    width: 90px;
+  }
+  .trending-carousel .big-card {
+    width: 150px;
+  }
+}
 </style>
-<div id="trendingCarousel" class="carousel slide mb-5" data-bs-ride="carousel" data-bs-interval="4000">
+
+<div id="trendingCarousel" class="carousel slide trending-carousel mb-5" data-bs-ride="carousel" data-bs-interval="3000">
   <div class="carousel-inner">
     {% for v in videos[:10] %}
-    <div class="carousel-item {% if loop.first %}active{% endif %}">
-      <div class="trending-slide">
-        <img src="{{ v['cover_url'] }}" alt="{{ v['name'] }}">
-        <div class="trending-caption">
-          <h3>{{ v['name'] }}</h3>
-          <a href="{{ v['url'] }}" class="btn btn-primary">Watch Now</a>
+    <div class="carousel-item {% if loop.index == 2 %}active{% endif %}">
+      <div class="carousel-cards d-flex justify-content-center">
+        {% set prev = videos[(loop.index0 - 1) % videos|length] %}
+        {% set curr = v %}
+        {% set next = videos[(loop.index0 + 1) % videos|length] %}
+
+        <div class="card small-card">
+          <img src="{{ prev['cover_url'] }}" alt="{{ prev['name'] }}">
+          <div class="card-info">
+            <h6>{{ prev['name'] }}</h6>
+            <a href="{{ prev['url'] }}" class="btn btn-sm btn-primary">Watch</a>
+          </div>
+        </div>
+
+        <div class="card big-card mx-2">
+          <img src="{{ curr['cover_url'] }}" alt="{{ curr['name'] }}">
+          <div class="card-info">
+            <h5>{{ curr['name'] }}</h5>
+            <a href="{{ curr['url'] }}" class="btn btn-primary">Watch Now</a>
+          </div>
+        </div>
+
+        <div class="card small-card">
+          <img src="{{ next['cover_url'] }}" alt="{{ next['name'] }}">
+          <div class="card-info">
+            <h6>{{ next['name'] }}</h6>
+            <a href="{{ next['url'] }}" class="btn btn-sm btn-primary">Watch</a>
+          </div>
         </div>
       </div>
     </div>
