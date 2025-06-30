@@ -5,97 +5,69 @@
 {% block title %}Trending | HanimeBeast{% endblock %}
 {% block content %}
 
+
+
+<div class="container px-4 px-lg-5 mt-5">
 <style>
   .trending-slide {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: stretch;
-    min-height: 350px;
-    background: #000;
-    border-radius: 12px;
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%; /* 16:9 aspect ratio */
     overflow: hidden;
+    border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0,0,0,0.5);
   }
 
   .trending-slide img {
+    position: absolute;
+    top: 0; left: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
     transition: transform 0.5s ease;
   }
 
-  .slide-left {
-    flex: 1 1 50%;
-    min-height: 350px;
-    overflow: hidden;
-  }
-
-  .slide-left img:hover {
+  .trending-slide:hover img {
     transform: scale(1.05);
   }
 
-  .slide-right {
-    flex: 1 1 50%;
-    padding: 40px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    background: linear-gradient(135deg, #111, #222);
+  .trending-caption {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background: rgba(0,0,0,0.6);
     color: #fff;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
 
-  .slide-right h3 {
-    font-size: 2rem;
-    margin-bottom: 15px;
-    font-weight: bold;
+  .trending-caption h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
   }
 
-  .slide-right p {
-    margin-bottom: 10px;
-    opacity: 0.9;
-    line-height: 1.5em;
-  }
-
-  .slide-right a.btn {
-    margin-top: 20px;
-    width: fit-content;
+  .trending-caption a.btn {
     background: #ff0055;
     border: none;
+    font-size: 0.9rem;
+    padding: 6px 12px;
   }
 
-  .slide-right a.btn:hover {
+  .trending-caption a.btn:hover {
     background: #ff3366;
   }
-
-  @media(max-width: 768px) {
-    .trending-slide {
-      flex-direction: column;
-    }
-    .slide-left, .slide-right {
-      flex: 1 1 100%;
-    }
-    .slide-left {
-      min-height: 200px;
-    }
-    .slide-right {
-      padding: 20px;
-    }
-  }
 </style>
-
-  <!-- Trending Slide Bar -->
 <div id="trendingCarousel" class="carousel slide mb-5" data-bs-ride="carousel" data-bs-interval="4000">
   <div class="carousel-inner">
     {% for v in videos[:10] %}
     <div class="carousel-item {% if loop.first %}active{% endif %}">
       <div class="trending-slide">
-        <div class="slide-left">
-          <img src="{{ v['cover_url'] }}" alt="{{ v['name'] }}">
-        </div>
-        <div class="slide-right">
+        <img src="{{ v['cover_url'] }}" alt="{{ v['name'] }}">
+        <div class="trending-caption">
           <h3>{{ v['name'] }}</h3>
-          <p>{{ v['description'] or 'No description available.' }}</p>
-          <p><i class="fa-solid fa-eye"></i> {{ v['views'] }} views</p>
           <a href="{{ v['url'] }}" class="btn btn-primary">Watch Now</a>
         </div>
       </div>
@@ -112,7 +84,7 @@
     <span class="visually-hidden">Next</span>
   </button>
 </div>
-<div class="container px-4 px-lg-5 mt-5">
+
   <!-- Trending Filter & Video Grid -->
   <div class="navbar navbar-expand-lg">
     <button class="btn-success btn btn-sm m-3">Trending : {{ time }}</button>
