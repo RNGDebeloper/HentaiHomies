@@ -6,97 +6,149 @@
 {% block content %}
 
 
-
+<!-- Gap above -->
+<div style="margin-top: 50px;"></div>
 <div class="container px-4 px-lg-5 mt-5">
 <style>
-.trending-swiper {
-  padding: 40px 0;
+.trending-carousel .carousel-cards {
+  display: flex;
+  align-items: stretch;
 }
 
-.trending-swiper .swiper-slide {
+.trending-carousel .card {
   background: #111;
+  border: none;
   border-radius: 10px;
   overflow: hidden;
   box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+  color: #fff;
   text-align: center;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
-.trending-swiper .swiper-slide img {
+.trending-carousel .card img {
   width: 100%;
   height: 200px;
   object-fit: cover;
+  transition: transform 0.4s ease;
 }
 
-.trending-swiper .card-info {
+.trending-carousel .big-card img {
+  height: 250px;
+}
+
+.trending-carousel .card-info {
   padding: 10px;
-  color: #fff;
+  background: #111;
 }
 
-.trending-swiper h5 {
-  margin: 0;
-  font-size: 1rem;
+.trending-carousel .big-card h5 {
+  font-size: 1.1rem;
+  margin-bottom: 8px;
 }
 
-.swiper-button-next, .swiper-button-prev {
-  color: #fff;
+.trending-carousel .small-card h6 {
+  font-size: 0.9rem;
+  margin-bottom: 6px;
+}
+
+.trending-carousel .card-info .btn {
+  margin-top: 5px;
+}
+
+.trending-carousel .small-card {
+  width: 120px;
+}
+
+.trending-carousel .big-card {
+  width: 200px;
 }
 
 @media(max-width: 768px) {
-  .trending-swiper .swiper-slide img {
+  .trending-carousel .card img {
     height: 150px;
+  }
+  .trending-carousel .big-card img {
+    height: 200px;
+  }
+  .trending-carousel .small-card {
+    width: 90px;
+  }
+  .trending-carousel .big-card {
+    width: 150px;
   }
 }
 </style>
 
 
-
-<!-- Gap above -->
-<div style="margin-top: 50px;"></div>
-
-<div class="swiper trending-swiper">
-  <div class="swiper-wrapper">
-    {% for v in videos[:10] %}
-    <div class="swiper-slide">
-      <div class="card">
-        <img src="{{ v['cover_url'] }}" alt="{{ v['name'] }}">
-        <div class="card-info">
-          <h5>{{ v['name'] }}</h5>
-          <a href="{{ v['url'] }}" class="btn btn-primary btn-sm mt-2">Watch Now</a>
-        </div>
-      </div>
-    </div>
-    {% endfor %}
-  </div>
-
-  <!-- Arrows -->
-  <div class="swiper-button-prev"></div>
-  <div class="swiper-button-next"></div>
+<div class="trending-carousel mb-5">
+  <div id="sliderWrapper" class="carousel-cards d-flex justify-content-center"></div>
 </div>
 
 
 <script>
-  const swiper = new Swiper('.trending-swiper', {
-    slidesPerView: 3,
-    spaceBetween: 20,
-    centeredSlides: true,
-    loop: true,
-    autoplay: {
-      delay: 2500,
-      disableOnInteraction: false,
-    },
-    navigation: {
-      nextEl: '.swiper-button-next',
-      prevEl: '.swiper-button-prev',
-    },
-    breakpoints: {
-      768: {
-        slidesPerView: 3
+  const videos = [
+    {% for v in videos[:10] %}
+      {
+        name: {{ v['name']|tojson }},
+        cover_url: {{ v['cover_url']|tojson }},
+        url: {{ v['url']|tojson }}
       },
-      0: {
-        slidesPerView: 1
-      }
-    }
-  });
+    {% endfor %}
+  ];
+
+  let currentIndex = 0;
+  const total = videos.length;
+
+  function renderSlide() {
+    const prev = videos[(currentIndex - 1 + total) % total];
+    const curr = videos[currentIndex];
+    const next = videos[(currentIndex + 1) % total];
+
+    const html = `
+      <div class="card small-card">
+        <img src="${prev.cover_url}" alt="${prev.name}">
+        <div class="card-info">
+          <h6>${prev.name}</h6>
+          <a href="${prev.url}" class="btn btn-sm btn-primary">Watch</a>
+        </div>
+      </div>
+
+      <div class="card big-card mx-2">
+        <img src="${curr.cover_url}" alt="${curr.name}">
+        <div class="card-info">
+          <h5>${curr.name}</h5>
+          <a href="${curr.url}" class="btn btn-primary">Watch Now</a>
+        </div>
+      </div>
+
+      <div class="card small-card">
+        <img src="${next.cover_url}" alt="${next.name}">
+        <div class="card-info">
+          <h6>${next.name}</h6>
+          <a href="${next.url}" class="btn btn-sm btn-primary">Watch</a>
+        </div>
+      </div>
+    `;
+
+    document.getElementById('sliderWrapper').innerHTML = html;
+  }
+
+  function nextSlide() {
+    currentIndex = (currentIndex + 1) % total;
+    renderSlide();
+  }
+
+  function prevSlide() {
+    currentIndex = (currentIndex - 1 + total) % total;
+    renderSlide();
+  }
+
+  renderSlide();
+  setInterval(nextSlide, 3000);
 </script>
 
 
