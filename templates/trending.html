@@ -86,55 +86,76 @@
 <!-- Gap above -->
 <div style="margin-top: 50px;"></div>
 
-<div id="trendingCarousel" class="carousel slide trending-carousel mb-5" data-bs-ride="carousel" data-bs-interval="3000">
-  <div class="carousel-inner">
-    {% set total = videos[:10]|length %}
-    {% for i in range(total) %}
-      {% set prev = videos[(i - 1) % total] %}
-      {% set curr = videos[i] %}
-      {% set next = videos[(i + 1) % total] %}
+<div class="trending-carousel mb-5">
+  <div id="sliderWrapper" class="carousel-cards d-flex justify-content-center"></div>
+</div>
 
-      <div class="carousel-item {% if loop.first %}active{% endif %}">
-        <div class="carousel-cards d-flex justify-content-center">
-          <!-- Prev -->
-          <div class="card small-card">
-            <img src="{{ prev['cover_url'] }}" alt="{{ prev['name'] }}">
-            <div class="card-info">
-              <h6>{{ prev['name'] }}</h6>
-              <a href="{{ prev['url'] }}" class="btn btn-sm btn-primary">Watch</a>
-            </div>
-          </div>
+   <script>
+  const videos = [
+    {% for v in videos[:10] %}
+      {
+        name: "{{ v['name']|escapejs }}",
+        cover_url: "{{ v['cover_url']|escapejs }}",
+        url: "{{ v['url']|escapejs }}"
+      },
+    {% endfor %}
+  ];
 
-          <!-- Current -->
-          <div class="card big-card mx-2">
-            <img src="{{ curr['cover_url'] }}" alt="{{ curr['name'] }}">
-            <div class="card-info">
-              <h5>{{ curr['name'] }}</h5>
-              <a href="{{ curr['url'] }}" class="btn btn-primary">Watch Now</a>
-            </div>
-          </div>
+  let currentIndex = 0;
+  const total = videos.length;
 
-          <!-- Next -->
-          <div class="card small-card">
-            <img src="{{ next['cover_url'] }}" alt="{{ next['name'] }}">
-            <div class="card-info">
-              <h6>{{ next['name'] }}</h6>
-              <a href="{{ next['url'] }}" class="btn btn-sm btn-primary">Watch</a>
-            </div>
-          </div>
+  function renderSlide() {
+    const prev = videos[(currentIndex - 1 + total) % total];
+    const curr = videos[currentIndex];
+    const next = videos[(currentIndex + 1) % total];
+
+    const html = `
+      <div class="card small-card">
+        <img src="${prev.cover_url}" alt="${prev.name}">
+        <div class="card-info">
+          <h6>${prev.name}</h6>
+          <a href="${prev.url}" class="btn btn-sm btn-primary">Watch</a>
         </div>
       </div>
-    {% endfor %}
-  </div>
 
-  <button class="carousel-control-prev" type="button" data-bs-target="#trendingCarousel" data-bs-slide="prev">
-    <span class="carousel-control-prev-icon"></span>
-    <span class="visually-hidden">Previous</span>
-  </button>
-  <button class="carousel-control-next" type="button" data-bs-target="#trendingCarousel" data-bs-slide="next">
-    <span class="carousel-control-next-icon"></span>
-    <span class="visually-hidden">Next</span>
-  </button>
+      <div class="card big-card mx-2">
+        <img src="${curr.cover_url}" alt="${curr.name}">
+        <div class="card-info">
+          <h5>${curr.name}</h5>
+          <a href="${curr.url}" class="btn btn-primary">Watch Now</a>
+        </div>
+      </div>
+
+      <div class="card small-card">
+        <img src="${next.cover_url}" alt="${next.name}">
+        <div class="card-info">
+          <h6>${next.name}</h6>
+          <a href="${next.url}" class="btn btn-sm btn-primary">Watch</a>
+        </div>
+      </div>
+    `;
+
+    document.getElementById('sliderWrapper').innerHTML = html;
+  }
+
+  function nextSlide() {
+    currentIndex = (currentIndex + 1) % total;
+    renderSlide();
+  }
+
+  function prevSlide() {
+    currentIndex = (currentIndex - 1 + total) % total;
+    renderSlide();
+  }
+
+  // Init
+  renderSlide();
+  setInterval(nextSlide, 3000);
+</script>
+
+<div class="text-center my-2">
+  <button onclick="prevSlide()" class="btn btn-secondary btn-sm me-2">Previous</button>
+  <button onclick="nextSlide()" class="btn btn-secondary btn-sm">Next</button>
 </div>
 
   <!-- Trending Filter & Video Grid -->
