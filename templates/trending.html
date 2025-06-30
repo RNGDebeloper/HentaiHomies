@@ -3,132 +3,141 @@
 {% block metadescription %}Trending Free Hentai Video Streams Online in 720p, 1080p HD{% endblock metadescription %}
 {% block metakeywords %} {% for v in videos %} {{ v['name'] }} , {% endfor %}  {% endblock metakeywords %}
 {% block title %}Trending | HanimeBeast{% endblock %}
+{% for i in range(total) %}
 {% block content %}
 
 
 
 <div class="container px-4 px-lg-5 mt-5">
 <style>
-.trending-wrapper {
-  overflow: hidden;
-  position: relative;
-}
-
-.trending-center-carousel {
+.trending-carousel .carousel-cards {
   display: flex;
-  justify-content: center;
-  align-items: center;
+  align-items: stretch;
 }
 
-.trending-track {
-  display: flex;
-  gap: 20px;
-  transition: transform 0.5s ease;
-}
-
-.trending-track .card {
-  flex: 0 0 200px;
+.trending-carousel .card {
   background: #111;
-  border-radius: 12px;
+  border: none;
+  border-radius: 10px;
   overflow: hidden;
   box-shadow: 0 4px 15px rgba(0,0,0,0.6);
-  text-align: center;
   color: #fff;
-  transform: scale(0.8);
-  transition: transform 0.5s ease;
+  text-align: center;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
-.trending-track .card img {
+.trending-carousel .card img {
   width: 100%;
   height: 200px;
   object-fit: cover;
+  transition: transform 0.4s ease;
 }
 
-.trending-track .card-info {
+.trending-carousel .big-card img {
+  height: 250px;
+}
+
+.trending-carousel .card-info {
   padding: 10px;
+  background: #111;
 }
 
-.trending-track .card-info h5 {
-  font-size: 1rem;
-  margin: 10px 0 5px;
+.trending-carousel .big-card h5 {
+  font-size: 1.1rem;
+  margin-bottom: 8px;
 }
 
-.trending-track .card-info .btn {
-  background: #ff0055;
-  border: none;
+.trending-carousel .small-card h6 {
+  font-size: 0.9rem;
+  margin-bottom: 6px;
 }
 
-.trending-track .card-info .btn:hover {
-  background: #ff3366;
+.trending-carousel .card-info .btn {
+  margin-top: 5px;
 }
 
-/* Highlight center card */
-.trending-track .card.active {
-  transform: scale(1);
-  z-index: 1;
+.trending-carousel .small-card {
+  width: 120px;
+}
+
+.trending-carousel .big-card {
+  width: 200px;
 }
 
 @media(max-width: 768px) {
-  .trending-track .card {
-    flex: 0 0 120px;
-  }
-  .trending-track .card img {
+  .trending-carousel .card img {
     height: 150px;
+  }
+  .trending-carousel .big-card img {
+    height: 200px;
+  }
+  .trending-carousel .small-card {
+    width: 90px;
+  }
+  .trending-carousel .big-card {
+    width: 150px;
   }
 }
 </style>
 
+
 <!-- Gap above -->
 <div style="margin-top: 50px;"></div>
 
-<div class="container trending-wrapper">
-  <div class="trending-center-carousel">
-    <div class="trending-track">
-      {% for v in videos[:10] %}
-      <div class="card">
-        <img src="{{ v['cover_url'] }}" alt="{{ v['name'] }}">
-        <div class="card-info">
-          <h5>{{ v['name'] }}</h5>
-          <a href="{{ v['url'] }}" class="btn btn-primary btn-sm">Watch Now</a>
+<div id="trendingCarousel" class="carousel slide trending-carousel mb-5" data-bs-ride="carousel" data-bs-interval="3000">
+  <div class="carousel-inner">
+    {% set total = videos[:10]|length %}
+    {% for i in range(total) %}
+      {% set prev = videos[(i - 1) % total] %}
+      {% set curr = videos[i] %}
+      {% set next = videos[(i + 1) % total] %}
+
+      <div class="carousel-item {% if loop.first %}active{% endif %}">
+        <div class="carousel-cards d-flex justify-content-center">
+          <!-- Prev -->
+          <div class="card small-card">
+            <img src="{{ prev['cover_url'] }}" alt="{{ prev['name'] }}">
+            <div class="card-info">
+              <h6>{{ prev['name'] }}</h6>
+              <a href="{{ prev['url'] }}" class="btn btn-sm btn-primary">Watch</a>
+            </div>
+          </div>
+
+          <!-- Current -->
+          <div class="card big-card mx-2">
+            <img src="{{ curr['cover_url'] }}" alt="{{ curr['name'] }}">
+            <div class="card-info">
+              <h5>{{ curr['name'] }}</h5>
+              <a href="{{ curr['url'] }}" class="btn btn-primary">Watch Now</a>
+            </div>
+          </div>
+
+          <!-- Next -->
+          <div class="card small-card">
+            <img src="{{ next['cover_url'] }}" alt="{{ next['name'] }}">
+            <div class="card-info">
+              <h6>{{ next['name'] }}</h6>
+              <a href="{{ next['url'] }}" class="btn btn-sm btn-primary">Watch</a>
+            </div>
+          </div>
         </div>
       </div>
-      {% endfor %}
-    </div>
+    {% endfor %}
   </div>
+
+  <button class="carousel-control-prev" type="button" data-bs-target="#trendingCarousel" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#trendingCarousel" data-bs-slide="next">
+    <span class="carousel-control-next-icon"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
 </div>
-  
-<script>
-const track = document.querySelector('.trending-track');
-const cards = track.children;
-let index = 1;
 
-function updateCards() {
-  for (let i = 0; i < cards.length; i++) {
-    cards[i].classList.remove('active');
-  }
-  // Mark the center one as active
-  cards[index].classList.add('active');
-
-  const cardWidth = cards[0].offsetWidth + 20; // plus gap
-  const offset = -((index - 1) * cardWidth);
-  track.style.transform = `translateX(${offset}px)`;
-}
-
-function next() {
-  index++;
-  if (index >= cards.length - 1) index = 1;
-  updateCards();
-}
-
-// clone first & last for smooth loop
-const first = cards[0].cloneNode(true);
-const last = cards[cards.length - 1].cloneNode(true);
-track.insertBefore(last, cards[0]);
-track.appendChild(first);
-
-updateCards();
-setInterval(next, 3000);
-</script>
   <!-- Trending Filter & Video Grid -->
   <div class="navbar navbar-expand-lg">
     <button class="btn-success btn btn-sm m-3">Trending : {{ time }}</button>
