@@ -90,13 +90,13 @@
   <div id="sliderWrapper" class="carousel-cards d-flex justify-content-center"></div>
 </div>
 
-   <script>
+<script>
   const videos = [
     {% for v in videos[:10] %}
       {
-        name: "{{ v['name']|escapejs }}",
-        cover_url: "{{ v['cover_url']|escapejs }}",
-        url: "{{ v['url']|escapejs }}"
+        name: {{ v['name']|tojson }},
+        cover_url: {{ v['cover_url']|tojson }},
+        url: {{ v['url']|tojson }}
       },
     {% endfor %}
   ];
@@ -148,7 +148,6 @@
     renderSlide();
   }
 
-  // Init
   renderSlide();
   setInterval(nextSlide, 3000);
 </script>
