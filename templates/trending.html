@@ -6,8 +6,6 @@
 {% block content %}
 
 
-<!-- Gap above -->
-<div style="margin-top: 50px;"></div>
 <div class="container px-4 px-lg-5 mt-5">
 <style>
 .trending-carousel .carousel-cards {
@@ -83,7 +81,8 @@
 }
 </style>
 
-
+<!-- Gap above -->
+<div style="margin-top: 50px;"></div>
 <div class="trending-carousel mb-5">
   <div id="sliderWrapper" class="carousel-cards d-flex justify-content-center"></div>
 </div>
@@ -153,6 +152,7 @@
 
 
   <!-- Trending Filter & Video Grid -->
+  <h2>Trending</h2>
   <div class="navbar navbar-expand-lg">
     <button class="btn-success btn btn-sm m-3">Trending : {{ time }}</button>
     <a class="btn-primary btn btn-sm m-3" href="{{ request.url }}/playlist.m3u"> Playlist m3u </a>
