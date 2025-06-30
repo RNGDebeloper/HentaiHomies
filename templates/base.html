@@ -81,15 +81,16 @@
       </div>
 
       <!-- ✅ DESKTOP SEARCH ICON -->
-      <div class="search-wrapper d-none d-lg-flex ms-auto">
-        <button type="button" id="searchToggle" class="search-icon">
-          <i class="fas fa-search"></i>
-        </button>
-        <form id="searchForm" method="post" action="/search">
-          <input id="searchInput" type="text" name="search_query" placeholder="Search anime..." class="search-input">
-          <button id="searchSubmit" type="submit" class="search-submit">Go</button>
-        </form>
-      </div>
+<div class="search-wrapper d-none d-lg-flex ms-auto">
+  <button type="button" id="searchToggle" class="search-icon">
+    <i class="fas fa-search"></i>
+  </button>
+  <form id="searchForm" method="post" action="/search">
+    <input id="searchInput" type="text" name="search_query" placeholder="Search anime..." class="search-input">
+    <button id="searchSubmit" type="submit" class="search-submit">Go</button>
+  </form>
+</div>
+
     </div>
   </nav>
 </header>
@@ -134,51 +135,56 @@
   }
 
   /* DESKTOP SEARCH */
-  .search-wrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
-    margin-left: auto;
-  }
+/* DESKTOP SEARCH - FIXED POSITION */
+.search-wrapper {
+  position: relative; /* KEY: this anchors the absolute input */
+  display: flex;
+  align-items: center;
+}
 
-  .search-icon {
-    background: none;
-    border: none;
-    color: #fff;
-    padding: 8px 10px;
-    cursor: pointer;
-    font-size: 1.1rem;
-  }
+.search-icon {
+  background: none;
+  border: none;
+  color: #fff;
+  padding: 8px 10px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  z-index: 2;
+}
 
-  #searchForm {
-    position: relative;
-  }
+#searchForm {
+  position: relative;
+}
 
-  .search-input {
-    position: absolute;
-    right: 40px;
-    width: 0;
-    opacity: 0;
-    transition: width 0.3s ease, opacity 0.3s ease;
-    padding: 8px 12px;
-    border: 1px solid #555;
-    border-radius: 20px;
-    background: #111;
-    color: #fff;
-    max-width: 70vw;
-  }
+.search-input {
+  position: absolute;
+  right: 40px; /* pushes input left of the icon */
+  top: 50%; /* centers vertically */
+  transform: translateY(-50%);
+  width: 0;
+  opacity: 0;
+  transition: width 0.3s ease, opacity 0.3s ease;
+  padding: 8px 12px;
+  border: 1px solid #555;
+  border-radius: 20px;
+  background: #111;
+  color: #fff;
+  max-width: 300px;
+}
 
-  .search-submit {
-    display: none;
-    position: absolute;
-    right: calc(40px + 210px);
-    padding: 8px 12px;
-    background: none;
-    border: 1px solid #555;
-    border-radius: 20px;
-    color: #fff;
-    cursor: pointer;
-  }
+.search-submit {
+  display: none;
+  position: absolute;
+  right: calc(40px + 210px);
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 8px 12px;
+  background: none;
+  border: 1px solid #555;
+  border-radius: 20px;
+  color: #fff;
+  cursor: pointer;
+}
 
   .search-input::placeholder {
     color: #aaa;
