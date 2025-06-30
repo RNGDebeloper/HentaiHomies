@@ -36,213 +36,182 @@
         }
     </style>
     
-<body style="background: #e0e0e0 no-repeat center center fixed; background-size: cover; color: #000;">
+<body style="background: rgb(238,174,202);
+background: -moz-radial-gradient(circle, rgba(238,174,202,1) 0%, rgba(0,35,75,1) 100%);
+background: -webkit-radial-gradient(circle, rgba(238,174,202,1) 0%, rgba(0,35,75,1) 100%);
+background: radial-gradient(circle, rgba(238,174,202,1) 0%, rgba(0,35,75,1) 100%);
+font-family: system-ui;" >
         <!-- Above Bacground: Belwo Nav Links -->
 
         <!-- ✅ Fixed, transparent, professional navbar -->
         <!-- ✅ Perfected responsive left-toggle navbar -->
-        <header>
-            <nav class="navbar navbar-expand-lg navbar-dark custom-navbar fixed-top">
-                <div class="container-fluid">
-                    <!-- LEFT: Toggler + Logo -->
-                    <a class="navbar-brand fw-bold me-2">
-                        <!-- HentaiHomies Text -->
-                        <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                            <i class="fas fa-bars"></i>
-                        </button>
-                        HentaiHomies
-                    </a>
+<header>
+  <nav class="navbar navbar-expand-lg navbar-dark custom-navbar fixed-top">
+    <div class="container-fluid">
+      <!-- LEFT: Toggler + Logo -->
+      <a class="navbar-brand fw-bold me-2">
+        <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+          aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <i class="fas fa-bars"></i>
+        </button>
+        HentaiHomies
+      </a>
 
-                    <!-- LEFT: Collapsible Nav Links -->
-                    <div class="collapse navbar-collapse" id="navbarNav">
-                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                            <li class="nav-item"><a class="nav-link active" href="/">Home</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/trending/month/0">Trending</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/browse">Browse</a></li>
-                            <li class="nav-item"><a class="nav-link" href="https://www.buymeacoffee.com/immodded" target="_blank">Donate</a></li>
-                            <li class="nav-item"><a class="nav-link" href="https://t.me/immodded" target="_blank">Contact</a></li>
-                        </ul>
-                        <div class="d-flex align-items-center justify-content-start" style="flex: 1;">
-                            <form id="searchForm" class="d-flex align-items-center position-relative" method="post" action="/search" style="position: relative;">
-                                <!-- Search Icon fixed to LEFT -->
-                                <button type="button" id="searchToggle" class="btn btn-sm btn-outline-light d-flex align-items-center p-2" style="position: absolute; left: 0; z-index: 2;">
-                                    <i class="fas fa-search"></i>
-                                </button>
+      <!-- Nav Links -->
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link active" href="/">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="/trending/month/0">Trending</a></li>
+          <li class="nav-item"><a class="nav-link" href="/browse">Browse</a></li>
+          <li class="nav-item"><a class="nav-link" href="https://www.buymeacoffee.com/immodded" target="_blank">Donate</a></li>
+          <li class="nav-item"><a class="nav-link" href="https://t.me/immodded" target="_blank">Contact</a></li>
+        </ul>
+      </div>
 
-                                <!-- Expandable Search Input -->
-                                <input
-                                    id="searchInput"
-                                    class="form-control form-control-sm"
-                                    type="text"
-                                    name="search_query"
-                                    placeholder="Search anime..."
-                                    style="width: 0; opacity: 0; padding-left: 35px; transition: width 0.3s ease, opacity 0.3s ease; border-radius: 20px; margin-left: 0;"
-                                />
+      <!-- RIGHT EDGE: Search -->
+      <div class="search-wrapper">
+        <form id="searchForm" method="post" action="/search">
+          <!-- Search Icon (RIGHT EDGE) -->
+          <button type="button" id="searchToggle" class="search-icon">
+            <i class="fas fa-search"></i>
+          </button>
 
-                                <!-- Submit Button -->
-                                <button id="searchSubmit" class="btn btn-sm btn-outline-light ms-2" type="submit" style="display: none;">
-                                    Go
-                                </button>
-                            </form>
-                        </div>
+          <!-- Hidden Input -->
+          <input id="searchInput" type="text" name="search_query" placeholder="Search anime..." class="search-input">
 
-                        <!-- Font Awesome for icon -->
-                        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+          <!-- Submit -->
+          <button id="searchSubmit" type="submit" class="search-submit">Go</button>
+        </form>
+      </div>
+    </div>
+  </nav>
+</header>
+<style>
+  /* Navbar Base */
+  .custom-navbar {
+    background: rgba(0, 0, 0, 0.9);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid #444;
+    padding: 0.5rem 1rem;
+  }
 
-                        <!-- Toggle Script -->
-                        <script>
-                            const toggle = document.getElementById("searchToggle");
-                            const input = document.getElementById("searchInput");
-                            const submit = document.getElementById("searchSubmit");
+  .custom-navbar .navbar-brand {
+    font-size: 1.4rem;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: color 0.3s ease;
+  }
 
-                            toggle.addEventListener("click", () => {
-                                if (input.style.width === "0px" || input.style.width === "0") {
-                                    input.style.width = "200px";
-                                    input.style.opacity = "1";
-                                    submit.style.display = "inline-block";
-                                    input.focus();
-                                } else {
-                                    input.style.width = "0";
-                                    input.style.opacity = "0";
-                                    submit.style.display = "none";
-                                }
-                            });
-                        </script>
-                    </div>
+  .custom-navbar .navbar-brand:hover {
+    color: #0dcaf0;
+  }
 
-                    <!-- Container: align left -->
-                </div>
-            </nav>
-        </header>
+  .custom-navbar .nav-link {
+    position: relative;
+    margin-right: 15px;
+    transition: color 0.3s ease;
+  }
 
-        <!-- ✅ Modern CSS -->
-        <style>
-            .custom-navbar {
-                background: rgba(0, 0, 0, 0.9); /* Slight transparent black */
-                backdrop-filter: blur(6px);
-                border-bottom: 1px solid #444;
-                padding: 0.5rem 1rem;
-            }
+  .custom-navbar .nav-link::after {
+    content: "";
+    position: absolute;
+    width: 0%;
+    height: 2px;
+    left: 0;
+    bottom: 0;
+    background-color: #0dcaf0;
+    transition: width 0.3s ease;
+  }
 
-            .custom-navbar .navbar-brand {
-                font-size: 1.4rem;
-                letter-spacing: 1px;
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-                transition: color 0.3s ease;
-            }
+  .custom-navbar .nav-link:hover {
+    color: #0dcaf0;
+  }
 
-            .custom-navbar .navbar-brand:hover {
-                color: #0dcaf0;
-            }
+  .custom-navbar .nav-link:hover::after {
+    width: 100%;
+  }
 
-            .custom-navbar .nav-link {
-                position: relative;
-                margin-right: 15px;
-                transition: color 0.3s ease;
-            }
+  /* SEARCH: RIGHT EDGE */
+  .search-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end; /* right align */
+  }
 
-            .custom-navbar .nav-link::after {
-                content: "";
-                position: absolute;
-                width: 0%;
-                height: 2px;
-                left: 0;
-                bottom: 0;
-                background-color: #0dcaf0;
-                transition: width 0.3s ease;
-            }
+  #searchForm {
+    position: relative;
+  }
 
-            .custom-navbar .nav-link:hover {
-                color: #0dcaf0;
-            }
+  .search-icon {
+    background: none;
+    border: none;
+    color: #fff;
+    padding: 8px 10px;
+    cursor: pointer;
+    z-index: 2;
+  }
 
-            .custom-navbar .nav-link:hover::after {
-                width: 100%;
-            }
+  .search-input {
+    position: absolute;
+    right: 40px; /* push input left of icon */
+    width: 0;
+    opacity: 0;
+    transition: width 0.3s ease, opacity 0.3s ease;
+    padding: 8px 12px;
+    border: 1px solid #555;
+    border-radius: 20px;
+    background: #111;
+    color: #fff;
+  }
 
-            .custom-navbar .form-control {
-                background-color: #222;
-                border: 1px solid #555;
-                color: #fff;
-            }
+  .search-submit {
+    display: none;
+    position: absolute;
+    right: calc(40px + 210px);
+    padding: 8px 12px;
+    background: none;
+    border: 1px solid #555;
+    border-radius: 20px;
+    color: #fff;
+    cursor: pointer;
+  }
 
-            .custom-navbar .form-control::placeholder {
-                color: #aaa;
-            }
+  .search-input::placeholder {
+    color: #aaa;
+  }
 
-            .custom-navbar .btn-outline-light {
-                transition: all 0.3s ease;
-            }
+  .search-input:focus {
+    outline: none;
+    border-color: #0dcaf0;
+  }
 
-            .custom-navbar .btn-outline-light:hover {
-                background-color: #0dcaf0;
-                color: #000;
-                border-color: #0dcaf0;
-            }
+  .custom-navbar .btn-outline-light:hover {
+    background-color: #0dcaf0;
+    color: #000;
+    border-color: #0dcaf0;
+  }
+</style>
+<script>
+  const toggle = document.getElementById('searchToggle');
+  const input = document.getElementById('searchInput');
+  const submit = document.getElementById('searchSubmit');
 
-            @media (max-width: 991.98px) {
-                .navbar-collapse {
-                    margin-top: 0.5rem;
-                }
-
-                form.d-flex {
-                    margin-top: 0.5rem;
-                    width: 100%;
-                }
-                
-            .search-wrapper {
-                position: relative;
-                display: flex;
-                align-items: center;
-                justify-content: flex-start; /* LEFT side */
-            }
-            }
-
-            #searchForm {
-                position: relative;
-            }
-
-            .search-icon {
-                position: absolute;
-                left: 0;
-                background: none;
-                border: none;
-                color: #fff;
-                padding: 8px 10px;
-                cursor: pointer;
-                z-index: 2;
-            }
-
-            .search-input {
-                width: 0;
-                opacity: 0;
-                transition: width 0.3s ease, opacity 0.3s ease;
-                padding: 8px 8px 8px 40px; /* space for icon */
-                border: 1px solid #ccc;
-                border-radius: 20px;
-                background: #111;
-                color: #fff;
-            }
-
-            .search-submit {
-                display: none;
-                margin-left: 10px;
-                padding: 8px 12px;
-                background: none;
-                border: 1px solid #ccc;
-                border-radius: 20px;
-                color: #fff;
-                cursor: pointer;
-            }
-
-            /* Optional: focus style */
-            .search-input:focus {
-                outline: none;
-                border-color: #00f0ff; /* neon highlight */
-            }
-        </style>
+  toggle.addEventListener('click', () => {
+    if (input.style.width === '0px' || input.style.width === '0') {
+      input.style.width = '200px';
+      input.style.opacity = '1';
+      submit.style.display = 'inline-block';
+      input.focus();
+    } else {
+      input.style.width = '0';
+      input.style.opacity = '0';
+      submit.style.display = 'none';
+    }
+  });
+</script>
 
         <!-- ✅ Custom CSS ends here -->
         <div class="container m-10">
