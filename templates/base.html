@@ -37,12 +37,12 @@
     </style>
     
 <body style="
-  background: #2a2a2a;
-  background: -moz-radial-gradient(circle, rgba(70,70,70,1) 0%, rgba(15,15,15,1) 100%);
-  background: -webkit-radial-gradient(circle, rgba(70,70,70,1) 0%, rgba(15,15,15,1) 100%);
-  background: radial-gradient(circle, rgba(70,70,70,1) 0%, rgba(15,15,15,1) 100%);
+  background: #3a3a3a;
+  background: -moz-radial-gradient(circle, rgba(90,90,90,1) 0%, rgba(40,40,40,1) 100%);
+  background: -webkit-radial-gradient(circle, rgba(90,90,90,1) 0%, rgba(40,40,40,1) 100%);
+  background: radial-gradient(circle, rgba(90,90,90,1) 0%, rgba(40,40,40,1) 100%);
   font-family: system-ui;
-  color: #f5f5f5;
+  color: #f0f0f0;
 ">
         <!-- Above Bacground: Belwo Nav Links -->
 
@@ -51,8 +51,8 @@
 <header>
   <nav class="navbar navbar-expand-lg navbar-dark custom-navbar fixed-top">
     <div class="container-fluid">
-      <!-- LEFT: Toggler + Logo -->
-      <a class="navbar-brand fw-bold me-2">
+      <!-- BRAND + TOGGLER -->
+      <a class="navbar-brand fw-bold me-2" href="/">
         <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
           aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
           <i class="fas fa-bars"></i>
@@ -60,7 +60,7 @@
         HentaiHomies
       </a>
 
-      <!-- Nav Links -->
+      <!-- COLLAPSIBLE LINKS + MOBILE SEARCH -->
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item"><a class="nav-link active" href="/">Home</a></li>
@@ -69,20 +69,24 @@
           <li class="nav-item"><a class="nav-link" href="https://www.buymeacoffee.com/immodded" target="_blank">Donate</a></li>
           <li class="nav-item"><a class="nav-link" href="https://t.me/immodded" target="_blank">Contact</a></li>
         </ul>
+
+        <!-- ✅ MOBILE SEARCH BAR (ALWAYS VISIBLE ON SMALL SCREENS) -->
+        <form class="d-block d-lg-none w-100" method="post" action="/search">
+          <div class="input-group mt-2">
+            <input class="form-control form-control-sm bg-dark text-light border-secondary"
+              type="text" name="search_query" placeholder="Search anime...">
+            <button class="btn btn-sm btn-outline-info" type="submit">Go</button>
+          </div>
+        </form>
       </div>
 
-      <!-- RIGHT EDGE: Search -->
-      <div class="search-wrapper">
+      <!-- ✅ DESKTOP SEARCH ICON -->
+      <div class="search-wrapper d-none d-lg-flex ms-auto">
+        <button type="button" id="searchToggle" class="search-icon">
+          <i class="fas fa-search"></i>
+        </button>
         <form id="searchForm" method="post" action="/search">
-          <!-- Search Icon (RIGHT EDGE) -->
-          <button type="button" id="searchToggle" class="search-icon">
-            <i class="fas fa-search"></i>
-          </button>
-
-          <!-- Hidden Input -->
           <input id="searchInput" type="text" name="search_query" placeholder="Search anime..." class="search-input">
-
-          <!-- Submit -->
           <button id="searchSubmit" type="submit" class="search-submit">Go</button>
         </form>
       </div>
@@ -91,7 +95,6 @@
 </header>
     
 <style>
-  /* Navbar Base */
   .custom-navbar {
     background: rgba(0, 0, 0, 0.9);
     backdrop-filter: blur(6px);
@@ -99,26 +102,19 @@
     padding: 0.5rem 1rem;
   }
 
-  .custom-navbar .navbar-brand {
+  .navbar-brand {
     font-size: 1.4rem;
-    letter-spacing: 1px;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    transition: color 0.3s ease;
   }
 
-  .custom-navbar .navbar-brand:hover {
-    color: #0dcaf0;
-  }
-
-  .custom-navbar .nav-link {
+  .nav-link {
     position: relative;
     margin-right: 15px;
     transition: color 0.3s ease;
   }
 
-  .custom-navbar .nav-link::after {
+  .nav-link::after {
     content: "";
     position: absolute;
     width: 0%;
@@ -129,24 +125,19 @@
     transition: width 0.3s ease;
   }
 
-  .custom-navbar .nav-link:hover {
+  .nav-link:hover {
     color: #0dcaf0;
   }
 
-  .custom-navbar .nav-link:hover::after {
+  .nav-link:hover::after {
     width: 100%;
   }
 
-  /* SEARCH: RIGHT EDGE */
+  /* DESKTOP SEARCH */
   .search-wrapper {
     position: relative;
     display: flex;
     align-items: center;
-    justify-content: flex-end; /* right align */
-  }
-
-  #searchForm {
-    position: relative;
   }
 
   .search-icon {
@@ -155,12 +146,16 @@
     color: #fff;
     padding: 8px 10px;
     cursor: pointer;
-    z-index: 2;
+    font-size: 1.1rem;
+  }
+
+  #searchForm {
+    position: relative;
   }
 
   .search-input {
     position: absolute;
-    right: 40px; /* push input left of icon */
+    right: 40px;
     width: 0;
     opacity: 0;
     transition: width 0.3s ease, opacity 0.3s ease;
@@ -169,6 +164,7 @@
     border-radius: 20px;
     background: #111;
     color: #fff;
+    max-width: 300px;
   }
 
   .search-submit {
@@ -192,10 +188,12 @@
     border-color: #0dcaf0;
   }
 
-  .custom-navbar .btn-outline-light:hover {
-    background-color: #0dcaf0;
-    color: #000;
-    border-color: #0dcaf0;
+  /* MOBILE SEARCH */
+  @media (max-width: 991px) {
+    .search-input,
+    .search-submit {
+      display: none !important;
+    }
   }
 </style>
 
@@ -217,6 +215,7 @@
     }
   });
 </script>
+
 
 
 
