@@ -40,12 +40,11 @@
     </style>
     
 <body style="
-  margin: 0;
-  min-height: auto;
-  background: #3a3a3a url('https://static-assets.freeanimehentai.net/images/bg3d-1900.930.min.jpg') center center / cover no-repeat fixed;
-  padding: 100px 20px;
-  text-align: center;
-  font-family: system-ui, sans-serif;
+  background: #3a3a3a;
+  background: -moz-radial-gradient(circle, rgba(90,90,90,1) 0%, rgba(40,40,40,1) 100%);
+  background: -webkit-radial-gradient(circle, rgba(90,90,90,1) 0%, rgba(40,40,40,1) 100%);
+  background: radial-gradient(circle, rgba(90,90,90,1) 0%, rgba(40,40,40,1) 100%);
+  font-family: system-ui;
   color: #f0f0f0;
 ">
         <!-- Above Bacground: Belwo Nav Links -->
@@ -219,6 +218,13 @@
     border-color: #0dcaf0;
   }
 
+  /* Container backgruond */  
+  .container m-10 {
+  background: url('https://static-assets.freeanimehentai.net/images/bg3d-1900.930.min.jpg') center center/cover no-repeat;
+  padding: 100px 20px;
+  text-align: center;
+  }
+    
   /* MOBILE SEARCH */
   @media (max-width: 991px) {
     .search-input,
