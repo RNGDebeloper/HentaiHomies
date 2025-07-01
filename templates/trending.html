@@ -5,14 +5,13 @@
 {% block title %}Trending | HanimeBeast{% endblock %}
 {% block content %}
 
+
+<div class="my-5"></div>
 <div class="container px-4 px-lg-5 mt-5">
 
-  <!-- Dismissible Notice Bar -->
-  <div id="noticeBar" class="alert alert-info text-center mb-4 d-flex justify-content-between align-items-center" style="background: #0d6efd; color: #fff; border: none; border-radius: 0;">
-    <div>
-      <i class="fa-solid fa-bell"></i> 🚨 New videos added daily! Enjoy censored and uncensored content safely.
-    </div>
-    <button type="button" class="btn-close btn-close-white" aria-label="Close" onclick="document.getElementById('noticeBar').style.display='none';"></button>
+  <!-- Notice Bar -->
+  <div class="alert alert-info text-center mb-4" role="alert" style="background: #0d6efd; color: #fff; border: none; border-radius: 0;">
+    🚨 New videos added daily! Enjoy censored and uncensored content safely.
   </div>
 
   <!-- Responsive Banner Ad Top -->
@@ -24,9 +23,9 @@
   </div>
 
   <!-- Trending Filter & Video Grid -->
-  <h2 class="mb-3">Trending Now :</h2>
   <div class="d-flex flex-wrap align-items-center mb-4 gap-2">
     <button class="btn btn-success btn-sm">Trending : {{ time }}</button>
+    <a class="btn btn-primary btn-sm" href="{{ request.url }}/playlist.m3u">Playlist m3u</a>
     <div class="btn-group flex-wrap" role="group">
       <a href="/trending/day/0" class="btn btn-outline-light btn-sm filter-btn">Daily</a>
       <a href="/trending/week/0" class="btn btn-outline-light btn-sm filter-btn">Weekly</a>
@@ -59,9 +58,9 @@
         <div class="badge bg-black text-white position-absolute" style="top: 0.5rem; right: 0.5rem">
           <i class="fa-solid fa-eye"></i>{{ v['views'] }}
         </div>
-        <!-- Censored/Uncensored Label -->
+        <!-- Correct Censored/Uncensored Label -->
         <div class="badge bg-danger text-white position-absolute" style="top: 0.5rem; left: 0.5rem">
-          {% if v['is_censored']|lower == 'true' %}
+          {% if v['is_censored'] == True %}
             Uncensored
           {% else %}
             Censored
@@ -96,10 +95,10 @@
 
   <div class="text-center">
     <button onclick="history.back()" class="btn btn-white mx-2">
-      <i class="fa-solid fa-backward"> Back</i>
+      <i class="fa-solid fa-backward"> B a c k</i>
     </button>
     <a href="{{ next_page }}" class="btn btn-white mx-2">
-      <i class="fa-solid fa-forward"> Next</i>
+      <i class="fa-solid fa-forward"> N e x t</i>
     </a>
   </div>
 
