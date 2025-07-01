@@ -14,7 +14,7 @@
   .hero {
     position: relative;
     background: url('https://static-assets.freeanimehentai.net/images/bg3d-1900.930.min.jpg') center/cover no-repeat;
-    padding: 140px 20px 80px; /* top padding to avoid header overlap */
+    padding: 180px 20px 80px; /* Top pad for header gap */
     text-align: center;
   }
 
@@ -22,7 +22,7 @@
     content: "";
     position: absolute;
     inset: 0;
-    background: rgba(0, 0, 0, 0.5); /* dark overlay for blending */
+    background: rgba(0, 0, 0, 0.6);
     z-index: 1;
   }
 
@@ -61,10 +61,10 @@
     background: #1e1e1e;
     border-radius: 8px;
     overflow: hidden;
-    min-width: 120px;
     flex-shrink: 0;
     box-shadow: 0 0 10px rgba(0,0,0,0.5);
     transition: transform 0.3s ease;
+    text-align: center;
   }
 
   .carousel-cards .card:hover {
@@ -83,7 +83,6 @@
 
   .card-info {
     padding: 10px;
-    text-align: center;
   }
 
   .card-info h5, .card-info h6 {
@@ -93,8 +92,8 @@
   }
 
   .card-info a {
+    margin-top: 10px;
     display: inline-block;
-    margin-top: 5px;
   }
 
   .label-badge {
@@ -154,6 +153,7 @@
     border-radius: 8px;
     overflow: hidden;
     transition: transform 0.3s ease;
+    text-align: center;
   }
 
   .video-grid .card:hover {
@@ -168,11 +168,20 @@
 
   .video-grid .card-body {
     padding: 15px;
-    text-align: center;
   }
 
   .video-grid .card-body h5 {
     color: #fff;
+    font-size: 1rem;
+  }
+
+  .video-grid .card-body p {
+    color: #fff;
+  }
+
+  .video-grid .btn {
+    display: inline-block;
+    margin-top: 10px;
   }
 
   .pagination {
@@ -187,11 +196,28 @@
     background: transparent;
   }
 
+  /* Responsive Banner Ad */
+  .ad-banner {
+    display: block;
+    margin: 40px auto;
+    text-align: center;
+  }
+
+  .ad-banner img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
 </style>
 
 <div class="hero">
   <h1>Watch Free HD Hentai & Anime Videos</h1>
   <p>Unlimited hentai & anime collection. 720p / 1080p HD, stream anywhere, free forever.</p>
+</div>
+
+<!-- Example Responsive Banner Ad -->
+<div class="ad-banner">
+  <img src="https://via.placeholder.com/728x90?text=Your+Desktop+Banner+Ad" alt="Ad Banner">
 </div>
 
 <div class="trending-carousel">
@@ -205,7 +231,8 @@
         name: {{ v['name']|tojson }},
         cover_url: {{ v['cover_url']|tojson }},
         url: {{ v['url']|tojson }},
-        label: {{ v['label']|tojson if v['label'] else '"Censored"' }}
+        label: {{ v['label']|tojson if v['label'] else '"Censored"' }},
+        views: {{ v['views']|tojson if v['views'] else 0 }}
       },
     {% endfor %}
   ];
@@ -224,6 +251,7 @@
         <img src="${prev.cover_url}" alt="${prev.name}">
         <div class="card-info">
           <h6>${prev.name}</h6>
+          <p style="color:#fff;"><i class="fa fa-eye"></i> ${prev.views}</p>
           <a href="${prev.url}" class="btn btn-sm btn-outline-warning">Watch</a>
         </div>
       </div>
@@ -232,6 +260,7 @@
         <img src="${curr.cover_url}" alt="${curr.name}">
         <div class="card-info">
           <h5>${curr.name}</h5>
+          <p style="color:#fff;"><i class="fa fa-eye"></i> ${curr.views}</p>
           <a href="${curr.url}" class="btn btn-warning">Watch Now</a>
         </div>
       </div>
@@ -240,6 +269,7 @@
         <img src="${next.cover_url}" alt="${next.name}">
         <div class="card-info">
           <h6>${next.name}</h6>
+          <p style="color:#fff;"><i class="fa fa-eye"></i> ${next.views}</p>
           <a href="${next.url}" class="btn btn-sm btn-outline-warning">Watch</a>
         </div>
       </div>
@@ -275,6 +305,11 @@
     </div>
   </div>
   {% endfor %}
+</div>
+
+<!-- Example Mobile Banner Ad -->
+<div class="ad-banner">
+  <img src="https://via.placeholder.com/320x100?text=Your+Mobile+Banner+Ad" alt="Mobile Ad">
 </div>
 
 <div class="pagination">
