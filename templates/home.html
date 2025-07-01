@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block metatitle %}Watch Free Hentai Video Streams Online in 720p, 1080p HD - HanimeBeast{% endblock %}
+{% block metadescription %}Watch hentai online free download HD on mobile phone, tablet, laptop, desktop. Stream uncensored, subbed, 720p and 1080p!{% endblock %}
+{% block title %}Home | HanimeBeast{% endblock %}
+
+{% block content %}
+
+<style>
+  body {
+    background: #303030;
+    color: #fff;
+  }
+
+  .hero {
+    background: url('/static/hero-bg.jpg') center center/cover no-repeat;
+    padding: 100px 20px;
+    text-align: center;
+  }
+
+  .hero h1 {
+    font-size: 2.5rem;
+    color: #f3c669;
+  }
+
+  .hero p {
+    max-width: 600px;
+    margin: 20px auto;
+    line-height: 1.6;
+  }
+
+  .carousel {
+    display: flex;
+    overflow-x: auto;
+    gap: 20px;
+    padding: 20px;
+  }
+
+  .carousel .card {
+    flex: 0 0 auto;
+    width: 200px;
+    background: #1c1c1c;
+    border-radius: 8px;
+    overflow: hidden;
+    text-align: center;
+  }
+
+  .carousel img {
+    width: 100%;
+    height: auto;
+  }
+
+  .carousel .card h5 {
+    margin: 10px;
+    font-size: 1rem;
+  }
+
+  .video-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+    padding: 20px;
+  }
+
+  .video-grid .card {
+    background: #1c1c1c;
+    border-radius: 8px;
+    overflow: hidden;
+    text-align: center;
+  }
+
+  .video-grid img {
+    width: 100%;
+    height: auto;
+  }
+
+  .video-grid .card h5 {
+    margin: 10px;
+    font-size: 1rem;
+  }
+</style>
+
+<div class="hero">
+  <h1>Watch Free HD Hentai & Anime Videos</h1>
+  <p>Enjoy your unlimited hentai & anime collection. The definitive source for 720p / 1080p HD videos, viewable on any device, for free.</p>
+</div>
+
+<!-- Carousel for Recent Uploads -->
+<h2 class="text-center mt-5">Recent Uploads</h2>
+<div class="carousel">
+  {% for v in recent_videos %}
+  <div class="card">
+    <a href="{{ v.url }}">
+      <img src="{{ v.cover_url }}" alt="{{ v.name }}">
+      <h5>{{ v.name }}</h5>
+    </a>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- Grid for More Videos -->
+<h2 class="text-center mt-5">All Videos</h2>
+<div class="video-grid">
+  {% for v in videos %}
+  <div class="card">
+    <a href="{{ v.url }}">
+      <img src="{{ v.cover_url }}" alt="{{ v.name }}">
+      <h5>{{ v.name }}</h5>
+    </a>
+  </div>
+  {% endfor %}
+</div>
+
+{% endblock %}
