@@ -5,151 +5,15 @@
 {% block title %}Trending | HanimeBeast{% endblock %}
 {% block content %}
 
-
 <div class="container px-4 px-lg-5 mt-5">
-<style>
-.trending-carousel .carousel-cards {
-  display: flex;
-  align-items: stretch;
-}
 
-.trending-carousel .card {
-  background: #111;
-  border: none;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.6);
-  color: #fff;
-  text-align: center;
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.trending-carousel .card img {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-  transition: transform 0.4s ease;
-}
-
-.trending-carousel .big-card img {
-  height: 250px;
-}
-
-.trending-carousel .card-info {
-  padding: 10px;
-  background: #111;
-}
-
-.trending-carousel .big-card h5 {
-  font-size: 1.1rem;
-  margin-bottom: 8px;
-}
-
-.trending-carousel .small-card h6 {
-  font-size: 0.9rem;
-  margin-bottom: 6px;
-}
-
-.trending-carousel .card-info .btn {
-  margin-top: 5px;
-}
-
-.trending-carousel .small-card {
-  width: 120px;
-}
-
-.trending-carousel .big-card {
-  width: 200px;
-}
-
-@media(max-width: 768px) {
-  .trending-carousel .card img {
-    height: 150px;
-  }
-  .trending-carousel .big-card img {
-    height: 200px;
-  }
-  .trending-carousel .small-card {
-    width: 90px;
-  }
-  .trending-carousel .big-card {
-    width: 150px;
-  }
-}
-</style>
-
-<!-- Gap above -->
-<div style="margin-top: 50px;"></div>
-<div class="trending-carousel mb-5">
-  <div id="sliderWrapper" class="carousel-cards d-flex justify-content-center"></div>
-</div>
-
-
-<script>
-  const videos = [
-    {% for v in videos[:10] %}
-      {
-        name: {{ v['name']|tojson }},
-        cover_url: {{ v['cover_url']|tojson }},
-        url: {{ v['url']|tojson }}
-      },
-    {% endfor %}
-  ];
-
-  let currentIndex = 0;
-  const total = videos.length;
-
-  function renderSlide() {
-    const prev = videos[(currentIndex - 1 + total) % total];
-    const curr = videos[currentIndex];
-    const next = videos[(currentIndex + 1) % total];
-
-    const html = 
-      <div class="card small-card">
-        <img src="${prev.cover_url}" alt="${prev.name}">
-        <div class="card-info">
-          <h6>${prev.name}</h6>
-          <a href="${prev.url}" class="btn btn-sm btn-primary">Watch</a>
-        </div>
-      </div>
-
-      <div class="card big-card mx-2">
-        <img src="${curr.cover_url}" alt="${curr.name}">
-        <div class="card-info">
-          <h5>${curr.name}</h5>
-          <a href="${curr.url}" class="btn btn-primary">Watch Now</a>
-        </div>
-      </div>
-
-      <div class="card small-card">
-        <img src="${next.cover_url}" alt="${next.name}">
-        <div class="card-info">
-          <h6>${next.name}</h6>
-          <a href="${next.url}" class="btn btn-sm btn-primary">Watch</a>
-        </div>
-      </div>
-    ;
-
-    document.getElementById('sliderWrapper').innerHTML = html;
-  }
-
-  function nextSlide() {
-    currentIndex = (currentIndex + 1) % total;
-    renderSlide();
-  }
-
-  function prevSlide() {
-    currentIndex = (currentIndex - 1 + total) % total;
-    renderSlide();
-  }
-
-  renderSlide();
-  setInterval(nextSlide, 3000);
-</script>
-
+  <!-- Responsive Banner Ad Top -->
+  <div class="text-center mb-4">
+    <div style="width:100%; max-width: 970px; margin: auto;">
+      <!-- Replace with your ad code -->
+      <img src="https://via.placeholder.com/970x90?text=Banner+Ad" alt="Ad" style="width:100%; height:auto;">
+    </div>
+  </div>
 
   <!-- Trending Filter & Video Grid -->
   <h2>Trending</h2>
@@ -167,10 +31,20 @@
   <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
     {% for v in videos %}
     <div class="col mb-5 ">
-      <div class="card h-100 bg-black text-white shadow-5-strong">
+      <div class="card h-100 bg-black text-white shadow-5-strong position-relative">
+        <!-- Views Badge -->
         <div class="badge bg-black text-white position-absolute" style="top: 0.5rem; right: 0.5rem">
           <i class="fa-solid fa-eye"></i>{{ v['views'] }}
         </div>
+        <!-- Censored/Uncensored Label -->
+        <div class="badge bg-danger text-white position-absolute" style="top: 0.5rem; left: 0.5rem">
+          {% if v['is_censored'] %}
+            Censored
+          {% else %}
+            Uncensored
+          {% endif %}
+        </div>
+        <!-- Thumbnail -->
         <img class="card-img-top" src="{{ v['cover_url'] }}" alt="{{ v['name'] }}">
         <div class="card-body p-4 ">
           <div class="text-center">
@@ -187,6 +61,14 @@
       </div>
     </div>
     {% endfor %}
+  </div>
+
+  <!-- Responsive Banner Ad Bottom -->
+  <div class="text-center my-4">
+    <div style="width:100%; max-width: 970px; margin: auto;">
+      <!-- Replace with your ad code -->
+      <img src="https://via.placeholder.com/970x90?text=Banner+Ad" alt="Ad" style="width:100%; height:auto;">
+    </div>
   </div>
 
   <div class="text-center">
