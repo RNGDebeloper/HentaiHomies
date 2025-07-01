@@ -12,9 +12,23 @@
   }
 
   .hero {
+    position: relative;
     background: url('https://static-assets.freeanimehentai.net/images/bg3d-1900.930.min.jpg') center/cover no-repeat;
-    padding: 80px 20px;
+    padding: 140px 20px 80px; /* top padding to avoid header overlap */
     text-align: center;
+  }
+
+  .hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5); /* dark overlay for blending */
+    z-index: 1;
+  }
+
+  .hero h1, .hero p {
+    position: relative;
+    z-index: 2;
   }
 
   .hero h1 {
@@ -25,9 +39,9 @@
 
   .hero p {
     max-width: 600px;
-    margin: 15px auto;
+    margin: 15px auto 0;
     line-height: 1.6;
-    color: #ccc;
+    color: #ddd;
   }
 
   .trending-carousel {
@@ -43,6 +57,7 @@
   }
 
   .carousel-cards .card {
+    position: relative;
     background: #1e1e1e;
     border-radius: 8px;
     overflow: hidden;
@@ -58,12 +73,12 @@
 
   .carousel-cards img {
     width: 100%;
-    height: 150px;
+    height: 200px;
     object-fit: cover;
   }
 
   .big-card img {
-    height: 220px;
+    height: 250px;
   }
 
   .card-info {
@@ -72,6 +87,7 @@
   }
 
   .card-info h5, .card-info h6 {
+    color: #fff;
     margin: 5px 0;
     font-size: 0.9rem;
   }
@@ -81,16 +97,28 @@
     margin-top: 5px;
   }
 
+  .label-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: #f3c669;
+    color: #000;
+    font-size: 0.75rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    text-transform: uppercase;
+  }
+
   .big-card {
     min-width: 200px;
   }
 
   @media(max-width: 768px) {
     .carousel-cards img {
-      height: 100px;
+      height: 140px;
     }
     .big-card img {
-      height: 150px;
+      height: 180px;
     }
     .big-card {
       min-width: 150px;
@@ -121,6 +149,7 @@
   }
 
   .video-grid .card {
+    position: relative;
     background: #1e1e1e;
     border-radius: 8px;
     overflow: hidden;
@@ -142,6 +171,10 @@
     text-align: center;
   }
 
+  .video-grid .card-body h5 {
+    color: #fff;
+  }
+
   .pagination {
     text-align: center;
     margin: 40px 0;
@@ -158,7 +191,7 @@
 
 <div class="hero">
   <h1>Watch Free HD Hentai & Anime Videos</h1>
-  <p>Unlimited hentai & anime collection. Curated 720p / 1080p HD videos on any device, free forever.</p>
+  <p>Unlimited hentai & anime collection. 720p / 1080p HD, stream anywhere, free forever.</p>
 </div>
 
 <div class="trending-carousel">
@@ -171,7 +204,8 @@
       {
         name: {{ v['name']|tojson }},
         cover_url: {{ v['cover_url']|tojson }},
-        url: {{ v['url']|tojson }}
+        url: {{ v['url']|tojson }},
+        label: {{ v['label']|tojson if v['label'] else '"Censored"' }}
       },
     {% endfor %}
   ];
@@ -186,6 +220,7 @@
 
     const html = `
       <div class="card small-card">
+        <span class="label-badge">${prev.label}</span>
         <img src="${prev.cover_url}" alt="${prev.name}">
         <div class="card-info">
           <h6>${prev.name}</h6>
@@ -193,6 +228,7 @@
         </div>
       </div>
       <div class="card big-card">
+        <span class="label-badge">${curr.label}</span>
         <img src="${curr.cover_url}" alt="${curr.name}">
         <div class="card-info">
           <h5>${curr.name}</h5>
@@ -200,6 +236,7 @@
         </div>
       </div>
       <div class="card small-card">
+        <span class="label-badge">${next.label}</span>
         <img src="${next.cover_url}" alt="${next.name}">
         <div class="card-info">
           <h6>${next.name}</h6>
@@ -229,6 +266,7 @@
 <div class="video-grid">
   {% for v in videos %}
   <div class="card">
+    <span class="label-badge">{{ v['label'] or "Censored" }}</span>
     <img src="{{ v['cover_url'] }}" alt="{{ v['name'] }}">
     <div class="card-body">
       <h5>{{ v['name'] }}</h5>
