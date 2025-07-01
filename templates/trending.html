@@ -13,14 +13,14 @@
   }
 
   .hero {
-    background: url('https://github.com/SasukeXDev/HianiTv/blob/main/templates/bg.jpg') center center/cover no-repeat;
+    background: url('https://static-assets.freeanimehentai.net/images/bg3d-1900.930.min.jpg') center center/cover no-repeat;
     padding: 100px 20px;
     text-align: center;
   }
 
-  .hero h1 {
+  .hero b {
     font-size: 2.5rem;
-    color: #3dadfc;
+    color: #f3c669;
   }
 
   .hero p {
@@ -40,7 +40,7 @@
   overflow: hidden;
   box-shadow: 0 4px 15px rgba(0,0,0,0.6);
   color: #fff;
-  text-align: center;
+  text-align: justify;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
@@ -51,7 +51,7 @@
   width: 100%;
   height: 200px;
   object-fit: cover;
-  transition: transform 0.4s ease;
+  transition: transform 0.45s ease;
 }
 
 .trending-carousel .big-card img {
@@ -102,18 +102,17 @@
 </style>
 
 <!-- Gap above -->
-<div style="margin-top: 50px;"> </div>
+<div style="margin-top: 50px;"></div>
 
 <!-- Above text -->
 <div class="hero">
   <h1>Watch Free HD Hentai & Anime Videos</h1>
-  <p>Enjoy your unlimited hentai & anime collection. The definitive source for 720p / 1080p HD videos, viewable on any device, for free.</p>
+  <p>Enjoy your <b>unlimited</b> hentai & anime collection. The definitive source for 720p / 1080p HD videos, viewable on any device, for free.</p>
 </div>
 
 <div class="trending-carousel mb-5">
   <div id="sliderWrapper" class="carousel-cards d-flex justify-content-center"></div>
 </div>
-
 
 <script>
   const videos = [
@@ -179,7 +178,7 @@
 
 
   <!-- Trending Filter & Video Grid -->
-  <h2>Trending</h2>
+  <h2>Your Ads Here</h2>
   <div class="navbar navbar-expand-lg">
     <button class="btn-success btn btn-sm m-3">Trending : {{ time }}</button>
     <a class="btn-primary btn btn-sm m-3" href="{{ request.url }}/playlist.m3u"> Playlist m3u </a>
