@@ -1,228 +1,92 @@
 {% extends "base.html" %}
-{% block metatitle %}Trending | HanimeBeast{% endblock metatitle %}
+{% block metatitle %}Trending | hantai on HanimeBeast{% endblock metatitle %}
 {% block metadescription %}Trending Free Hentai Video Streams Online in 720p, 1080p HD{% endblock metadescription %}
-{% block metakeywords %}{% for v in videos %}{{ v['name'] }}, {% endfor %}{% endblock metakeywords %}
+{% block metakeywords %} {% for v in videos %} {{ v['name'] }} , {% endfor %}  {% endblock metakeywords %}
 {% block title %}Trending | HanimeBeast{% endblock %}
 {% block content %}
 
+
+<div class="container px-4 px-lg-5 mt-5">
 <style>
-  body {
-    background: #121212;
-    color: #eee;
-  }
+.trending-carousel .carousel-cards {
+  display: flex;
+  align-items: stretch;
+}
 
-  .hero {
-    position: relative;
-    background: url('https://static-assets.freeanimehentai.net/images/bg3d-1900.930.min.jpg') center/cover no-repeat;
-    padding: 180px 20px 80px; /* Top pad for header gap */
-    text-align: center;
-  }
+.trending-carousel .card {
+  background: #111;
+  border: none;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+  color: #fff;
+  text-align: center;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
 
-  .hero::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.6);
-    z-index: 1;
-  }
+.trending-carousel .card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
 
-  .hero h1, .hero p {
-    position: relative;
-    z-index: 2;
-  }
+.trending-carousel .big-card img {
+  height: 250px;
+}
 
-  .hero h1 {
-    font-size: 2.5rem;
-    color: #f3c669;
-    text-shadow: 0 0 5px #000;
-  }
+.trending-carousel .card-info {
+  padding: 10px;
+  background: #111;
+}
 
-  .hero p {
-    max-width: 600px;
-    margin: 15px auto 0;
-    line-height: 1.6;
-    color: #ddd;
-  }
+.trending-carousel .big-card h5 {
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+}
 
-  .trending-carousel {
-    overflow: hidden;
-    padding: 40px 0;
-  }
+.trending-carousel .small-card h6 {
+  font-size: 0.9rem;
+  margin-bottom: 6px;
+}
 
-  .carousel-cards {
-    display: flex;
-    gap: 20px;
-    justify-content: center;
-    flex-wrap: nowrap;
-  }
+.trending-carousel .card-info .btn {
+  margin-top: 5px;
+}
 
-  .carousel-cards .card {
-    position: relative;
-    background: #1e1e1e;
-    border-radius: 8px;
-    overflow: hidden;
-    flex-shrink: 0;
-    box-shadow: 0 0 10px rgba(0,0,0,0.5);
-    transition: transform 0.3s ease;
-    text-align: center;
-  }
+.trending-carousel .small-card {
+  width: 120px;
+}
 
-  .carousel-cards .card:hover {
-    transform: translateY(-5px);
-  }
+.trending-carousel .big-card {
+  width: 200px;
+}
 
-  .carousel-cards img {
-    width: 100%;
+@media(max-width: 768px) {
+  .trending-carousel .card img {
+    height: 150px;
+  }
+  .trending-carousel .big-card img {
     height: 200px;
-    object-fit: cover;
   }
-
-  .big-card img {
-    height: 250px;
+  .trending-carousel .small-card {
+    width: 90px;
   }
-
-  .card-info {
-    padding: 10px;
+  .trending-carousel .big-card {
+    width: 150px;
   }
-
-  .card-info h5, .card-info h6 {
-    color: #fff;
-    margin: 5px 0;
-    font-size: 0.9rem;
-  }
-
-  .card-info a {
-    margin-top: 10px;
-    display: inline-block;
-  }
-
-  .label-badge {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    background: #f3c669;
-    color: #000;
-    font-size: 0.75rem;
-    padding: 2px 6px;
-    border-radius: 4px;
-    text-transform: uppercase;
-  }
-
-  .big-card {
-    min-width: 200px;
-  }
-
-  @media(max-width: 768px) {
-    .carousel-cards img {
-      height: 140px;
-    }
-    .big-card img {
-      height: 180px;
-    }
-    .big-card {
-      min-width: 150px;
-    }
-  }
-
-  .time-filter {
-    margin: 30px 0;
-    text-align: center;
-  }
-
-  .time-filter .btn {
-    margin: 5px;
-    border: 1px solid #f3c669;
-    background: transparent;
-    color: #f3c669;
-  }
-
-  .time-filter .btn.active {
-    background: #f3c669;
-    color: #000;
-  }
-
-  .video-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
-  }
-
-  .video-grid .card {
-    position: relative;
-    background: #1e1e1e;
-    border-radius: 8px;
-    overflow: hidden;
-    transition: transform 0.3s ease;
-    text-align: center;
-  }
-
-  .video-grid .card:hover {
-    transform: translateY(-5px);
-  }
-
-  .video-grid img {
-    width: 100%;
-    height: 250px;
-    object-fit: cover;
-  }
-
-  .video-grid .card-body {
-    padding: 15px;
-  }
-
-  .video-grid .card-body h5 {
-    color: #fff;
-    font-size: 1rem;
-  }
-
-  .video-grid .card-body p {
-    color: #fff;
-  }
-
-  .video-grid .btn {
-    display: inline-block;
-    margin-top: 10px;
-  }
-
-  .pagination {
-    text-align: center;
-    margin: 40px 0;
-  }
-
-  .pagination .btn {
-    margin: 0 10px;
-    border: 1px solid #f3c669;
-    color: #f3c669;
-    background: transparent;
-  }
-
-  /* Responsive Banner Ad */
-  .ad-banner {
-    display: block;
-    margin: 40px auto;
-    text-align: center;
-  }
-
-  .ad-banner img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 8px;
-  }
+}
 </style>
 
-<div class="hero">
-  <h1>Watch Free HD Hentai & Anime Videos</h1>
-  <p>Unlimited hentai & anime collection. 720p / 1080p HD, stream anywhere, free forever.</p>
+<!-- Gap above -->
+<div style="margin-top: 50px;"></div>
+<div class="trending-carousel mb-5">
+  <div id="sliderWrapper" class="carousel-cards d-flex justify-content-center"></div>
 </div>
 
-<!-- Example Responsive Banner Ad -->
-<div class="ad-banner">
-  <img src="https://via.placeholder.com/728x90?text=Your+Desktop+Banner+Ad" alt="Ad Banner">
-</div>
-
-<div class="trending-carousel">
-  <div id="sliderWrapper" class="carousel-cards"></div>
-</div>
 
 <script>
   const videos = [
@@ -230,9 +94,7 @@
       {
         name: {{ v['name']|tojson }},
         cover_url: {{ v['cover_url']|tojson }},
-        url: {{ v['url']|tojson }},
-        label: {{ v['label']|tojson if v['label'] else '"Censored"' }},
-        views: {{ v['views']|tojson if v['views'] else 0 }}
+        url: {{ v['url']|tojson }}
       },
     {% endfor %}
   ];
@@ -245,35 +107,32 @@
     const curr = videos[currentIndex];
     const next = videos[(currentIndex + 1) % total];
 
-    const html = `
+    const html = 
       <div class="card small-card">
-        <span class="label-badge">${prev.label}</span>
         <img src="${prev.cover_url}" alt="${prev.name}">
         <div class="card-info">
           <h6>${prev.name}</h6>
-          <p style="color:#fff;"><i class="fa fa-eye"></i> ${prev.views}</p>
-          <a href="${prev.url}" class="btn btn-sm btn-outline-warning">Watch</a>
+          <a href="${prev.url}" class="btn btn-sm btn-primary">Watch</a>
         </div>
       </div>
-      <div class="card big-card">
-        <span class="label-badge">${curr.label}</span>
+
+      <div class="card big-card mx-2">
         <img src="${curr.cover_url}" alt="${curr.name}">
         <div class="card-info">
           <h5>${curr.name}</h5>
-          <p style="color:#fff;"><i class="fa fa-eye"></i> ${curr.views}</p>
-          <a href="${curr.url}" class="btn btn-warning">Watch Now</a>
+          <a href="${curr.url}" class="btn btn-primary">Watch Now</a>
         </div>
       </div>
+
       <div class="card small-card">
-        <span class="label-badge">${next.label}</span>
         <img src="${next.cover_url}" alt="${next.name}">
         <div class="card-info">
           <h6>${next.name}</h6>
-          <p style="color:#fff;"><i class="fa fa-eye"></i> ${next.views}</p>
-          <a href="${next.url}" class="btn btn-sm btn-outline-warning">Watch</a>
+          <a href="${next.url}" class="btn btn-sm btn-primary">Watch</a>
         </div>
       </div>
-    `;
+    ;
+
     document.getElementById('sliderWrapper').innerHTML = html;
   }
 
@@ -282,39 +141,63 @@
     renderSlide();
   }
 
+  function prevSlide() {
+    currentIndex = (currentIndex - 1 + total) % total;
+    renderSlide();
+  }
+
   renderSlide();
   setInterval(nextSlide, 3000);
 </script>
 
-<div class="time-filter">
-  <a href="/trending/day/0" class="btn {% if time == 'day' %}active{% endif %}">Daily</a>
-  <a href="/trending/week/0" class="btn {% if time == 'week' %}active{% endif %}">Weekly</a>
-  <a href="/trending/month/0" class="btn {% if time == 'month' %}active{% endif %}">Monthly</a>
-  <a href="/trending/year/0" class="btn {% if time == 'year' %}active{% endif %}">Yearly</a>
-</div>
 
-<div class="video-grid">
-  {% for v in videos %}
-  <div class="card">
-    <span class="label-badge">{{ v['label'] or "Censored" }}</span>
-    <img src="{{ v['cover_url'] }}" alt="{{ v['name'] }}">
-    <div class="card-body">
-      <h5>{{ v['name'] }}</h5>
-      <p><i class="fa fa-eye"></i> {{ v['views'] }}</p>
-      <a href="{{ v['url'] }}" class="btn btn-sm btn-warning">Watch</a>
+  <!-- Trending Filter & Video Grid -->
+  <h2>Trending</h2>
+  <div class="navbar navbar-expand-lg">
+    <button class="btn-success btn btn-sm m-3">Trending : {{ time }}</button>
+    <a class="btn-primary btn btn-sm m-3" href="{{ request.url }}/playlist.m3u"> Playlist m3u </a>
+    <div class="btn-group" role="group">
+      <a href="/trending/day/0" class="btn btn-black btn-sm">Daily</a>
+      <a href="/trending/week/0" class="btn btn-black btn-sm">Weekly</a>
+      <a href="/trending/month/0" class="btn btn-black btn-sm">Monthly</a>
+      <a href="/trending/year/0" class="btn btn-black btn-sm">Yearly</a>
     </div>
   </div>
-  {% endfor %}
-</div>
 
-<!-- Example Mobile Banner Ad -->
-<div class="ad-banner">
-  <img src="https://via.placeholder.com/320x100?text=Your+Mobile+Banner+Ad" alt="Mobile Ad">
-</div>
+  <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+    {% for v in videos %}
+    <div class="col mb-5 ">
+      <div class="card h-100 bg-black text-white shadow-5-strong">
+        <div class="badge bg-black text-white position-absolute" style="top: 0.5rem; right: 0.5rem">
+          <i class="fa-solid fa-eye"></i>{{ v['views'] }}
+        </div>
+        <img class="card-img-top" src="{{ v['cover_url'] }}" alt="{{ v['name'] }}">
+        <div class="card-body p-4 ">
+          <div class="text-center">
+            <h5 class="fw-bolder">{{ v['name'] }}</h5>
+          </div>
+        </div>
+        <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+          <div class="text-center">
+            <a class="btn btn-outline-info" href="{{ v['url'] }}">
+              <i class="fa-solid fa-fire fa-xl"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
 
-<div class="pagination">
-  <button onclick="history.back()" class="btn">Back</button>
-  <a href="{{ next_page }}" class="btn">Next</a>
+  <div class="text-center">
+    <button onclick="history.back()" class="btn btn-white mx-2">
+      <i class="fa-solid fa-backward"></i>
+    </button>
+    <a href="{{ next_page }}" class="btn btn-white mx-2">
+      <i class="fa-solid fa-forward"></i>
+    </a>
+  </div>
+
 </div>
 
 {% endblock %}
