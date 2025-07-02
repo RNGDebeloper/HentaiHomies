@@ -164,8 +164,6 @@
     {% endif %}
 {% endfor %}
                 </div>
-        <a class="btn-primary btn btn-sm m-3" href="{{ request.url }}/playlist.m3u"> Playlist m3u </a>
-
                 <a href="https://www.buymeacoffee.com/immodded" class="btn btn-warning btn-sm">Donate</a>
           <a href="https://t.me/immodded" class="btn btn-success btn-sm">Report</a>
             </div>
@@ -217,9 +215,9 @@
     <div class="navbar navbar-expand-lg">
         <button class="btn-success btn btn-sm m-3">Episodes</button>
     </div>
-    <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+    <div class="d-flex flex-row overflow-auto">
         {% for e in video['episodes'] %}
-        <div class="col mb-5 ">
+        <div class="col mb-5 me-3 flex-shrink-0" style="width: 200px;">
             <div class="card h-100 bg-black text-white shadow-5-strong">
                 <div class="badge bg-black text-white position-absolute" style="top: 0.5rem; right: 0.5rem"><i
                         class="fa-solid fa-eye"></i>{{ e['views'] }}</div>
