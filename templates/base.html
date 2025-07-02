@@ -149,10 +149,9 @@
 
 <body
   style="
-    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
-      url('https://static-assets.freeanimehentai.net/images/bg3d-1900.930.min.jpg') no-repeat top center,
-      radial-gradient(circle, rgba(90, 90, 90, 1) 0%, rgba(40, 40, 40, 1) 100%);
-    background-size: auto 400px, auto, cover;
+    background: linear-gradient(135deg, #111 0%, #333 50%, #111 100%),
+                radial-gradient(circle at top left, #555 0%, #222 100%);
+    background-blend-mode: overlay;
     background-repeat: no-repeat;
     background-attachment: scroll;
     padding: 200px;
@@ -160,6 +159,7 @@
     color: #f0f0f0;
   "
 >
+
   <!-- ✅ Navbar -->
   <header>
     <nav class="navbar navbar-expand-lg navbar-dark custom-navbar fixed-top">
@@ -243,12 +243,12 @@
     {% block content %}{% endblock %}
 
     <div class="alert alert-info my-3 p-4" role="alert"
-      style="max-height: 150px; overflow-y: auto; border-radius: 8px; background: #e9f7fe; color: #005b7f;">
+      style="max-height: 150px; overflow-y: auto; border-radius: 8px; background: #3b3a3a; color: #f7f9fa;">
       <strong>Help Us Bring Higher Quality Content!</strong><br />
       We're on a mission to enhance your viewing experience by offering 1080p quality videos. Your support can make this
       possible. Consider making a donation today to contribute towards this exciting upgrade.
       <br />
-      <a class="neon btn btn-sm btn-dark mt-2" href="https://www.buymeacoffee.com/immodded" target="_blank">Donate
+      <a class="neon btn btn-sm btn-blue mt-2" href="https://www.buymeacoffee.com/immodded" target="_blank">Donate
         Now</a>
     </div>
   </div>
