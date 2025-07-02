@@ -184,17 +184,16 @@
             <!-- Genre -->
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" id="navbarGenreDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              <i class="fas fa-mask"></i>Genres
-              </a>
+              <i class="fas fa-genre"></i> Genres </a>
               <ul class="dropdown-menu" aria-labelledby="navbarGenreDropdown">
-              <li><a class="dropdown-item" href="/browse/hentai-tags/3d/0">3D</a></li>
-              <li><a class="dropdown-item" href="/browse/hentai-tags/ahegao/0">Ahegao</a></li>
-              <li><a class="dropdown-item" href="/browse/hentai-tags/anal/0">Anal</a></li>
-              <li><a class="dropdown-item" href="/browse/hentai-tags/bdsm/0">Bdsm</a></li>
-              <li><a class="dropdown-item" href="/browse/hentai-tags/big%20boobs/0">Big Boobs</a></li>
-              <li><a class="dropdown-item" href="/browse/hentai-tags/blow%20job/0">Blow Job</a></li>
-              <li><a class="dropdown-item" href="/browse/hentai-tags/bondage/0">Bondage</a></li>
-              <li><a class="dropdown-item" href="/browse/hentai-tags/boob%20job/0">Boob Job</a></li>
+              <li><a class="dropdown-item" bg-dark href="/browse/hentai-tags/3d/0">3D</a></li>
+              <li><a class="dropdown-item" bg-dark href="/browse/hentai-tags/ahegao/0">Ahegao</a></li>
+              <li><a class="dropdown-item" bg-dark href="/browse/hentai-tags/anal/0">Anal</a></li>
+              <li><a class="dropdown-item" bg-dark href="/browse/hentai-tags/bdsm/0">Bdsm</a></li>
+              <li><a class="dropdown-item" bg-dark href="/browse/hentai-tags/big%20boobs/0">Big Boobs</a></li>
+              <li><a class="dropdown-item" bg-dark href="/browse/hentai-tags/blow%20job/0">Blow Job</a></li>
+              <li><a class="dropdown-item" bg-dark href="/browse/hentai-tags/bondage/0">Bondage</a></li>
+              <li><a class="dropdown-item" bg-dark href="/browse/hentai-tags/boob%20job/0">Boob Job</a></li>
               </ul>
             </li>
            <!-- Genre above ends -->
@@ -208,8 +207,8 @@
           <form class="d-block d-lg-none w-100" method="post" action="/search">
             <div class="input-group mt-2">
               <input class="form-control form-control-sm bg-dark text-light border-secondary" type="text"
-                name="search_query" placeholder="Search anime..." />
-              <button class="btn btn-sm btn-outline-info" type="submit">Go</button>
+                name="search_query" placeholder="Search..." />
+              <button class="neon btn btn-sm btn-outline-info" type="submit">Go</button>
             </div>
           </form>
         </div>
@@ -250,7 +249,7 @@
   </script>
 
   <!-- ✅ Main content -->
-  <div class="container m-5">
+  <div class="container m-10">
     {% block content %}{% endblock %}
 
     <div class="alert alert-info my-3 p-4" role="alert"
