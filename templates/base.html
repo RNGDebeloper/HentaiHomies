@@ -29,230 +29,206 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
         <title>{% block title %}{% endblock %} HANIME BEAST</title>
+        
     </head>
-    <style>
-        /* Neon keyframes removed */
-
-        .neon {
-            /* Removed animation */
-            color: #2b2b2b; /* Optional: keep color if you want */
-        }
-    </style>
     
-<body style="
-  background:
-    linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)),
-    url('https://static-assets.freeanimehentai.net/images/bg3d-1900.930.min.jpg') no-repeat top center,
-    radial-gradient(circle, rgba(90,90,90,1) 0%, rgba(40,40,40,1) 100%);
-  background-size: auto 400px, auto, cover;
-  background-repeat: no-repeat, repeat, no-repeat;
-  background-attachment: scroll;
-  font-family: system-ui;
-  color: #f0f0f0;
-">
+        <style>
+            .custom-navbar {
+                background: rgba(0, 0, 0, 0.9);
+                backdrop-filter: blur(6px);
+                border-bottom: 1px solid #444;
+                padding: 0.5rem 1rem;
+            }
 
+            .navbar-brand {
+                font-size: 1.4rem;
+                display: flex;
+                align-items: center;
+            }
 
+            .nav-link {
+                position: relative;
+                margin-right: 15px;
+                transition: color 0.3s ease;
+            }
+
+            .nav-link::after {
+                content: "";
+                position: absolute;
+                width: 0%;
+                height: 2px;
+                left: 0;
+                bottom: 0;
+                background-color: #0dcaf0;
+                transition: width 0.3s ease;
+            }
+
+            .nav-link:hover {
+                color: #0dcaf0;
+            }
+
+            .nav-link:hover::after {
+                width: 100%;
+            }
+
+            /* DESKTOP SEARCH */
+            /* DESKTOP SEARCH - FIXED POSITION */
+            .search-wrapper {
+                position: relative; /* KEY: this anchors the absolute input */
+                display: flex;
+                align-items: center;
+            }
+
+            .search-icon {
+                background: none;
+                border: none;
+                color: #fff;
+                padding: 8px 10px;
+                cursor: pointer;
+                font-size: 1.2rem;
+                z-index: 2;
+            }
+
+            #searchForm {
+                position: relative;
+            }
+
+            .search-input {
+                position: absolute;
+                right: 40px; /* pushes input left of the icon */
+                top: 50%; /* centers vertically */
+                transform: translateY(-50%);
+                width: 0;
+                opacity: 0;
+                transition: width 0.3s ease, opacity 0.3s ease;
+                padding: 8px 12px;
+                border: 1px solid #555;
+                border-radius: 20px;
+                background: #111;
+                color: #fff;
+                max-width: 300px;
+            }
+
+            .search-submit {
+                display: none;
+                position: absolute;
+                right: calc(40px + 210px);
+                top: 50%;
+                transform: translateY(-50%);
+                padding: 8px 12px;
+                background: none;
+                border: 1px solid #555;
+                border-radius: 20px;
+                color: #fff;
+                cursor: pointer;
+            }
+
+            .search-input::placeholder {
+                color: #aaa;
+            }
+
+            .search-input:focus {
+                outline: none;
+                border-color: #0dcaf0;
+            }
+
+            /* MOBILE SEARCH */
+            @media (max-width: 991px) {
+                .search-input,
+                .search-submit {
+                    display: none !important;
+                }
+            }
+        </style>
+    
+    <body
+        style="
+            background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('/templates/bg.png') no-repeat top center,
+                radial-gradient(circle, rgba(90, 90, 90, 1) 0%, rgba(40, 40, 40, 1) 100%);
+            background-size: auto 400px, auto, cover;
+            background-repeat: no-repeat;
+            background-attachment: scroll;
+            padding: 100px;
+            font-family: system-ui;
+            color: #f0f0f0;
+        "
+    >
         <!-- Above Bacground: Belwo Nav Links -->
 
         <!-- ✅ Fixed, transparent, professional navbar -->
         <!-- ✅ Perfected responsive left-toggle navbar -->
-<header>
-  <nav class="navbar navbar-expand-lg navbar-dark custom-navbar fixed-top">
-    <div class="container-fluid">
-      <!-- BRAND + TOGGLER -->
-      <a class="navbar-brand fw-bold me-2">
-        <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-          aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-          <i class="fas fa-bars"></i>
-        </button>
-        HentaiHomies
-      </a>
+        <header>
+            <nav class="navbar navbar-expand-lg navbar-dark custom-navbar fixed-top">
+                <div class="container-fluid">
+                    <!-- BRAND + TOGGLER -->
+                    <a class="navbar-brand fw-bold me-2">
+                        <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                        HentaiHomies
+                    </a>
 
-      <!-- COLLAPSIBLE LINKS + MOBILE SEARCH -->
-<div class="collapse navbar-collapse" id="navbarNav">
-  <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-    <li class="nav-item">
-      <a class="nav-link active" href="/">
-        <i class="fas fa-home"></i> Home
-      </a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" href="/trending/month/0">
-        <i class="fas fa-fire"></i> Trending
-      </a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" href="/browse">
-        <i class="fas fa-search"></i> Browse
-      </a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" href="https://www.buymeacoffee.com/immodded" target="_blank">
-        <i class="fas fa-coffee"></i> Donate
-      </a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" href="https://t.me/immodded" target="_blank">
-        <i class="fas fa-envelope"></i> Contact
-      </a>
-    </li>
-  </ul>
+                    <!-- COLLAPSIBLE LINKS + MOBILE SEARCH -->
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                            <li class="nav-item">
+                                <a class="nav-link active" href="/"> <i class="fas fa-home"></i> Home </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/trending/month/0"> <i class="fas fa-fire"></i> Trending </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/browse"> <i class="fas fa-search"></i> Browse </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="https://www.buymeacoffee.com/immodded" target="_blank"> <i class="fas fa-coffee"></i> Donate </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="https://t.me/immodded" target="_blank"> <i class="fas fa-envelope"></i> Contact </a>
+                            </li>
+                        </ul>
 
-        <!-- ✅ MOBILE SEARCH BAR (ALWAYS VISIBLE ON SMALL SCREENS) -->
-        <form class="d-block d-lg-none w-100" method="post" action="/search">
-          <div class="input-group mt-2">
-            <input class="form-control form-control-sm bg-dark text-light border-secondary"
-              type="text" name="search_query" placeholder="Search anime...">
-            <button class="btn btn-sm btn-outline-info" type="submit">Go</button>
-          </div>
-        </form>
-      </div>
+                        <!-- ✅ MOBILE SEARCH BAR (ALWAYS VISIBLE ON SMALL SCREENS) -->
+                        <form class="d-block d-lg-none w-100" method="post" action="/search">
+                            <div class="input-group mt-2">
+                                <input class="form-control form-control-sm bg-dark text-light border-secondary" type="text" name="search_query" placeholder="Search anime..." />
+                                <button class="btn btn-sm btn-outline-info" type="submit">Go</button>
+                            </div>
+                        </form>
+                    </div>
 
-      <!-- ✅ DESKTOP SEARCH ICON -->
-<div class="search-wrapper d-none d-lg-flex ms-auto">
-  <button type="button" id="searchToggle" class="search-icon">
-    <i class="fas fa-search"></i>
-  </button>
-  <form id="searchForm" method="post" action="/search">
-    <input id="searchInput" type="text" name="search_query" placeholder="Search anime..." class="search-input">
-    <button id="searchSubmit" type="submit" class="search-submit">Go</button>
-  </form>
-</div>
+                    <!-- ✅ DESKTOP SEARCH ICON -->
+                    <div class="search-wrapper d-none d-lg-flex ms-auto">
+                        <button type="button" id="searchToggle" class="search-icon">
+                            <i class="fas fa-search"></i>
+                        </button>
+                        <form id="searchForm" method="post" action="/search">
+                            <input id="searchInput" type="text" name="search_query" placeholder="Search anime..." class="search-input" />
+                            <button id="searchSubmit" type="submit" class="search-submit">Go</button>
+                        </form>
+                    </div>
+                </div>
+            </nav>
+        </header>
+        
+        <script>
+            const toggle = document.getElementById("searchToggle");
+            const input = document.getElementById("searchInput");
+            const submit = document.getElementById("searchSubmit");
 
-    </div>
-  </nav>
-</header>
-    
-<style>
-  .custom-navbar {
-    background: rgba(0, 0, 0, 0.9);
-    backdrop-filter: blur(6px);
-    border-bottom: 1px solid #444;
-    padding: 0.5rem 1rem;
-  }
-
-  .navbar-brand {
-    font-size: 1.4rem;
-    display: flex;
-    align-items: center;
-  }
-
-  .nav-link {
-    position: relative;
-    margin-right: 15px;
-    transition: color 0.3s ease;
-  }
-
-  .nav-link::after {
-    content: "";
-    position: absolute;
-    width: 0%;
-    height: 2px;
-    left: 0;
-    bottom: 0;
-    background-color: #0dcaf0;
-    transition: width 0.3s ease;
-  }
-
-  .nav-link:hover {
-    color: #0dcaf0;
-  }
-
-  .nav-link:hover::after {
-    width: 100%;
-  }
-
-  /* DESKTOP SEARCH */
-/* DESKTOP SEARCH - FIXED POSITION */
-.search-wrapper {
-  position: relative; /* KEY: this anchors the absolute input */
-  display: flex;
-  align-items: center;
-}
-
-.search-icon {
-  background: none;
-  border: none;
-  color: #fff;
-  padding: 8px 10px;
-  cursor: pointer;
-  font-size: 1.2rem;
-  z-index: 2;
-}
-
-#searchForm {
-  position: relative;
-}
-
-.search-input {
-  position: absolute;
-  right: 40px; /* pushes input left of the icon */
-  top: 50%; /* centers vertically */
-  transform: translateY(-50%);
-  width: 0;
-  opacity: 0;
-  transition: width 0.3s ease, opacity 0.3s ease;
-  padding: 8px 12px;
-  border: 1px solid #555;
-  border-radius: 20px;
-  background: #111;
-  color: #fff;
-  max-width: 300px;
-}
-
-.search-submit {
-  display: none;
-  position: absolute;
-  right: calc(40px + 210px);
-  top: 50%;
-  transform: translateY(-50%);
-  padding: 8px 12px;
-  background: none;
-  border: 1px solid #555;
-  border-radius: 20px;
-  color: #fff;
-  cursor: pointer;
-}
-
-  .search-input::placeholder {
-    color: #aaa;
-  }
-
-  .search-input:focus {
-    outline: none;
-    border-color: #0dcaf0;
-  }
-    
-  /* MOBILE SEARCH */
-  @media (max-width: 991px) {
-    .search-input,
-    .search-submit {
-      display: none !important;
-    }
-  }
-</style>
-
-<script>
-  const toggle = document.getElementById('searchToggle');
-  const input = document.getElementById('searchInput');
-  const submit = document.getElementById('searchSubmit');
-
-  toggle.addEventListener('click', () => {
-    if (input.style.width === '0px' || input.style.width === '0') {
-      input.style.width = '200px';
-      input.style.opacity = '1';
-      submit.style.display = 'inline-block';
-      input.focus();
-    } else {
-      input.style.width = '0';
-      input.style.opacity = '0';
-      submit.style.display = 'none';
-    }
-  });
-</script>
-
-
-
+            toggle.addEventListener("click", () => {
+                if (input.style.width === "0px" || input.style.width === "0") {
+                    input.style.width = "200px";
+                    input.style.opacity = "1";
+                    submit.style.display = "inline-block";
+                    input.focus();
+                } else {
+                    input.style.width = "0";
+                    input.style.opacity = "0";
+                    submit.style.display = "none";
+                }
+            });
+        </script>
 
         <!-- ✅ Custom CSS ends here -->
         <div class="container m-10">
@@ -270,40 +246,76 @@
         </div>
 
         <!--   Footer content  -->
-        <footer class="bg-black text-white text-center py-4 mt-5" style="width: 100%;">
-            <div class="container">
-                <p class="mb-2">
-                    Made with
-                    <span class="text-danger neon">
-                        <a href="https://t.me/Its_sasuke_uchiha" target="_blank" class="text-danger">&hearts;</a>
-                    </span>
-                    by
-                    <a href="https://github.com" class="text-white neon" target="_blank">HanimeBeast</a>
-                    &copy;
-                    <script>
-                        document.write(new Date().getFullYear());
-                    </script>
-                </p>
-                <div class="mb-2">
-                    <a href="/terms" class="text-muted mx-2">Terms of Service</a> | <a href="/privacy" class="text-muted mx-2">Privacy Policy</a> |
-                    <a href="/contact" class="text-muted mx-2">Contact</a>
-                </div>
-                <div>
-                    <a href="https://t.me/its_sasuke_uchiha" target="_blank" class="text-white mx-2">
-                        <i class="fab fa-telegram"></i>
-                    </a>
-                    <a href="https://Facebook.com/anitoonindiayt" target="_blank" class="text-white mx-2">
-                        <i class="fab fa-facebook"></i>
-                    </a>
-                </div>
-            </div>
-        </footer>
+<footer class="bg-black text-white py-5">
+  <div class="container">
+    <div class="row">
+      <!-- Column 1 -->
+      <div class="col-md-3 mb-4">
+        <img src="YOUR_LOGO_URL" alt="Logo" style="width: 40px; height: auto;">
+        <h5 class="mt-2">hanime.tv</h5>
+        <ul class="list-unstyled">
+          <li><a href="/" class="text-white">Home</a></li>
+          <li><a href="/trending" class="text-white">Trending</a></li>
+          <li><a href="/random" class="text-white">Random</a></li>
+          <li><a href="/images" class="text-white">Images</a></li>
+          <li><a href="/search" class="text-white">Search</a></li>
+          <li><a href="/browse" class="text-white">Browse</a></li>
+        </ul>
+      </div>
+      <!-- Column 2 -->
+      <div class="col-md-3 mb-4">
+        <h6>Partners</h6>
+        <ul class="list-unstyled">
+          <li><a href="#" class="text-white">Nutaku</a></li>
+          <li><a href="#" class="text-white">ThePornDude</a></li>
+          <li><a href="#" class="text-white">hanime.tv Fans' Community</a></li>
+        </ul>
+      </div>
+      <!-- Column 3 -->
+      <div class="col-md-3 mb-4">
+        <h6>Resources</h6>
+        <ul class="list-unstyled">
+          <li><a href="#" class="text-white">Premium Benefits</a></li>
+          <li><a href="#" class="text-white">Advertising</a></li>
+          <li><a href="/terms" class="text-white">Terms of Use</a></li>
+          <li><a href="#" class="text-white">EULA</a></li>
+          <li><a href="#" class="text-white">2257 Statement</a></li>
+          <li><a href="/privacy" class="text-white">Privacy</a></li>
+        </ul>
+      </div>
+      <!-- Column 4 -->
+      <div class="col-md-3 mb-4">
+        <h6>Connect</h6>
+        <ul class="list-unstyled">
+          <li>
+            <i class="fas fa-comment"></i>
+            <a href="/contact" class="text-white ms-2">Contact Us</a>
+          </li>
+          <li>
+            <i class="fas fa-rss"></i>
+            <a href="#" class="text-white ms-2">What's New</a>
+          </li>
+          <li>
+            <i class="fas fa-users"></i>
+            <a href="#" class="text-white ms-2">hanime.tv Fans' Community</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="text-center mt-4">
+      <p class="mb-0">Made with 
+        <span class="text-danger">&hearts;</span> by 
+        <a href="https://github.com" class="text-white">HanimeBeast</a> &copy; 
+        <script>document.write(new Date().getFullYear());</script>
+      </p>
+    </div>
+  </div>
+</footer>
 
         <!-- ✅ Bootstrap for Js here -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
         <!-- Swiper JS -->
         <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-
     </body>
 
     <script>
