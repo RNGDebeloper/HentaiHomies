@@ -94,7 +94,7 @@ app = Flask(__name__)
 # if above not works, / in the trending place
 @app.route('/')
 def index():
-    return redirect("/home.html")
+    return redirect("/home")
 
 #@app.route('/trending')
 #def index():
