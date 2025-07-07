@@ -93,7 +93,7 @@ app = Flask(__name__)
 # if above not works, / in the trending place
 @app.route("/")
 def home():
-    return render_template("home.html")
+    return render_template("hm.html")
 
 #@app.route('/trending')
 #def index():
