@@ -91,9 +91,9 @@ def getsearch(query, page):
 app = Flask(__name__)
 #added home
 # if above not works, / in the trending place
-@app.route('/')
+@app.route("/")
 def home():
-    return redirect("/home")
+    return render_template("home.html")
 
 #@app.route('/trending')
 #def index():
