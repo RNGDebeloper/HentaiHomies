@@ -92,7 +92,7 @@ app = Flask(__name__)
 #added home
 
 # if above not works, / in the trending place
-@app.route('/')
+@app.route('/home')
 def index():
     return redirect("/home")
 
