@@ -12,140 +12,85 @@
     color: #fff;
     font-family: Arial, Helvetica, sans-serif;
     margin: 0;
+    text-align: center;
   }
 
   .hero {
-    background: url('/bg.jpg') center center/cover no-repeat;
-    padding: 120px 20px;
-    text-align: center;
+    padding: 120px 20px 40px;
   }
 
   .hero h1 {
     font-size: 3rem;
-    color: #f3c669;
-    margin: 0;
+    color: #fff;
+    text-shadow: 0 0 10px #fff;
+    margin: 0 0 20px;
   }
 
   .hero p {
     max-width: 600px;
-    margin: 20px auto 0;
-    line-height: 1.8;
+    margin: 0 auto 40px;
     font-size: 1.1rem;
+    line-height: 1.6;
+    text-shadow: 0 0 5px #fff;
   }
 
-  h2 {
-    font-size: 2rem;
-    color: #f3c669;
+  .search-bar {
+    margin: 0 auto 60px;
+    max-width: 400px;
+  }
+
+  .search-bar input[type="text"] {
+    width: 100%;
+    padding: 15px 20px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 30px;
+    background: #111;
+    color: #fff;
     text-align: center;
-    margin-top: 60px;
+    box-shadow: 0 0 10px #fff;
   }
 
-  .carousel {
+  .share-buttons {
     display: flex;
-    overflow-x: auto;
+    justify-content: center;
     gap: 20px;
-    padding: 20px 40px;
-    scroll-snap-type: x mandatory;
+    margin-top: 40px;
   }
 
-  .carousel::-webkit-scrollbar {
-    height: 8px;
-  }
-
-  .carousel::-webkit-scrollbar-thumb {
-    background: #333;
-    border-radius: 4px;
-  }
-
-  .carousel .card {
-    flex: 0 0 auto;
-    width: 220px;
-    background: #111;
-    border-radius: 10px;
-    overflow: hidden;
-    text-align: center;
-    transition: transform 0.3s ease;
-    scroll-snap-align: start;
-  }
-
-  .carousel .card:hover {
-    transform: translateY(-5px);
-  }
-
-  .carousel img {
-    width: 100%;
-    display: block;
-  }
-
-  .carousel .card h5 {
-    margin: 10px;
-    font-size: 1rem;
+  .share-buttons a {
+    display: inline-block;
     color: #fff;
-  }
-
-  .video-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 20px;
-    padding: 20px 40px;
-  }
-
-  .video-grid .card {
-    background: #111;
-    border-radius: 10px;
-    overflow: hidden;
-    text-align: center;
-    transition: transform 0.3s ease;
-  }
-
-  .video-grid .card:hover {
-    transform: translateY(-5px);
-  }
-
-  .video-grid img {
-    width: 100%;
-    display: block;
-  }
-
-  .video-grid .card h5 {
-    margin: 10px;
-    font-size: 1rem;
-    color: #fff;
-  }
-
-  a {
-    color: inherit;
+    font-size: 1.2rem;
     text-decoration: none;
+    padding: 10px 20px;
+    border: 2px solid #fff;
+    border-radius: 30px;
+    transition: background 0.3s, color 0.3s;
+    text-shadow: 0 0 5px #fff;
+  }
+
+  .share-buttons a:hover {
+    background: #fff;
+    color: #000;
   }
 </style>
 
 <div class="hero">
   <h1>Watch Free HD Hentai & Anime Videos</h1>
   <p>Unlimited hentai & anime in 720p / 1080p HD. Stream uncensored, subbed, on any device — free forever.</p>
-</div>
-
-<h2>Recent Uploads</h2>
-<div class="carousel">
-  {% for v in recent_videos %}
-  <div class="card">
-    <a href="{{ v.url }}">
-      <img src="{{ v.cover_url }}" alt="{{ v.name }}">
-      <h5>{{ v.name }}</h5>
-    </a>
+  
+  <div class="search-bar">
+    <form action="/search" method="get">
+      <input type="text" name="q" placeholder="Search videos...">
+    </form>
   </div>
-  {% endfor %}
-</div>
 
-<h2>All Videos</h2>
-<div class="video-grid">
-  {% for v in videos %}
-  <div class="card">
-    <a href="{{ v.url }}">
-      <img src="{{ v.cover_url }}" alt="{{ v.name }}">
-      <h5>{{ v.name }}</h5>
-    </a>
+  <div class="share-buttons">
+    <a href="https://twitter.com/share?url={{ request.url }}" target="_blank">Twitter</a>
+    <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.url }}" target="_blank">Facebook</a>
+    <a href="https://t.me/share/url?url={{ request.url }}" target="_blank">Telegram</a>
   </div>
-  {% endfor %}
 </div>
 
 {% endblock %}
