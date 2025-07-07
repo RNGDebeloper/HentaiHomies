@@ -94,7 +94,11 @@ app = Flask(__name__)
 # if above not works, / in the trending place
 @app.route('/')
 def index():
-    return redirect("/trending/month/0")
+    return redirect("/home")
+
+#@app.route('/trending')
+#def index():
+#    return redirect("/trending/month/0")
 
 @app.route('/search', methods=['GET', 'POST'])
 def search():
