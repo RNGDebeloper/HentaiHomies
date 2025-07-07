@@ -90,19 +90,10 @@ def getsearch(query, page):
 
 app = Flask(__name__)
 #added home
+# if above not works, / in the trending place
 @app.route('/')
 def home():
-    # Example data
-    recent_videos = [
-        {"name": "Sample Video 1", "cover_url": "/static/sample1.jpg", "url": "/watch/1"},
-        {"name": "Sample Video 2", "cover_url": "/static/sample2.jpg", "url": "/watch/2"},
-    ]
-    videos = recent_videos * 6  # Just for demo
-    return render_template("home.html", recent_videos=recent_videos, videos=videos)
-# if above not works, / in the trending place
-#@app.route('/')
-#def index():
- #   return redirect("/home")
+    return redirect("/home")
 
 #@app.route('/trending')
 #def index():
