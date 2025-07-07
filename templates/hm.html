@@ -6,6 +6,9 @@
 
 {% block content %}
 
+<!-- Font Awesome CDN for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
 <style>
   body {
     background: #000;
@@ -16,7 +19,14 @@
   }
 
   .hero {
-    padding: 120px 20px 40px;
+    padding: 80px 20px 40px;
+  }
+
+  .hero img {
+    width: 120px;
+    height: auto;
+    margin-bottom: 20px;
+    filter: drop-shadow(0 0 10px #fff);
   }
 
   .hero h1 {
@@ -35,8 +45,9 @@
   }
 
   .search-bar {
-    margin: 0 auto 60px;
+    margin: 0 auto 40px;
     max-width: 400px;
+    position: relative;
   }
 
   .search-bar input[type="text"] {
@@ -51,6 +62,21 @@
     box-shadow: 0 0 10px #fff;
   }
 
+  .search-bar button {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #fff;
+    color: #000;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+
   .share-buttons {
     display: flex;
     justify-content: center;
@@ -59,15 +85,18 @@
   }
 
   .share-buttons a {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #111;
+    padding: 15px;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    transition: background 0.3s;
+    box-shadow: 0 0 10px #fff;
+    font-size: 1.5rem;
     color: #fff;
-    font-size: 1.2rem;
-    text-decoration: none;
-    padding: 10px 20px;
-    border: 2px solid #fff;
-    border-radius: 30px;
-    transition: background 0.3s, color 0.3s;
-    text-shadow: 0 0 5px #fff;
   }
 
   .share-buttons a:hover {
@@ -77,19 +106,29 @@
 </style>
 
 <div class="hero">
+  <!-- Add your PNG logo here -->
+  <img src="https://cdn.imgbin.com/9/7/6/imgbin-asuna-kirito-anime-sinon-sword-art-online-asuna-P0yWdvzY2wKA6rm8nF3WJc6Bv.jpg" alt="Site Logo">
+
   <h1>Watch Free HD Hentai & Anime Videos</h1>
   <p>Unlimited hentai & anime in 720p / 1080p HD. Stream uncensored, subbed, on any device — free forever.</p>
   
   <div class="search-bar">
     <form action="/search" method="get">
-      <input type="text" name="q" placeholder="Search videos...">
+      <input type="text" name="q" placeholder="Search videos..." required>
+      <button type="submit"><i class="fas fa-search"></i></button>
     </form>
   </div>
 
   <div class="share-buttons">
-    <a href="https://twitter.com/share?url={{ request.url }}" target="_blank">Twitter</a>
-    <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.url }}" target="_blank">Facebook</a>
-    <a href="https://t.me/share/url?url={{ request.url }}" target="_blank">Telegram</a>
+    <a href="https://twitter.com/share?url={{ request.url }}" target="_blank">
+      <i class="fab fa-twitter"></i>
+    </a>
+    <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.url }}" target="_blank">
+      <i class="fab fa-facebook-f"></i>
+    </a>
+    <a href="https://t.me/share/url?url={{ request.url }}" target="_blank">
+      <i class="fab fa-telegram-plane"></i>
+    </a>
   </div>
 </div>
 
