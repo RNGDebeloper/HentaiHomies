@@ -8,85 +8,123 @@
 
 <style>
   body {
-    background: #303030;
+    background: #000;
     color: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
   }
 
   .hero {
     background: url('/static/hero-bg.jpg') center center/cover no-repeat;
-    padding: 100px 20px;
+    padding: 120px 20px;
     text-align: center;
   }
 
   .hero h1 {
-    font-size: 2.5rem;
+    font-size: 3rem;
     color: #f3c669;
+    margin: 0;
   }
 
   .hero p {
     max-width: 600px;
-    margin: 20px auto;
-    line-height: 1.6;
+    margin: 20px auto 0;
+    line-height: 1.8;
+    font-size: 1.1rem;
+  }
+
+  h2 {
+    font-size: 2rem;
+    color: #f3c669;
+    text-align: center;
+    margin-top: 60px;
   }
 
   .carousel {
     display: flex;
     overflow-x: auto;
     gap: 20px;
-    padding: 20px;
+    padding: 20px 40px;
+    scroll-snap-type: x mandatory;
+  }
+
+  .carousel::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  .carousel::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 4px;
   }
 
   .carousel .card {
     flex: 0 0 auto;
-    width: 200px;
-    background: #1c1c1c;
-    border-radius: 8px;
+    width: 220px;
+    background: #111;
+    border-radius: 10px;
     overflow: hidden;
     text-align: center;
+    transition: transform 0.3s ease;
+    scroll-snap-align: start;
+  }
+
+  .carousel .card:hover {
+    transform: translateY(-5px);
   }
 
   .carousel img {
     width: 100%;
-    height: auto;
+    display: block;
   }
 
   .carousel .card h5 {
     margin: 10px;
     font-size: 1rem;
+    color: #fff;
   }
 
   .video-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     gap: 20px;
-    padding: 20px;
+    padding: 20px 40px;
   }
 
   .video-grid .card {
-    background: #1c1c1c;
-    border-radius: 8px;
+    background: #111;
+    border-radius: 10px;
     overflow: hidden;
     text-align: center;
+    transition: transform 0.3s ease;
+  }
+
+  .video-grid .card:hover {
+    transform: translateY(-5px);
   }
 
   .video-grid img {
     width: 100%;
-    height: auto;
+    display: block;
   }
 
   .video-grid .card h5 {
     margin: 10px;
     font-size: 1rem;
+    color: #fff;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
   }
 </style>
 
 <div class="hero">
   <h1>Watch Free HD Hentai & Anime Videos</h1>
-  <p>Enjoy your unlimited hentai & anime collection. The definitive source for 720p / 1080p HD videos, viewable on any device, for free.</p>
+  <p>Unlimited hentai & anime in 720p / 1080p HD. Stream uncensored, subbed, on any device — free forever.</p>
 </div>
 
-<!-- Carousel for Recent Uploads -->
-<h2 class="text-center mt-5">Recent Uploads</h2>
+<h2>Recent Uploads</h2>
 <div class="carousel">
   {% for v in recent_videos %}
   <div class="card">
@@ -98,8 +136,7 @@
   {% endfor %}
 </div>
 
-<!-- Grid for More Videos -->
-<h2 class="text-center mt-5">All Videos</h2>
+<h2>All Videos</h2>
 <div class="video-grid">
   {% for v in videos %}
   <div class="card">
