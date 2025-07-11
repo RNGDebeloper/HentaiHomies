@@ -95,9 +95,13 @@ app = Flask(__name__)
 def home():
     return render_template("hm.html")
 
-#@app.route('/trending')
-#def index():
- #   return redirect("/trending/month/0")
+@app.route('/terms')
+def terms():
+    return render_template("terms.html")
+
+@app.route('/privacy')
+def privacy():
+    return render_template("privacy.html")
 
 @app.route('/search', methods=['GET', 'POST'])
 def search():
