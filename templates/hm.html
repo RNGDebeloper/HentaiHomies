@@ -6,9 +6,6 @@
 
 {% block content %}
 
-<!-- Font Awesome CDN for icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
 <style>
   body {
     background: #000;
@@ -26,13 +23,13 @@
     width: 120px;
     height: auto;
     margin-bottom: 20px;
-    filter: drop-shadow(0 0 10px #fff);
+    filter: drop-shadow(0 0 5px #fff); /* reduced glow */
   }
 
   .hero h1 {
     font-size: 3rem;
     color: #fff;
-    text-shadow: 0 0 10px #fff;
+    text-shadow: 0 0 5px #fff; /* reduced glow */
     margin: 0 0 20px;
   }
 
@@ -41,40 +38,7 @@
     margin: 0 auto 40px;
     font-size: 1.1rem;
     line-height: 1.6;
-    text-shadow: 0 0 5px #fff;
-  }
-
-  .search-bar {
-    margin: 0 auto 40px;
-    max-width: 400px;
-    position: relative;
-  }
-
-  .search-bar input[type="text"] {
-    width: 100%;
-    padding: 15px 20px;
-    font-size: 1rem;
-    border: none;
-    border-radius: 30px;
-    background: #111;
-    color: #fff;
-    text-align: center;
-    box-shadow: 0 0 10px #fff;
-  }
-
-  .search-bar button {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: #fff;
-    color: #000;
-    border: none;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    cursor: pointer;
-    font-weight: bold;
+    text-shadow: 0 0 3px #fff; /* reduced glow */
   }
 
   .share-buttons {
@@ -94,7 +58,7 @@
     width: 50px;
     height: 50px;
     transition: background 0.3s;
-    box-shadow: 0 0 10px #fff;
+    box-shadow: 0 0 5px #fff; /* reduced glow */
     font-size: 1.5rem;
     color: #fff;
   }
@@ -102,6 +66,25 @@
   .share-buttons a:hover {
     background: #fff;
     color: #000;
+  }
+
+  .visit-website {
+    display: inline-block;
+    margin-top: 30px;
+    padding: 15px 30px;
+    background: #fff;
+    color: #000;
+    text-decoration: none;
+    border-radius: 30px;
+    font-weight: bold;
+    transition: background 0.3s, color 0.3s;
+    box-shadow: 0 0 5px #fff; /* subtle glow */
+  }
+
+  .visit-website:hover {
+    background: #000;
+    color: #fff;
+    border: 1px solid #fff;
   }
 </style>
 
@@ -111,13 +94,6 @@
 
   <h1>Watch Free HD Hentai & Anime Videos</h1>
   <p>Unlimited hentai & anime in 720p / 1080p HD. Stream uncensored, subbed, on any device — free forever.</p>
-  
-  <div class="search-bar">
-    <form action="/search" method="get">
-      <input type="text" name="q" placeholder="Search videos..." required>
-      <button type="submit"><i class="fas fa-search"></i></button>
-    </form>
-  </div>
 
   <div class="share-buttons">
     <a href="https://twitter.com/share?url={{ request.url }}" target="_blank">
@@ -130,6 +106,8 @@
       <i class="fab fa-telegram-plane"></i>
     </a>
   </div>
+
+  <a href="https://yourwebsite.com" class="visit-website" target="_blank">Visit Website</a>
 </div>
 
 {% endblock %}
