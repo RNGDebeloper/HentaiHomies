@@ -10,21 +10,20 @@
 <div class="container px-4 px-lg-5 mt-5">
 
   <!-- Notice Bar -->
-  <div class="alert alert-info text-center mb-4" role="alert" style="background: #0d6efd; color: #fff; border: none; border-radius: 0;">
-    🚨 New videos added daily! Enjoy censored and uncensored content safely.
-  </div>
+<div class="alert alert-info text-center mb-4" role="alert" 
+  style="background: #0d6efd; color: #fff; border: none; border-radius: 0.5rem;">
+  🚨 New videos added daily! Enjoy censored and uncensored content safely.
+</div>
 
-  <!-- Responsive Banner Ad Top -->
-  <div class="text-center mb-4">
-    <div style="width:100%; max-width: 970px; margin: auto;">
-      <!-- Replace with your ad code -->
-      <img src="https://www.google.com/url?sa=i&url=https%3A%2F%2Finstapage.com%2Fblog%2Fbanner-ads%2F&psig=AOvVaw1DK0BlJrwaNRbAWStEdc43&ust=1751562189930000&source=images&cd=vfe&opi=89978449&ved=0CBUQjRxqFwoTCOCtpefTno4DFQAAAAAdAAAAABAK" alt="Ad" style="width:100%; height:auto;">
-    </div>
+  <!-- 🔥 High-engagement ad slot -->
+  <div class="ads-slot">
+    <strong>Your Ad Here</strong><br>
+    (Place your high CPM ad code)
   </div>
 
   <!-- Trending Filter & Video Grid -->
   <div class="d-flex flex-wrap align-items-center mb-4 gap-2">
-    <button class="btn btn-success btn-sm">Trending : {{ time }}</button>
+    <button class="btn white btn-sm">Trending : {{ time }}</button>
     <div class="btn-group flex-wrap" role="group">
       <a href="/trending/day/0" class="btn btn-outline-light btn-sm filter-btn">Daily</a>
       <a href="/trending/week/0" class="btn btn-outline-light btn-sm filter-btn">Weekly</a>
@@ -57,14 +56,6 @@
         <div class="badge bg-black text-white position-absolute" style="top: 0.5rem; right: 0.5rem">
           <i class="fa-solid fa-eye"></i>{{ v['views'] }}
         </div>
-        <!-- Correct Censored/Uncensored Label -->
-        <div class="badge bg-danger text-white position-absolute" style="top: 0.5rem; left: 0.5rem">
-          {% if v['is_censored'] == True %}
-            Uncensored
-          {% else %}
-            Censored
-          {% endif %}
-        </div>
         <!-- Thumbnail -->
         <img class="card-img-top" src="{{ v['cover_url'] }}" alt="{{ v['name'] }}">
         <div class="card-body p-4">
@@ -84,20 +75,18 @@
     {% endfor %}
   </div>
 
-  <!-- Responsive Banner Ad Bottom -->
-  <div class="text-center my-4">
-    <div style="width:100%; max-width: 970px; margin: auto;">
-      <!-- Replace with your ad code -->
-      <img src="https://www.google.com/url?sa=i&url=https%3A%2F%2Finstapage.com%2Fblog%2Fbanner-ads%2F&psig=AOvVaw1DK0BlJrwaNRbAWStEdc43&ust=1751562189930000&source=images&cd=vfe&opi=89978449&ved=0CBUQjRxqFwoTCOCtpefTno4DFQAAAAAdAAAAABAK" alt="Ad" style="width:100%; height:auto;">
-    </div>
+  <!-- 🔥 High-engagement ad slot -->
+  <div class="ads-slot">
+    <strong>Your Ad Here</strong><br>
+    (Place your high CPM ad code)
   </div>
 
   <div class="text-center">
     <button onclick="history.back()" class="btn btn-white mx-2">
-      <i class="fa-solid fa-backward"> B a c k</i>
+      <i class="fa-solid fa-backward"></i>
     </button>
     <a href="{{ next_page }}" class="btn btn-white mx-2">
-      <i class="fa-solid fa-forward"> N e x t</i>
+      <i class="fa-solid fa-forward"></i>
     </a>
   </div>
 
