@@ -95,6 +95,10 @@ app = Flask(__name__)
 def home():
     return render_template("hm.html")
 
+@app.route("/public")
+def public():
+    return render_template("public")
+
 @app.route('/terms')
 def terms():
     return render_template("terms.html")
