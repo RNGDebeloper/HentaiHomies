@@ -184,6 +184,11 @@
   <div class="card-body p-3">
     <div id="video-container">
       <video id="live" autoplay controls></video>
+      <!-- 🔥 High-engagement ad slot -->
+      <div class="ads-slot">
+        <strong>Your Ad Here</strong><br>
+        (Place your high CPM ad code)
+      </div>
       <div id="alertDiv" class="alert alert-warning mt-2">
         If the video is stuck, tap play again and wait a few seconds.
       </div>
@@ -242,23 +247,6 @@
 <!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 <script>
-  function toggleLights() {
-    const overlay = document.getElementById('lightsOverlay');
-    const live = document.getElementById('live');
-    const focused = document.getElementById('focusedVideo');
-
-    if (overlay.style.display === 'block') {
-      overlay.style.display = 'none';
-      live.play();
-      focused.pause();
-    } else {
-      overlay.style.display = 'block';
-      focused.src = live.src;
-      focused.play();
-      live.pause();
-    }
-  }
-
   function playVideo(link) {
     const video = document.getElementById('live');
     const proxied = `/proxy?url=${encodeURIComponent(link)}`;
