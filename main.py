@@ -95,9 +95,9 @@ app = Flask(__name__)
 def home():
     return render_template("hm.html")
 
-@app.route("/public")
+@app.route("/logo3.png")
 def public():
-    return render_template("public")
+    return render_template("logo3.png")
 
 @app.route('/terms')
 def terms():
