@@ -11,7 +11,7 @@
 
   <!-- Notice Bar -->
 <div class="alert alert-info text-center mb-4" role="alert" 
-  style="background: #0d6efd; color: #fff; border: none; border-radius: 0.5rem;">
+  style="background: #0d6efd; color: #fff; border: none; border-radius: 0.8rem;">
   🚨 New videos added daily! Enjoy censored and uncensored content safely.
 </div>
 
@@ -23,7 +23,7 @@
 
   <!-- Trending Filter & Video Grid -->
   <div class="d-flex flex-wrap align-items-center mb-4 gap-2">
-    <button class="btn white btn-sm">Trending : {{ time }}</button>
+    <button class="btn btn-light btn-sm">Trending : {{ time }}</button>
     <div class="btn-group flex-wrap" role="group">
       <a href="/trending/day/0" class="btn btn-outline-light btn-sm filter-btn">Daily</a>
       <a href="/trending/week/0" class="btn btn-outline-light btn-sm filter-btn">Weekly</a>
@@ -42,6 +42,15 @@
       transition: all 0.3s ease;
     }
 
+    .ads-slot {
+    background: #333;
+    text-align: center;
+    color: #fff;
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 10px;
+  }
+
     .filter-btn:hover {
       background: #0d6efd;
       color: #fff;
@@ -54,7 +63,7 @@
       <div class="card h-100 bg-black text-white shadow-5-strong position-relative">
         <!-- Views Badge -->
         <div class="badge bg-black text-white position-absolute" style="top: 0.5rem; right: 0.5rem">
-          <i class="fa-solid fa-eye"></i>{{ v['views'] }}
+          <i class="fa-solid fa-eye"></i> {{ v['views'] }}
         </div>
         <!-- Thumbnail -->
         <img class="card-img-top" src="{{ v['cover_url'] }}" alt="{{ v['name'] }}">
