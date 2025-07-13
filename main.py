@@ -140,6 +140,10 @@ def browse():
     data  = getbrowse()
     return render_template('browse.html', tags = data['hentai_tags'])
 
+@app.route('/robots.txt')
+def robots():
+    return send_from_directory(app.static_folder, 'robots.txt')
+
 @app.route('/browse/<type>/<category>/<page>', methods= ["GET"])
 def browse_category(type,category,page):
     videos = getbrowsevideos(type, category, page)
