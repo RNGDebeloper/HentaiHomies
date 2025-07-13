@@ -1,8 +1,8 @@
 {% extends "base.html" %}
-{% block metatitle %}Trending | hantai on HanimeBeast{% endblock metatitle %}
+{% block metatitle %}Trending | hantai on HentaiHomies{% endblock metatitle %}
 {% block metadescription %}Trending Free Hentai Video Streams Online in 720p, 1080p HD{% endblock metadescription %}
 {% block metakeywords %} {% for v in videos %} {{ v['name'] }} , {% endfor %}  {% endblock metakeywords %}
-{% block title %}Trending | HanimeBeast{% endblock %}
+{% block title %}Trending | HentaiHomies{% endblock %}
 {% block content %}
 
 
@@ -61,10 +61,38 @@
     {% for v in videos %}
     <div class="col mb-5">
       <div class="card h-100 bg-black text-white shadow-5-strong position-relative">
-        <!-- Views Badge -->
-        <div class="badge bg-black text-white position-absolute" style="top: 0.5rem; right: 0.5rem">
-          <i class="fa-solid fa-eye"></i> {{ v['views'] }}
-        </div>
+
+        <div class="card position-relative mb-4">
+  <img src="{{ v['thumbnail'] }}" class="card-img-top" alt="{{ v['title'] }}">
+  <div class="card-body">
+    <h5 class="card-title">{{ v['title'] }}</h5>
+  </div>
+
+  <!-- Rank + Views Badges -->
+  <div class="position-absolute top-0 end-0 m-2 d-flex flex-column align-items-end gap-1">
+    <span class="badge rounded-pill text-dark shadow-sm px-3 py-2"
+      style="
+        {% if loop.index == 1 %}
+          background: linear-gradient(135deg, #ffd700, #ffdf00);
+        {% elif loop.index == 2 %}
+          background: linear-gradient(135deg, #c0c0c0, #d3d3d3);
+        {% elif loop.index == 3 %}
+          background: linear-gradient(135deg, #cd7f32, #e6a04e);
+        {% else %}
+          background: #f8f9fa;
+        {% endif %}
+      ">
+      <span class="fw-bold">#{{ loop.index }}</span>
+    </span>
+
+    <span class="badge bg-dark text-light rounded-pill shadow-sm px-3 py-2">
+      <i class="fa-solid fa-eye"></i> {{ v['views'] }}
+    </span>
+  </div>
+</div>
+
+
+        
         <!-- Thumbnail -->
         <img class="card-img-top" src="{{ v['cover_url'] }}" alt="{{ v['name'] }}">
         <div class="card-body p-4">
