@@ -62,17 +62,11 @@
     <div class="col mb-5">
       <div class="card h-100 bg-black text-white shadow-5-strong position-relative">
 
-        <div class="card position-relative mb-4">
-  <img src="{{ v['thumbnail'] }}" class="card-img-top" alt="{{ v['title'] }}">
-  <div class="card-body">
-    <h5 class="card-title">{{ v['title'] }}</h5>
-  </div>
 
-  <!-- Views Badges -->
-<div class="badge bg-black text-white position-absolute" style="top: 0.5rem; right: 0.5rem">
-  <i class="fa-solid fa-eye"></i> {{ v['views'] }}
-</div>
-
+        <!-- Views Badge -->
+        <div class="badge bg-black text-white position-absolute" style="top: 0.5rem; right: 0.5rem">
+          <i class="fa-solid fa-eye"></i> {{ v['views'] }}
+        </div>
         
         <!-- Thumbnail -->
         <img class="card-img-top" src="{{ v['cover_url'] }}" alt="{{ v['name'] }}">
