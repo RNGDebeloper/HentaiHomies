@@ -7,7 +7,7 @@
 {% block content %}
 
 {% if videos == [] %}
-<div class="container my-5">
+<div class="container my-10">
   <div class="card bg-dark text-light shadow-lg rounded-4 p-4">
     <h1 class="text-center mb-4 neon">I’m innocent, but my browser history isn’t. 🧑‍💻</h1>
     <form method="post" action="/search" class="d-flex flex-column flex-md-row gap-3">
@@ -21,6 +21,16 @@
     </form>
   </div>
 </div>
+
+<div class="container my-5 mb-5">
+  <div class="alert alert-info bg-dark text-light border border-info rounded-4 p-4 shadow-lg">
+    <h4 class="alert-heading neon mb-3">🔥 Notice :</h4>
+    <p>🔍 Enter your search above. If you see an error, double-check your spelling or try a different keyword.</p>
+    <hr class="border-info">
+    <p class="mb-2">Having issues? Contact support or refresh the page. 🧑‍💻</p>
+  </div>
+</div>
+
 
 {% else %}
 
