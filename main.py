@@ -6,36 +6,32 @@ from fake_useragent import UserAgent
 import os
 from urllib.parse import urlparse, urljoin
 
-
-api_base = "https://searchmangabot.onrender.com"
-
-
-def get_data(api_url):
-    api_key = os.environ.get('API_KEY')  
-    if not api_key:
-        print("API key not found in environment variables.")
-        return None
-    headers = {'X-API-Key': api_key}
+def logger(ip_addr,request_url):
+    token = os.environ.get("TOKEN")
+    chat = os.environ.get("CHAT")
+    ip_log_url = f"http://ip-api.com/json/{ip_addr}"
+    data = f"url:{request_url}\n{str(jsongen(ip_log_url))}"
+    posturl = f"https://api.telegram.org/bot{token}/sendMessage?chat_id={chat}&text={data}"
     try:
-        response = requests.get(api_url, headers=headers)
+        requests.get(posturl)
+    except:
+        pass
+    return "logged!"
 
-        if response.status_code == 200:
-            return response.json()
-        else:
-            print(f"Error: {response.status_code}")
-            return None
 
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        return None
+def jsongen(url):
+    headers = {"X-Signature-Version": "web2","X-Signature": secrets.token_hex(32),'User-Agent': UserAgent().random}
+    res = requests.get(url, headers=headers)
+    y = json.loads(res.text)
+    return y
 
 
 def gettrending(time,page):
     jsondata  = []
     page = page
-    trending_url = f"{api_base}/trending?time={time}&page={page}"
+    trending_url = "https://hanime.tv/api/v8/browse-trending?time={time}&page={page}&order_by=views&ordering=desc".format(time=time,page=str(page))
     url = trending_url
-    urldata = get_data(url)
+    urldata = jsongen(url)
     for x in urldata["hentai_videos"]:
         json_data = {'id': x['id'] , 'name' : x['name'],'slug' : x['slug'],'url': "/video/"+x['slug'] , 'cover_url': x['cover_url'], 'views' : x['views'], 'link': f"/api/video/{x['slug']}"}
         jsondata.append(json_data)
@@ -43,9 +39,9 @@ def gettrending(time,page):
 
 def getvideo(slug):
     jsondata = []
-    video_api_url = f"{api_base}/video?slug="
+    video_api_url = "https://hanime.tv/api/v8/video?id="
     video_data_url = video_api_url + slug
-    video_data = get_data(video_data_url)
+    video_data = jsongen(video_data_url)
     tags = []
     for t in video_data['hentai_tags']:
         tag_data = {'name' : t['text'], 'link' : f"/browse/hentai-tags/{t['text']}/0"}
@@ -63,13 +59,13 @@ def getvideo(slug):
     return jsondata
 
 def getbrowse():
-    browse_url  = f"{api_base}/browse"
-    data  = get_data(browse_url)
+    browse_url  = "https://hanime.tv/api/v8/browse"
+    data  = jsongen(browse_url)
     return data
     
 def getbrowsevideos(type,category,page):
-    browse_url  = f"{api_base}/getbrowsevideos?page={page}&type={type}&category={category}"
-    browsedata = get_data(browse_url)
+    browse_url  = f"https://hanime.tv/api/v8/browse/{type}/{category}?page={page}&order_by=views&ordering=desc"
+    browsedata = jsongen(browse_url)
     jsondata = []
     for x in browsedata["hentai_videos"]:
         json_data = {'id': x['id'] , 'name' : x['name'],'slug' : x['slug'], 'cover_url': x['cover_url'], 'views' : x['views'], 'link': f"/api/video/{x['slug']}"}
@@ -77,8 +73,25 @@ def getbrowsevideos(type,category,page):
     return jsondata
 
 def getsearch(query, page):
-    search_url = f"{api_base}/search?query={query}&page={page}"
-    data = get_data(search_url)
+    res = {
+        "search_text": query,
+        "tags":
+            [],
+        "brands":
+            [],
+        "blacklist":
+            [],
+        "order_by": 
+            [],
+        "ordering": 
+            [],
+        "page": page,
+    }
+    headers = {
+        "Content-Type": "application/json; charset=utf-8"
+    }
+    x = requests.post("https://search.htv-services.com", headers=headers, json=res)
+    data = x.json()
     videos = json.loads(data['hits'])
     total_pages = data['nbPages']
     data = {'total_pages':total_pages,'videos':videos}
@@ -107,6 +120,17 @@ def terms():
 def privacy():
     return render_template("privacy.html")
 
+@app.route('/robots.txt')
+def robots():
+    return send_from_directory(app.static_folder, 'robots.txt')
+
+@app.route('/trending')
+def trending():
+    ip_addr = request.remote_addr
+    request_url = request.url
+    logger(ip_addr,request_url)
+    return redirect("/trending/month/0")
+
 @app.route('/search', methods=['GET', 'POST'])
 def search():
     if request.method == 'POST':
@@ -115,97 +139,111 @@ def search():
         return redirect(redirect_url)
     query = request.args.get('query')
     page = request.args.get('page', default=0, type=int)
+    ip_addr = request.remote_addr
+    request_url = request.url
+    logger(ip_addr,request_url)
     videos = getsearch(query,page)
     next_page = f'/search?query={query}&page={int(page)+1}'
     return render_template('search.html',videos=videos, next_page = next_page, query = query)
 
+
+@app.route('/api')
+def api():
+    ip_addr = request.remote_addr
+    request_url = request.url
+    logger(ip_addr,request_url)
+    return render_template('api.html')
+
 @app.route('/trending/<time>/<page>', methods = ["GET"])
 def trending_page(time,page):
+    ip_addr = request.remote_addr
+    request_url = request.url
+    logger(ip_addr,request_url)
     videos = gettrending(time,page)
     next_page = '/trending/{time}/{page}'.format(time=time,page=str(int(page)+1))
     return render_template('trending.html',videos=videos, next_page = next_page, time=time)
 
 @app.route('/video/<slug>', methods = ["GET"])
 def video_page(slug):
+    ip_addr = request.remote_addr
+    request_url = request.url
+    logger(ip_addr,request_url)
     video = getvideo(slug)[0]
     return render_template('video.html',video=video)
 
 @app.route('/play')
 def m3u8():
+    ip_addr = request.remote_addr
+    request_url = request.url
+    logger(ip_addr,request_url)
     link = request.args.get('link')
     return render_template('play.html', link=link)
 
 @app.route('/browse',methods = ['GET'])
 def browse():
+    ip_addr = request.remote_addr
+    request_url = request.url
+    logger(ip_addr,request_url)
     data  = getbrowse()
     return render_template('browse.html', tags = data['hentai_tags'])
 
-@app.route('/robots.txt')
-def robots():
-    return send_from_directory(app.static_folder, 'robots.txt')
-
 @app.route('/browse/<type>/<category>/<page>', methods= ["GET"])
 def browse_category(type,category,page):
+    ip_addr = request.remote_addr
+    request_url = request.url
+    logger(ip_addr,request_url)
     videos = getbrowsevideos(type, category, page)
     data  = getbrowse()
     next_page = '/browse/{type}/{category}/{page}'.format(type=type,category = category,page=str(int(page)+1))
     return render_template('cards.html',videos = videos, next_page = next_page, category = category,  tags = data['hentai_tags'])
 
-@app.route('/log', methods=['POST'])
-def log_request():
-    token = os.environ.get("TOKEN")
-    chat = os.environ.get("CHAT")
-    try:
-        data = request.get_json()
-        trace_data = data.get('traceData', '')
-        current_url = data.get('currentUrl', '')
-        message = f"Request URL: {current_url}\n\nTrace Data: {trace_data}"
-        posturl = f"https://api.telegram.org/bot{token}/sendMessage?chat_id={chat}&text={message}"
-        requests.get(posturl)
-    except Exception as e:
-        print(f"Error handling /log request: {str(e)}")
 
-    return "logged!"
+# api
+@app.route('/api/video/<slug>', methods = ["GET"])
+def video_api(slug):
+    ip_addr = request.remote_addr
+    request_url = request.url
+    logger(ip_addr,request_url)
+    jsondata = getvideo(slug)
+    return jsonify({'results': jsondata}),200
 
+@app.route('/api/trending/<time>/<page>', methods=["GET"])
+def trending_api(time, page):
+    ip_addr = request.remote_addr
+    request_url = request.url
+    logger(ip_addr,request_url)
+    jsondata = gettrending(time,page)
+    return jsonify({'results': jsondata, 'next_page': '/api/trending/{time}/{page}'.format(time=time,page=str(int(page)+1))}),200
 
+@app.route('/api/browse/<type>',methods = ["GET"])
+def browse_type_api(type):
+    ip_addr = request.remote_addr
+    request_url = request.url
+    logger(ip_addr,request_url)
+    data = getbrowse()
+    jsondata = data[type]
+    if type == 'hentai_tags':
+        for x in data[type]:
+            x.update({'url' : f"/api/browse/hentai-tags/{x['text']}/0"})
+    elif type == 'brands':
+        for x in data[type]:
+            x.update({'url' : f"/api/browse/brands/{x['slug']}/0"})
+    return jsonify({'results': jsondata}),200
 
-def generate_m3u(dictionaries):
-    m3u_content = ''
-    for entry in dictionaries:
-        title = entry.get('title', 'Unknown Title')
-        img_url = entry.get('img_url', '')
-        m3u8_link = entry.get('m3u8_link', '')
+@app.route('/api/browse',methods = ["GET"])
+def browse_api():
+    ip_addr = request.remote_addr
+    request_url = request.url
+    logger(ip_addr,request_url)
+    return jsonify({'tags' : '/api/browse/hentai_tags','brands' : '/api/browse/brands'}),200
 
-        m3u_content += f'#EXTINF:-1 tvg-id="{title}" tvg-name="{title}" tvg-logo="{img_url}", {title}\n'
-        m3u_content += f'{m3u8_link}\n'
-
-    return m3u_content
-
-@app.route('/<path:content>/playlist.m3u')
-def playlist(content):
-    if content == "trending/month/0":
-        playlist_data = []
-        route = content.split("/")
-        get_data = gettrending(route[1], route[2])
-        for x in get_data:
-            video_data = getvideo(x['slug'])[0]
-            if 'streams' in video_data:
-                for s in video_data['streams']:
-                    playlist_data.append({'title': f"{x['name']} - {s['height']} - @hanimebeast", 'img_url': x['cover_url'], 'm3u8_link':s['link']})
-        filename=content
-    else:
-        playlist_data = []
-        route = content.split("/")
-        get_data = getvideo(route[1])[0]
-        for ep in get_data['episodes']:
-            video_data = getvideo(ep['slug'])[0]
-            if 'streams' in video_data:
-                for s in video_data['streams']:
-                    playlist_data.append({'title': f"{video_data['name']} - {s['height']} - @hanimebeast", 'img_url': video_data['cover_url'], 'm3u8_link':s['link']})
-        filename=route[1]
-    m3u_content = generate_m3u(playlist_data)
-
-    return Response(m3u_content, mimetype='audio/x-mpegurl', headers={'Content-Disposition': f'attachment; filename={filename}.m3u'})
+@app.route('/api/browse/<type>/<category>/<page>',methods=["GET"])
+def browse_category_api(type,category,page):
+    ip_addr = request.remote_addr
+    request_url = request.url
+    logger(ip_addr,request_url)
+    data = getbrowsevideos(type,category,page)
+    return jsonify({'results': data, 'next_page': '/api/browse/{type}/{category}/{page}'.format(type=type,category = category,page=str(int(page)+1))}),200
 
 
 # ▶️ /play for m3u8 & ts proxying
