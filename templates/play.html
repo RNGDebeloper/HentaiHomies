@@ -20,38 +20,45 @@
         width: 100%;
         height: auto;
     }
+    
+    .video-js {
+      width: 100% !important;
+      height: auto !important;
+    }
+    
 </style>
 
-<div class="container mt-5">
+  <div class="container mt-5">
     <div class="card">
-        <div class="card-body">
-            <video 
-                id="live"
-                class="video-js vjs-default-skin"
-                controls
-                preload="auto"
-                width="100%"
-                height="auto"
-                data-setup='{}'>
-                <source src="{{ link }}" type="video/mp4">
-            </video>
-        </div>
+      <div class="card-body">
+        <video
+          id="live"
+          class="video-js vjs-default-skin vjs-big-play-centered"
+          controls
+          preload="auto"
+          width="100%"
+          height="auto"
+          data-setup='{}'>
+          <source src="{{ link }}" type="video/mp4">
+        </video>
+      </div>
     </div>
-</div>
+  </div>
 
-<script>
-  var player = videojs('live');
+  <!-- ✅ Initialize Player with IMA VAST Ad -->
+  <script>
+    var player = videojs('live');
 
-  player.ima({
-    id: 'live',
-    adTagUrl: 'https://active-bat.com/dMmoFHzPd.GeNLv/ZjGxU-/feDmt9zufZLUAlakIPCT/Ye1KMajskU2FOIDtIeteNcjVU/yoOmTwY-4kMjyOZSsva/Wg1bpmdFDv0Lxv' + Date.now()
-  });
+    player.ima({
+      id: 'live',
+      adTagUrl: 'https://active-bat.com/dMmoFHzPd.GeNLv/ZjGxU-/feDmt9zufZLUAlakIPCT/Ye1KMajskU2FOIDtIeteNcjVU/yoOmTwY-4kMjyOZSsva/Wg1bpmdFDv0Lxv'
+    });
 
-  player.ready(function() {
-    player.ima.initializeAdDisplayContainer();
-    player.ima.requestAds();
-    player.play();
-  });
-</script>
+    player.ready(function () {
+      player.ima.initializeAdDisplayContainer();
+      player.ima.requestAds();
+      player.play();
+    });
+  </script>
 
 {% endblock %}
