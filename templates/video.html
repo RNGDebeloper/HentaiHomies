@@ -141,7 +141,14 @@
 <div class="card">
   <div class="card-body p-3">
     <div id="video-container">
-<video id="live" autoplay controls>
+<video    id="live"
+          class="video-js vjs-default-skin vjs-big-play-centered"
+          controls
+          preload="auto"
+          width="100%"
+          height="auto"
+          data-setup='{}'>
+          <source src="" type="video/mp4">
 </video>
       <!-- 🔥 High-engagement ad slot -->
       <div class="ads-slot">
@@ -234,6 +241,55 @@
     {% endfor %}
   };
 
+ // Pre-roll ads scripts
+  <!-- Scripts -->
+  <script src="https://vjs.zencdn.net/7.20.3/video.min.js"></script>
+  <script src="https://imasdk.googleapis.com/js/sdkloader/ima3.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/videojs-contrib-ads@6.9.0/dist/videojs-contrib-ads.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/videojs-ima@1.9.1/dist/videojs.ima.min.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const player = videojs('live');
+
+      // IMA plugin setup
+      player.ima({
+        id: 'live',
+        adTagUrl: 'https://active-bat.com/drm.FXzcdeGwNNvmZzGxUT/geHmD9ZuNZAU/lekXPLT-Ym1DM/jckY2JO/D/IltyNxj-Uay/OCTyYF4_MVyqZWsxaqWk1VpFd/D/0uxw',
+        debug: false,
+        timeout: 5000,
+        prerollTimeout: 5000
+      });
+
+      player.ready(function () {
+        player.ima.initializeAdDisplayContainer();
+
+        // Catch ad errors and fallback
+        player.on('aderror', () => { player.play(); });
+
+        // Pre-roll ads
+        player.ima.requestAds();
+        player.play();
+
+        // Mid-roll (pause trigger)
+        player.on('pause', function () {
+          if (!player.ima.adIsPlaying()) {
+            player.ima.changeAdTag('https://active-bat.com/drm.FXzcdeGwNNvmZzGxUT/geHmD9ZuNZAU/lekXPLT-Ym1DM/jckY2JO/D/IltyNxj-Uay/OCTyYF4_MVyqZWsxaqWk1VpFd/D/0uxw');
+            player.ima.requestAds();
+            player.play();
+          }
+        });
+
+        // Post-roll on ended
+        player.on('ended', function () {
+          player.ima.changeAdTag('https://active-bat.com/drm.FXzcdeGwNNvmZzGxUT/geHmD9ZuNZAU/lekXPLT-Ym1DM/jckY2JO/D/IltyNxj-Uay/OCTyYF4_MVyqZWsxaqWk1VpFd/D/0uxw');
+          player.ima.requestAds();
+        });
+      });
+    });
+  </script>
+
+  
   
   // Watch mark logic
   const btn = document.getElementById('watchbtn');
