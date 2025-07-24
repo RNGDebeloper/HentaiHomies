@@ -45,39 +45,51 @@
     </div>
   </div>
 
-  <!-- ✅ Initialize Player with IMA VAST Ad -->
+  <!-- Scripts -->
+  <script src="https://vjs.zencdn.net/7.20.3/video.min.js"></script>
+  <script src="https://imasdk.googleapis.com/js/sdkloader/ima3.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/videojs-contrib-ads@6.9.0/dist/videojs-contrib-ads.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/videojs-ima@1.9.1/dist/videojs.ima.min.js"></script>
+
   <script>
-    const player = videojs('live');
+    document.addEventListener("DOMContentLoaded", function () {
+      const player = videojs('live');
 
-    const adTag = 'https://active-bat.com/drm.FXzcdeGwNNvmZzGxUT/geHmD9ZuNZAU/lekXPLT-Ym1DM/jckY2JO/D/IltyNxj-Uay/OCTyYF4_MVyqZWsxaqWk1VpFd/D/0uxw' + Date.now();
+      // IMA plugin setup
+      player.ima({
+        id: 'live',
+        adTagUrl: 'https://active-bat.com/drm.FXzcdeGwNNvmZzGxUT/geHmD9ZuNZAU/lekXPLT-Ym1DM/jckY2JO/D/IltyNxj-Uay/OCTyYF4_MVyqZWsxaqWk1VpFd/D/0uxw',
+        debug: false,
+        timeout: 5000,
+        prerollTimeout: 5000
+      });
 
-    player.ima({
-      id: 'live',
-      adTagUrl: adTag,
-      adsResponse: null
-    });
+      player.ready(function () {
+        player.ima.initializeAdDisplayContainer();
 
-    // Start with pre-roll
-    player.ready(function () {
-      player.ima.initializeAdDisplayContainer();
-      player.ima.requestAds();
-    });
+        // Catch ad errors and fallback
+        player.on('aderror', () => { player.play(); });
 
-    // Mid-roll logic at 10 seconds
-    let midRollPlayed = false;
-    player.on('timeupdate', function () {
-      if (!midRollPlayed && player.currentTime() >= 10 && player.currentTime() < 11) {
-        midRollPlayed = true;
-        player.pause();
+        // Pre-roll ads
         player.ima.requestAds();
-      }
-    });
+        player.play();
 
-    // Post-roll when video ends
-    player.on('ended', function () {
-      player.ima.requestAds();
+        // Mid-roll (pause trigger)
+        player.on('pause', function () {
+          if (!player.ima.adIsPlaying()) {
+            player.ima.changeAdTag('https://active-bat.com/drm.FXzcdeGwNNvmZzGxUT/geHmD9ZuNZAU/lekXPLT-Ym1DM/jckY2JO/D/IltyNxj-Uay/OCTyYF4_MVyqZWsxaqWk1VpFd/D/0uxw');
+            player.ima.requestAds();
+            player.play();
+          }
+        });
+
+        // Post-roll on ended
+        player.on('ended', function () {
+          player.ima.changeAdTag('https://active-bat.com/drm.FXzcdeGwNNvmZzGxUT/geHmD9ZuNZAU/lekXPLT-Ym1DM/jckY2JO/D/IltyNxj-Uay/OCTyYF4_MVyqZWsxaqWk1VpFd/D/0uxw');
+          player.ima.requestAds();
+        });
+      });
     });
   </script>
-
 
 {% endblock %}
