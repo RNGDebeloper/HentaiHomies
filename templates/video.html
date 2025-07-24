@@ -145,8 +145,6 @@
           class="video-js vjs-default-skin vjs-big-play-centered"
           controls
           preload="auto"
-          width="100%"
-          height="auto"
           data-setup='{}'>
 </video>
       <!-- 🔥 High-engagement ad slot -->
@@ -254,8 +252,8 @@
     id: 'live',
     debug: false,
     timeout: 5000,
-    prerollTimeout: 5000,
-    adTagUrl: 'https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/single_ad_samples&env=vp&output=vast&unviewed_position_start=1&cust_params=deployment%3Ddevsite&correlator=' + Date.now()
+    adTagUrl: 'https://active-bat.com/dJmnFjzgd.GfNYvGZzGBUL/ZeTmC9guvZsUslikwPyTgYv1/Mjj/kz2FOxD/IptVNrj/UzyDOyT-Yo4fMsyvZ_sbaiWd1hpbdpD/0IxJ',
+    prerollTimeout: 5000
   });
 
   player.ready(function () {
@@ -268,14 +266,14 @@
     player.on('timeupdate', function () {
       if (!midrollPlayed && player.currentTime() > 60) {
         midrollPlayed = true;
-        player.ima.changeAdTag('https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/single_ad_samples&env=vp&output=vast&unviewed_position_start=1&cust_params=deployment%3Ddevsite-mid&correlator=' + Date.now());
+        player.ima.changeAdTag('https://active-bat.com/dJmnFjzgd.GfNYvGZzGBUL/ZeTmC9guvZsUslikwPyTgYv1/Mjj/kz2FOxD/IptVNrj/UzyDOyT-Yo4fMsyvZ_sbaiWd1hpbdpD/0IxJ');
         player.ima.requestAds();
       }
     });
 
     // Post-roll after end
     player.on('ended', function () {
-      player.ima.changeAdTag('https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/single_ad_samples&env=vp&output=vast&unviewed_position_start=1&cust_params=deployment%3Ddevsite-post&correlator=' + Date.now());
+      player.ima.changeAdTag('https://active-bat.com/dJmnFjzgd.GfNYvGZzGBUL/ZeTmC9guvZsUslikwPyTgYv1/Mjj/kz2FOxD/IptVNrj/UzyDOyT-Yo4fMsyvZ_sbaiWd1hpbdpD/0IxJ');
       player.ima.requestAds();
     });
 
