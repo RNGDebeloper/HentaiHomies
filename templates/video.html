@@ -148,7 +148,6 @@
           width="100%"
           height="auto"
           data-setup='{}'>
-          <source src="" type="video/mp4">
 </video>
       <!-- 🔥 High-engagement ad slot -->
       <div class="ads-slot">
@@ -242,52 +241,51 @@
   };
 
  // Pre-roll ads scripts
-  <!-- Scripts -->
-  <script src="https://vjs.zencdn.net/7.20.3/video.min.js"></script>
-  <script src="https://imasdk.googleapis.com/js/sdkloader/ima3.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/videojs-contrib-ads@6.9.0/dist/videojs-contrib-ads.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/videojs-ima@1.9.1/dist/videojs.ima.min.js"></script>
+<!-- Video.js + IMA SDK -->
+<script src="https://vjs.zencdn.net/7.20.3/video.min.js"></script>
+<script src="https://imasdk.googleapis.com/js/sdkloader/ima3.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/videojs-contrib-ads@6.9.0/dist/videojs-contrib-ads.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/videojs-ima@1.9.1/dist/videojs.ima.min.js"></script>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const player = videojs('live');
+<script>
+  var player = videojs('live');
 
-      // IMA plugin setup
-      player.ima({
-        id: 'live',
-        adTagUrl: 'https://active-bat.com/drm.FXzcdeGwNNvmZzGxUT/geHmD9ZuNZAU/lekXPLT-Ym1DM/jckY2JO/D/IltyNxj-Uay/OCTyYF4_MVyqZWsxaqWk1VpFd/D/0uxw',
-        debug: false,
-        timeout: 5000,
-        prerollTimeout: 5000
-      });
+  player.ima({
+    id: 'live',
+    debug: false,
+    timeout: 5000,
+    prerollTimeout: 5000,
+    adTagUrl: 'https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/single_ad_samples&env=vp&output=vast&unviewed_position_start=1&cust_params=deployment%3Ddevsite&correlator=' + Date.now()
+  });
 
-      player.ready(function () {
-        player.ima.initializeAdDisplayContainer();
+  player.ready(function () {
+    player.ima.initializeAdDisplayContainer();
+    player.ima.requestAds(); // Preroll
+    player.play();
 
-        // Catch ad errors and fallback
-        player.on('aderror', () => { player.play(); });
-
-        // Pre-roll ads
+    // Mid-roll after 60 seconds
+    let midrollPlayed = false;
+    player.on('timeupdate', function () {
+      if (!midrollPlayed && player.currentTime() > 60) {
+        midrollPlayed = true;
+        player.ima.changeAdTag('https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/single_ad_samples&env=vp&output=vast&unviewed_position_start=1&cust_params=deployment%3Ddevsite-mid&correlator=' + Date.now());
         player.ima.requestAds();
-        player.play();
-
-        // Mid-roll (pause trigger)
-        player.on('pause', function () {
-          if (!player.ima.adIsPlaying()) {
-            player.ima.changeAdTag('https://active-bat.com/drm.FXzcdeGwNNvmZzGxUT/geHmD9ZuNZAU/lekXPLT-Ym1DM/jckY2JO/D/IltyNxj-Uay/OCTyYF4_MVyqZWsxaqWk1VpFd/D/0uxw');
-            player.ima.requestAds();
-            player.play();
-          }
-        });
-
-        // Post-roll on ended
-        player.on('ended', function () {
-          player.ima.changeAdTag('https://active-bat.com/drm.FXzcdeGwNNvmZzGxUT/geHmD9ZuNZAU/lekXPLT-Ym1DM/jckY2JO/D/IltyNxj-Uay/OCTyYF4_MVyqZWsxaqWk1VpFd/D/0uxw');
-          player.ima.requestAds();
-        });
-      });
+      }
     });
-  </script>
+
+    // Post-roll after end
+    player.on('ended', function () {
+      player.ima.changeAdTag('https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/single_ad_samples&env=vp&output=vast&unviewed_position_start=1&cust_params=deployment%3Ddevsite-post&correlator=' + Date.now());
+      player.ima.requestAds();
+    });
+
+    // Ad error fallback
+    player.on('aderror', function () {
+      console.warn('Ad Error: fallback to content playback');
+      player.play();
+    });
+  });
+</script>
 
   
   
