@@ -25,13 +25,33 @@
 <div class="container mt-5">
     <div class="card">
         <div class="card-body">
-            <video id="live" autoplay controls>
+            <video 
+                id="live"
+                class="video-js vjs-default-skin"
+                controls
+                preload="auto"
+                width="100%"
+                height="auto"
+                data-setup='{}'>
                 <source src="{{ link }}" type="video/mp4">
             </video>
         </div>
     </div>
 </div>
 
+<script>
+  var player = videojs('live');
 
+  player.ima({
+    id: 'live',
+    adTagUrl: 'https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/single_ad_samples&ciu_szs=300x250&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&cust_params=deployment%3Ddevsite&correlator=' + Date.now()
+  });
+
+  player.ready(function() {
+    player.ima.initializeAdDisplayContainer();
+    player.ima.requestAds();
+    player.play();
+  });
+</script>
 
 {% endblock %}
