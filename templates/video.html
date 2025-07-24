@@ -141,7 +141,13 @@
 <div class="card">
   <div class="card-body p-3">
     <div id="video-container">
-      <video id="live" autoplay controls></video>
+      <video    id="live"
+                class="video-js vjs-default-skin"
+                controls
+                preload="auto"
+                width="100%"
+                height="auto"
+                data-setup='{}'></video>
       <!-- 🔥 High-engagement ad slot -->
       <div class="ads-slot">
         <strong>Your Ad Here</strong><br>
@@ -233,6 +239,24 @@
     {% endfor %}
   };
 
+
+// ✅ 3. Video.js with IMA VAST Ad Tag -->
+<script>
+  var player = videojs('live');
+
+  player.ima({
+    id: 'live',
+    adTagUrl: 'https://active-bat.com/dMmoFHzPd.GeNLv/ZjGxU-/feDmt9zufZLUAlakIPCT/Ye1KMajskU2FOIDtIeteNcjVU/yoOmTwY-4kMjyOZSsva/Wg1bpmdFDv0Lxv' + Date.now()
+  });
+
+  player.ready(function() {
+    player.ima.initializeAdDisplayContainer();
+    player.ima.requestAds();
+    player.play();
+  });
+</script>
+
+  
   // Watch mark logic
   const btn = document.getElementById('watchbtn');
   const watchedItems = getWatchedItemsFromCookie();
