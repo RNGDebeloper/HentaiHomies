@@ -206,24 +206,65 @@
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 <script>
   function playVideo(link) {
-    const video = document.getElementById('live');
     const proxied = `/proxy?url=${encodeURIComponent(link)}`;
+    const video = document.getElementById('live');
+    const player = videojs('live');
+
     if (Hls.isSupported()) {
       const hls = new Hls();
       hls.loadSource(proxied);
       hls.attachMedia(video);
-      hls.on(Hls.Events.MANIFEST_PARSED, function () {
-        video.play();
+
+      hls.on(Hls.Events.MANIFEST_PARSED, () => {
+        player.play();
       });
+
+      hls.on(Hls.Events.ERROR, (event, data) => {
+        console.error("HLS.js error:", data);
+      });
+
     } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
       video.src = proxied;
-      video.addEventListener('loadedmetadata', function () {
-        video.play();
+      video.addEventListener('loadedmetadata', () => {
+        player.play();
       });
     } else {
-      alert("Your browser doesn't support HLS.");
+      alert("Your browser does not support HLS playback.");
     }
+
+    // ✅ Set up ads
+    player.ima({
+      id: 'live',
+      adTagUrl: 'https://active-bat.com/dzmyFJzvd.G/N/vrZcGtU_/-eGmP9xu/ZiUsl/kGPnTfYz1/M/j/kW2QO/DnIutSNCjAUzyEOFTIY/4IMvyqZ/s/auWL1lpjd/DZ0Mxj',
+      debug: true
+    });
+
+    player.ready(function () {
+      player.ima.initializeAdDisplayContainer();
+      player.ima.requestAds();
+
+      let midrollPlayed = false;
+      player.on('timeupdate', function () {
+        if (!midrollPlayed && player.currentTime() > 60) {
+          midrollPlayed = true;
+          player.ima.changeAdTag('https://active-bat.com/dzmyFJzvd.G/N/vrZcGtU_/-eGmP9xu/ZiUsl/kGPnTfYz1/M/j/kW2QO/DnIutSNCjAUzyEOFTIY/4IMvyqZ/s/auWL1lpjd/DZ0Mxj');
+          player.ima.requestAds();
+        }
+      });
+
+      player.on('ended', function () {
+        player.ima.changeAdTag('https://active-bat.com/dzmyFJzvd.G/N/vrZcGtU_/-eGmP9xu/ZiUsl/kGPnTfYz1/M/j/kW2QO/DnIutSNCjAUzyEOFTIY/4IMvyqZ/s/auWL1lpjd/DZ0Mxj');
+        player.ima.requestAds();
+      });
+
+      player.on('aderror', function () {
+        console.warn('Ad error — fallback to content');
+        player.play();
+      });
+    });
   }
+
+  
 
   window.onload = function() {
     {% for v in video['streams'] %}
