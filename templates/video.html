@@ -214,7 +214,7 @@
   </div>
 </div>
 
-<!-- Scripts -->
+<!-- Scripts 
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 <script>
   function playVideo(link) {
@@ -235,7 +235,39 @@
     } else {
       alert("Your browser doesn't support HLS.");
     }
-  }
+  }   -->
+
+
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <script>
+    function playVideo(link) {
+      const video = document.getElementById('live');
+      const proxied = `/proxy?url=${encodeURIComponent(link)}`;
+
+      if (Hls.isSupported()) {
+        const hls = new Hls();
+        hls.loadSource(proxied);
+        hls.attachMedia(video);
+        hls.on(Hls.Events.MANIFEST_PARSED, function () {
+          video.play();
+        });
+
+        hls.on(Hls.Events.ERROR, function (event, data) {
+          console.error("HLS error", data);
+          alert("Error loading video stream.");
+        });
+
+      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        video.src = proxied;
+        video.addEventListener('loadedmetadata', function () {
+          video.play();
+        });
+      } else {
+        alert("Your browser doesn't support HLS playback.");
+      }
+    }
+
+  
 
   window.onload = function() {
     {% for v in video['streams'] %}
