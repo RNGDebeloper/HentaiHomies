@@ -252,26 +252,45 @@ def proxy():
     target_url = request.args.get("url")
     if not target_url:
         return "Missing URL", 400
-    
+
     try:
         # Fetch content from target URL
         resp = requests.get(target_url, headers={"User-Agent": "Mozilla/5.0"}, stream=True, timeout=10)
         content_type = resp.headers.get("Content-Type", "")
 
+        # Define common headers
+        cors_headers = {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET, OPTIONS",
+            "Access-Control-Allow-Headers": "Content-Type, Range",
+            "Accept-Ranges": "bytes"
+        }
+
         # If it's a .m3u8 file, rewrite inner URLs
         if "application/vnd.apple.mpegurl" in content_type or target_url.endswith(".m3u8"):
             base_url = target_url.rsplit("/", 1)[0] + "/"
             content = resp.text
-            # Rewrite all inner URLs to go through the proxy
+
             def rewrite_line(line):
                 if line.strip().startswith("#") or line.strip() == "":
                     return line
                 return "/proxy?url=" + urljoin(base_url, line.strip())
-            new_content = "\n".join([rewrite_line(line) for line in content.splitlines()])
-            return Response(new_content, content_type=content_type)
 
-        # Otherwise just stream it as-is (e.g. .ts video segment)
-        return Response(resp.iter_content(chunk_size=1024), content_type=content_type)
+            new_content = "\n".join([rewrite_line(line) for line in content.splitlines()])
+            response = Response(new_content, content_type=content_type)
+            for key, value in cors_headers.items():
+                response.headers[key] = value
+            return response
+
+        # Otherwise, stream content (e.g., .ts segment)
+        def generate():
+            for chunk in resp.iter_content(chunk_size=4096):
+                yield chunk
+
+        response = Response(generate(), content_type=content_type)
+        for key, value in cors_headers.items():
+            response.headers[key] = value
+        return response
 
     except Exception as e:
         return f"Proxy error: {e}", 500
