@@ -334,50 +334,7 @@
 </script>
 
 
-<script src="https://vjs.zencdn.net/7.20.3/video.min.js"></script>
-<script src="https://imasdk.googleapis.com/js/sdkloader/ima3.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/videojs-contrib-ads@6.9.0/dist/videojs-contrib-ads.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/videojs-ima@1.9.1/dist/videojs.ima.min.js"></script>
 
-<script>
-  var player = videojs('live');
-
-  player.ima({
-    id: 'live',
-    debug: true,
-    timeout: 5000,
-    adTagUrl: 'https://active-bat.com/dJmnFjzgd.GfNYvGZzGBUL/ZeTmC9guvZsUslikwPyTgYv1/Mjj/kz2FOxD/IptVNrj/UzyDOyT-Yo4fMsyvZ_sbaiWd1hpbdpD/0IxJ',
-    prerollTimeout: 5000
-  });
-
-  player.ready(function () {
-    player.ima.initializeAdDisplayContainer();
-    player.ima.requestAds(); // Preroll
-    player.play();
-
-    // Mid-roll after 60 seconds
-    let midrollPlayed = false;
-    player.on('timeupdate', function () {
-      if (!midrollPlayed && player.currentTime() > 60) {
-        midrollPlayed = true;
-        player.ima.changeAdTag('https://active-bat.com/dJmnFjzgd.GfNYvGZzGBUL/ZeTmC9guvZsUslikwPyTgYv1/Mjj/kz2FOxD/IptVNrj/UzyDOyT-Yo4fMsyvZ_sbaiWd1hpbdpD/0IxJ');
-        player.ima.requestAds();
-      }
-    });
-
-    // Post-roll after end
-    player.on('ended', function () {
-      player.ima.changeAdTag('https://active-bat.com/dJmnFjzgd.GfNYvGZzGBUL/ZeTmC9guvZsUslikwPyTgYv1/Mjj/kz2FOxD/IptVNrj/UzyDOyT-Yo4fMsyvZ_sbaiWd1hpbdpD/0IxJ');
-      player.ima.requestAds();
-    });
-
-    // Ad error fallback
-    player.on('aderror', function () {
-      console.warn('Ad Error: fallback to content playback');
-      player.play();
-    });
-  });
-</script>
 
 
 {% endblock %}
