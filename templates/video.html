@@ -71,6 +71,17 @@
     border: 1px solid #fff !important;
   }
 
+/* ✅ Stream video css white */
+      #video-container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .video-js {
+      width: 100%;
+      height: auto;
+    }
+
   .ads-slot {
     background: #333;
     text-align: center;
@@ -141,16 +152,8 @@
 <div class="card">
   <div class="card-body p-3">
     <div id="video-container">
-<video
-  id="content_video"
-  class="video-js vjs-default-skin"
-  controls
-  preload="auto"
-  width="640"
-  height="360"
-  poster=""
-  data-setup='{}'
->
+<video id="content_video" class="video-js vjs-default-skin" controls preload="auto" poster="https://via.placeholder.com/800x450?text=Video+Loading">
+    </video>
       <!-- 🔥 High-engagement ad slot -->
       <div class="ads-slot">
         <strong>Your Ad Here</strong><br>
@@ -294,7 +297,7 @@
   }
 </script>
 
-// Pre-roll ads scripts
+
 <script src="https://vjs.zencdn.net/7.20.3/video.min.js"></script>
 <script src="https://imasdk.googleapis.com/js/sdkloader/ima3.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/videojs-contrib-ads@6.9.0/dist/videojs-contrib-ads.min.js"></script>
@@ -305,7 +308,7 @@
 
   player.ima({
     id: 'live',
-    debug: false,
+    debug: true,
     timeout: 10000,
     adTagUrl: 'https://active-bat.com/dJmnFjzgd.GfNYvGZzGBUL/ZeTmC9guvZsUslikwPyTgYv1/Mjj/kz2FOxD/IptVNrj/UzyDOyT-Yo4fMsyvZ_sbaiWd1hpbdpD/0IxJ',
     prerollTimeout: 10000
