@@ -72,14 +72,22 @@
   }
 
 /* ✅ Stream video css white */
-      #video-container {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-    .video-js {
+    .video-container {
+      max-width: 100%;
       width: 100%;
       height: auto;
+      position: relative;
+    }
+
+    .video-js {
+      width: 100% !important;
+      height: auto !important;
+    }
+
+    @media (max-width: 768px) {
+      .video-js {
+        height: auto;
+      }
     }
 
   .ads-slot {
