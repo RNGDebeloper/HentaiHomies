@@ -71,6 +71,17 @@
   }
 
 /* ✅ vIDEO JS white */
+
+
+  #live.video-js {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 12px;
+}
+
   
 
   .ads-slot {
@@ -221,6 +232,8 @@
 <script>
   window.addEventListener('DOMContentLoaded', function () {
     // all logic here
+  });
+</script>
 
 <script>
   function playVideo(link) {
@@ -341,7 +354,6 @@
     btn.classList.add('unwatched');
     btn.innerText = 'Mark as watched';
   }
-  });
 </script>
 
 {% endblock %}
