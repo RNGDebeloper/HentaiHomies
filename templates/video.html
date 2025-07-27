@@ -56,12 +56,25 @@
 
 
   /* ✅ Stream heading white */
-  video.video-js {
-    width: 100%;
-    height: auto;
-    border-radius: 12px;
-    z-index: 1;
-  } 
+video {
+  position: relative;
+  width: 100%;
+  max-width: 960px; /* or whatever max width you want */
+  margin: 0 auto;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+  background: #000;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+video.video-js {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 12px;
+}
   
   .stream-heading {
     color: #fff; /* ✅ Stream heading white */
