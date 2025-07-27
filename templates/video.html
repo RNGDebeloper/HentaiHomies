@@ -57,6 +57,7 @@
   video {
     width: 100%;
     height: auto;
+    position: flex;
     border-radius: 12px;
     z-index: 1;
   }
@@ -72,17 +73,7 @@
   }
 
 /* ✅ vIDEO JS white */
-  .video-container {
-      max-width: 960px;
-      margin: 20px auto;
-      position: relative;
-      aspect-ratio: 16/9;
-  }
 
-  .video-js {
-      width: 100% !important;
-      height: 100% !important;
-  }
   
 
   .ads-slot {
@@ -155,7 +146,7 @@
 <div class="card">
   <div class="card-body p-3">
     <div id="video-container">
-      <video id="live" class="video-js vjs-default-skin" controls preload="auto" playsinline autoplay muted> 
+      <video id="live" class="video-js vjs-default-skin" preload="auto" controls playsinline autoplay muted> 
       </video>
       <!-- 🔥 High-engagement ad slot -->
       <div class="ads-slot">
