@@ -365,7 +365,19 @@ function playVideo(link) {
   });
 }
 
+    var player = videojs('live');
 
+    player.ready(function () {
+      // Add Seek Buttons
+      player.seekButtons({
+        forward: 10,
+        back: 10
+      });
+
+      // Add Playback Speed Options
+      player.controlBar.playbackRateMenuButton.show();
+      player.playbackRates([1, 1.5, 2, 2.5]);
+    });
 
 
 
