@@ -356,22 +356,43 @@ function playVideo(link) {
   });
 }
 
-    const player = videojs('live');
-
     player.ready(function () {
-      // Playback Speed Options
+      // Playback speeds
       player.controlBar.playbackRateMenuButton.show();
-      player.playbackRates([1, 1.25, 1.5, 2, 2.5]);
+      player.playbackRates([0.5, 1, 1.5, 2, 3]);
 
-      // Rewind & Forward Buttons
-      player.seekButtons({
-        forward: 10,
-        back: 10
+      // Create Forward/Back buttons manually
+      const Button = videojs.getComponent('Button');
+
+      const rewindButton = videojs.extend(Button, {
+        constructor: function () {
+          Button.apply(this, arguments);
+          this.controlText('Rewind 10s');
+        },
+        handleClick: function () {
+          const newTime = Math.max(0, player.currentTime() - 10);
+          player.currentTime(newTime);
+        }
       });
+
+      const forwardButton = videojs.extend(Button, {
+        constructor: function () {
+          Button.apply(this, arguments);
+          this.controlText('Forward 10s');
+        },
+        handleClick: function () {
+          const newTime = Math.min(player.duration(), player.currentTime() + 10);
+          player.currentTime(newTime);
+        }
+      });
+
+      // Add buttons to control bar
+      player.getChild('controlBar').addChild(new rewindButton(player), {}, 0);
+      player.getChild('controlBar').addChild(new forwardButton(player), {}, 2);
     });
 
 
-
+ // Code Ended Here
 
       window.onload = function() {
     {% for v in video['streams'] %}
