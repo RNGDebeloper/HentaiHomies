@@ -241,6 +241,53 @@
 <script src="https://unpkg.com/videojs-ima@1.9.0/dist/videojs.ima.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.1/dist/hls.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/videojs-seek-buttons@1.0.6/dist/videojs-seek-buttons.min.js"></script>
+  <script>
+    const player = videojs('live');
+
+    player.ready(() => {
+      // ✅ Add playback speed options
+      player.controlBar.playbackRateMenuButton.show();
+      player.playbackRates([0.75, 1, 1.5, 2, 3]);
+
+      // ✅ Create rewind button (10s)
+      class RewindButton extends videojs.getComponent('Button') {
+        constructor(player, options) {
+          super(player, options);
+          this.controlText("Rewind 10 seconds");
+          this.addClass('vjs-rewind-button');
+          this.el().innerHTML = '⏪';
+        }
+
+        handleClick() {
+          const currentTime = player.currentTime();
+          player.currentTime(Math.max(0, currentTime - 10));
+        }
+      }
+
+      // ✅ Create forward button (10s)
+      class ForwardButton extends videojs.getComponent('Button') {
+        constructor(player, options) {
+          super(player, options);
+          this.controlText("Forward 10 seconds");
+          this.addClass('vjs-forward-button');
+          this.el().innerHTML = '⏩';
+        }
+
+        handleClick() {
+          const currentTime = player.currentTime();
+          player.currentTime(Math.min(player.duration(), currentTime + 10));
+        }
+      }
+
+      // Register buttons
+      videojs.registerComponent('RewindButton', RewindButton);
+      videojs.registerComponent('ForwardButton', ForwardButton);
+
+      // Add to control bar
+      player.getChild('controlBar').addChild('RewindButton', {}, 0);
+      player.getChild('controlBar').addChild('ForwardButton', {}, 2);
+    });
+  </script>
 
 
 <!-- Then your script with `videojs(...)` -->
@@ -355,43 +402,6 @@ function playVideo(link) {
     });
   });
 }
-
-    
-const player = videojs('live');
-  player.ready(function () {
-      // Playback speeds
-      player.controlBar.playbackRateMenuButton.show();
-      player.playbackRates([0.5, 1, 1.5, 2, 3]);
-
-      // Create Forward/Back buttons manually
-      const Button = videojs.getComponent('Button');
-
-      const rewindButton = videojs.extend(Button, {
-        constructor: function () {
-          Button.apply(this, arguments);
-          this.controlText('Rewind 10s');
-        },
-        handleClick: function () {
-          const newTime = Math.max(0, player.currentTime() - 10);
-          player.currentTime(newTime);
-        }
-      });
-
-      const forwardButton = videojs.extend(Button, {
-        constructor: function () {
-          Button.apply(this, arguments);
-          this.controlText('Forward 10s');
-        },
-        handleClick: function () {
-          const newTime = Math.min(player.duration(), player.currentTime() + 10);
-          player.currentTime(newTime);
-        }
-      });
-
-      // Add buttons to control bar
-      player.getChild('controlBar').addChild(new rewindButton(player), {}, 0);
-      player.getChild('controlBar').addChild(new forwardButton(player), {}, 2);
-    });
 
 
  // Code Ended Here
