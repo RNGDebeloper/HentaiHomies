@@ -82,14 +82,10 @@
     }
 
 
-
-    .vjs-control.custom-button {
-      font-size: 18px;
-      line-height: 2;
-      padding: 0 10px;
-      cursor: pointer;
-      color: white;
-    }
+/*
+    video {
+      border-radius: 12px;
+    } */
 
   
      .video-js {
@@ -391,36 +387,6 @@
       ]
     }
   });
-
-  // Rewind Button ⏪
-  const rewindButton = videojs.extend(videojs.getComponent('Button'), {
-    constructor: function () {
-      videojs.getComponent('Button').apply(this, arguments);
-      this.controlText("Rewind 10s");
-    },
-    handleClick: function () {
-      const current = player.currentTime();
-      player.currentTime(Math.max(0, current - 10));
-    }
-  });
-  videojs.registerComponent('rewindButton', rewindButton);
-
-  // Forward Button ⏩
-  const forwardButton = videojs.extend(videojs.getComponent('Button'), {
-    constructor: function () {
-      videojs.getComponent('Button').apply(this, arguments);
-      this.controlText("Forward 10s");
-    },
-    handleClick: function () {
-      const current = player.currentTime();
-      player.currentTime(Math.min(player.duration(), current + 10));
-    }
-  });
-  videojs.registerComponent('forwardButton', forwardButton);
-
-  // Add buttons to player
-  player.getChild('controlBar').addChild('rewindButton', {}, 1);   // after play button
-  player.getChild('controlBar').addChild('forwardButton', {}, 2);  // after rewind
 </script>
 
 
