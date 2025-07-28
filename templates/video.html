@@ -356,7 +356,9 @@ function playVideo(link) {
   });
 }
 
-    player.ready(function () {
+    
+const player = videojs('video');
+  player.ready(function () {
       // Playback speeds
       player.controlBar.playbackRateMenuButton.show();
       player.playbackRates([0.5, 1, 1.5, 2, 3]);
