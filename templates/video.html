@@ -240,6 +240,17 @@
 <script src="https://unpkg.com/videojs-contrib-ads@6.9.0/dist/videojs.ads.min.js"></script>
 <script src="https://unpkg.com/videojs-ima@1.9.0/dist/videojs.ima.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.1/dist/hls.min.js"></script>
+<script src="https://unpkg.com/videojs-seek-buttons/dist/videojs-seek-buttons.min.js"></script>
+<script>
+  var player = videojs('live');
+  player.ready(function () {
+    player.seekButtons({
+      forward: 10,
+      back: 10
+    });
+  });
+</script>
+
 
 <!-- Then your script with `videojs(...)` -->
 <script>
@@ -248,7 +259,7 @@
   });
 </script>
 
-<script>
+<!-- <script>
   function playVideo(link) {
     const proxied = `/proxy?url=${encodeURIComponent(link)}`;
     const video = document.getElementById('live');
@@ -306,7 +317,58 @@
         player.play();
       });
     });
-  }
+  }  -->
+
+
+<script>
+function playVideo(link) {
+  const proxied = `/proxy?url=${encodeURIComponent(link)}`;
+  const player = videojs('live');
+
+  player.src({
+    src: proxied,
+    type: 'application/x-mpegURL'
+  });
+
+  player.ready(function () {
+    player.play();
+
+    // Initialize Ads
+    player.ima({
+      id: 'live',
+      adTagUrl: 'https://active-bat.com/dzmyFJzvd.G/N/vrZcGtU_/-eGmP9xu/ZiUsl/kGPnTfYz1/M/j/kW2QO/DnIutSNCjAUzyEOFTIY/4IMvyqZ/s/auWL1lpjd/DZ0Mxj',
+      debug: true
+    });
+
+    player.ima.initializeAdDisplayContainer();
+    player.ima.requestAds();
+
+    // Mid-roll Ad
+    let midrollPlayed = false;
+    player.on('timeupdate', () => {
+      if (!midrollPlayed && player.currentTime() > 60) {
+        midrollPlayed = true;
+        player.ima.changeAdTag('https://active-bat.com/dzmyFJzvd.G/N/vrZcGtU_/-eGmP9xu/ZiUsl/kGPnTfYz1/M/j/kW2QO/DnIutSNCjAUzyEOFTIY/4IMvyqZ/s/auWL1lpjd/DZ0Mxj');
+        player.ima.requestAds();
+      }
+    });
+
+    player.on('ended', () => {
+      player.ima.changeAdTag('https://active-bat.com/dzmyFJzvd.G/N/vrZcGtU_/-eGmP9xu/ZiUsl/kGPnTfYz1/M/j/kW2QO/DnIutSNCjAUzyEOFTIY/4IMvyqZ/s/auWL1lpjd/DZ0Mxj');
+      player.ima.requestAds();
+    });
+
+    player.on('aderror', () => {
+      console.warn('Ad error – playing content directly.');
+      player.play();
+    });
+  });
+}
+
+
+
+
+
 
       window.onload = function() {
     {% for v in video['streams'] %}
