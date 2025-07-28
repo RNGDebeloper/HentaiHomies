@@ -80,6 +80,11 @@
       aspect-ratio: 16/9;
       border-radius: 12px;
     }
+
+   video {
+      border-radius: 12px;
+    }
+
   
      .video-js {
       width: 100% !important;
@@ -239,13 +244,6 @@
 <script>
   window.addEventListener('DOMContentLoaded', function () {
     // all logic here
-      window.onload = function() {
-    {% for v in video['streams'] %}
-      {% if v['height'] == "360" %}
-        playVideo('{{ v['url'] }}');
-      {% endif %}
-    {% endfor %}
-  };
   });
 </script>
 
@@ -309,9 +307,14 @@
     });
   }
 
-
+      window.onload = function() {
+    {% for v in video['streams'] %}
+      {% if v['height'] == "360" %}
+        playVideo('{{ v['url'] }}');
+      {% endif %}
+    {% endfor %}
+  };
   
-
   // Watch mark logic
   const btn = document.getElementById('watchbtn');
   const watchedItems = getWatchedItemsFromCookie();
@@ -363,5 +366,59 @@
     btn.innerText = 'Mark as watched';
   }
 </script>
+
+
+// script
+<script>
+  const player = videojs("live", {
+    playbackRates: [0.5, 1, 1.25, 1.5, 2],
+    controlBar: {
+      children: [
+        'playToggle',
+        'rewindButton',
+        'forwardButton',
+        'volumePanel',
+        'currentTimeDisplay',
+        'timeDivider',
+        'durationDisplay',
+        'progressControl',
+        'playbackRateMenuButton',
+        'fullscreenToggle',
+      ]
+    }
+  });
+
+  // Rewind Button ⏪
+  const rewindButton = videojs.extend(videojs.getComponent('Button'), {
+    constructor: function () {
+      videojs.getComponent('Button').apply(this, arguments);
+      this.controlText("Rewind 10s");
+    },
+    handleClick: function () {
+      const current = player.currentTime();
+      player.currentTime(Math.max(0, current - 10));
+    }
+  });
+  videojs.registerComponent('rewindButton', rewindButton);
+
+  // Forward Button ⏩
+  const forwardButton = videojs.extend(videojs.getComponent('Button'), {
+    constructor: function () {
+      videojs.getComponent('Button').apply(this, arguments);
+      this.controlText("Forward 10s");
+    },
+    handleClick: function () {
+      const current = player.currentTime();
+      player.currentTime(Math.min(player.duration(), current + 10));
+    }
+  });
+  videojs.registerComponent('forwardButton', forwardButton);
+
+  // Add buttons to player
+  player.getChild('controlBar').addChild('rewindButton', {}, 1);   // after play button
+  player.getChild('controlBar').addChild('forwardButton', {}, 2);  // after rewind
+</script>
+
+
 
 {% endblock %}
