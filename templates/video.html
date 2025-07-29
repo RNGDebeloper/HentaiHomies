@@ -3,7 +3,7 @@
 {% block ogtitle %}{{ video['name'] }}{% endblock ogtitle %}
 {% block metadescription %}{{ video['description'] }}{% endblock metadescription %}
 {% block metakeywords %}{% for t in video['tags'] %} {{ t['name'] }}, {% endfor %} {% endblock metakeywords %}
-{% block title %}{{ video['name'] }} | HentaiHomies{% endblock %}
+{% block title %}{{ video['name'] }} | Hanime{% endblock %}
 {% block content %}
 
 <style>
@@ -249,13 +249,25 @@
       player.controlBar.playbackRateMenuButton.show();
       player.playbackRates([0.75, 1, 1.5, 2, 3]);
 
+
+            // ✅ SVG markup
+      const rewindSVG = `
+        <svg viewBox="0 0 24 24">
+          <path d="M11 18V6L2.5 12L11 18ZM13 18L21.5 12L13 6V18Z" />
+        </svg>`;
+      const forwardSVG = `
+        <svg viewBox="0 0 24 24">
+          <path d="M13 6V18L21.5 12L13 6ZM11 6L2.5 12L11 18V6Z" />
+        </svg>`;
+
+      
       // ✅ Create rewind button (10s)
       class RewindButton extends videojs.getComponent('Button') {
         constructor(player, options) {
           super(player, options);
           this.controlText("Rewind 10 seconds");
           this.addClass('vjs-rewind-button');
-          this.el().innerHTML = '⏪';
+          this.el().innerHTML = rewindSVG;
         }
 
         handleClick() {
@@ -270,7 +282,7 @@
           super(player, options);
           this.controlText("Forward 10 seconds");
           this.addClass('vjs-forward-button');
-          this.el().innerHTML = '⏩';
+          this.el().innerHTML = forwardSVG;
         }
 
         handleClick() {
