@@ -3,7 +3,7 @@
 {% block ogtitle %}{{ video['name'] }}{% endblock ogtitle %}
 {% block metadescription %}{{ video['description'] }}{% endblock metadescription %}
 {% block metakeywords %}{% for t in video['tags'] %} {{ t['name'] }}, {% endfor %} {% endblock metakeywords %}
-{% block title %}{{ video['name'] }} | Hanime{% endblock %}
+{% block title %}{{ video['name'] }} |{% endblock %}
 {% block content %}
 
 <style>
@@ -252,12 +252,12 @@
 
             // ✅ SVG markup
       const rewindSVG = `
-        <svg viewBox="0 0 24 24">
-          <path d="M11 18V6L2.5 12L11 18ZM13 18L21.5 12L13 6V18Z" />
+        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M7.712 4.818A1.5 1.5 0 0 1 10 6.095v2.972c.104-.13.234-.248.389-.343l6.323-3.906A1.5 1.5 0 0 1 19 6.095v7.81a1.5 1.5 0 0 1-2.288 1.276l-6.323-3.905a1.505 1.505 0 0 1-.389-.344v2.973a1.5 1.5 0 0 1-2.288 1.276l-6.323-3.905a1.5 1.5 0 0 1 0-2.552l6.323-3.906Z"/>
         </svg>`;
       const forwardSVG = `
-        <svg viewBox="0 0 24 24">
-          <path d="M13 6V18L21.5 12L13 6ZM11 6L2.5 12L11 18V6Z" />
+        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M3.288 4.818A1.5 1.5 0 0 0 1 6.095v7.81a1.5 1.5 0 0 0 2.288 1.276l6.323-3.905c.155-.096.285-.213.389-.344v2.973a1.5 1.5 0 0 0 2.288 1.276l6.323-3.905a1.5 1.5 0 0 0 0-2.552l-6.323-3.906A1.5 1.5 0 0 0 10 6.095v2.972a1.506 1.506 0 0 0-.389-.343L3.288 4.818Z"/>
         </svg>`;
 
       
