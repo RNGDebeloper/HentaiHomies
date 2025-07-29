@@ -74,7 +74,8 @@
 /* ✅ vIDEO JS white : live.video-js */
 
     .vidads {
-      max-width: 960px;
+   /*   max-width: 960px; */
+      max-width: 1024px;
       margin: 10px auto;
       position: relative;
       aspect-ratio: 16/9;
@@ -166,7 +167,7 @@
   <div class="card-body p-3">
     <div id="video-container">
       <div class="vidads">
-       <video id="live" class="video-js vjs-default-skin" preload="auto" controls autoplay playsinline> 
+       <video id="live" class="video-js vjs-default-skin vjs-big-play-centered" preload="auto" controls autoplay playsinline> 
         </video>
         </div>
       <!-- 🔥 High-engagement ad slot -->
@@ -309,66 +310,6 @@
     // all logic here
   });
 </script>
-
-<!-- <script>
-  function playVideo(link) {
-    const proxied = `/proxy?url=${encodeURIComponent(link)}`;
-    const video = document.getElementById('live');
-    const player = videojs('live');
-
-    if (Hls.isSupported()) {
-      const hls = new Hls();
-      hls.loadSource(proxied);
-      hls.attachMedia(video);
-
-      hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        player.play();
-      });
-
-      hls.on(Hls.Events.ERROR, (event, data) => {
-        console.error("HLS.js error:", data);
-      });
-
-    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-      video.src = proxied;
-      video.addEventListener('loadedmetadata', () => {
-        player.play();
-      });
-    } else {
-      alert("Your browser does not support HLS playback.");
-    }
-
-    // ✅ Set up ads
-    player.ima({
-      id: 'live',
-      adTagUrl: 'https://active-bat.com/dzmyFJzvd.G/N/vrZcGtU_/-eGmP9xu/ZiUsl/kGPnTfYz1/M/j/kW2QO/DnIutSNCjAUzyEOFTIY/4IMvyqZ/s/auWL1lpjd/DZ0Mxj',
-      debug: true
-    });
-
-    player.ready(function () {
-      player.ima.initializeAdDisplayContainer();
-      player.ima.requestAds();
-
-      let midrollPlayed = false;
-      player.on('timeupdate', function () {
-        if (!midrollPlayed && player.currentTime() > 60) {
-          midrollPlayed = true;
-          player.ima.changeAdTag('https://active-bat.com/dzmyFJzvd.G/N/vrZcGtU_/-eGmP9xu/ZiUsl/kGPnTfYz1/M/j/kW2QO/DnIutSNCjAUzyEOFTIY/4IMvyqZ/s/auWL1lpjd/DZ0Mxj');
-          player.ima.requestAds();
-        }
-      });
-
-      player.on('ended', function () {
-        player.ima.changeAdTag('https://active-bat.com/dzmyFJzvd.G/N/vrZcGtU_/-eGmP9xu/ZiUsl/kGPnTfYz1/M/j/kW2QO/DnIutSNCjAUzyEOFTIY/4IMvyqZ/s/auWL1lpjd/DZ0Mxj');
-        player.ima.requestAds();
-      });
-
-      player.on('aderror', function () {
-        console.warn('Ad error — fallback to content');
-        player.play();
-      });
-    });
-  }  -->
 
 
 <script>
