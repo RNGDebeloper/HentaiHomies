@@ -1,9 +1,9 @@
 {% extends "base.html" %}
-{% block metatitle %}{{ category }} | Hanime on HentaiHomies {% endblock metatitle %}
-{% block ogtitle %}{{ category }} | Hanime on HentaiHomies {% endblock ogtitle %}
+{% block metatitle %}{{ category }} | Hanime on hanime {% endblock metatitle %}
+{% block ogtitle %}{{ category }} | Hanime on hanime {% endblock ogtitle %}
 {% block metadescription %}{% for t in tags %}{% if t['text'] == category %}{{ t['description'] }}{% endif %}{% endfor %}{% endblock metadescription %}
 {% block metakeywords %}{{ category }} , hentai, hentai api, hentai porn api, browse porn, browse, {% endblock metakeywords %}
-{% block title %} {{category}} | HentaiHomies{% endblock %}
+{% block title %} {{category}} |{% endblock %}
 {% block content %}
 
 <div class="container px-4 px-lg-5 mt-5">    
