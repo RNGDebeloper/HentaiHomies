@@ -1,3 +1,5 @@
 # Allow all search engines to crawl everything
 User-agent: *
 Disallow:
+
+Sitemap: https://www.hanime.cloud/sitemap.xml
