@@ -2,4 +2,4 @@
 User-agent: *
 Disallow:
 
-Sitemap: https://www.hanime.cloud/sitemap.xml
+Sitemap: https://www.hanime.cloud/sitemap_index.xml
