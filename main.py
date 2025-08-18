@@ -2,6 +2,7 @@ from flask import Flask, jsonify, render_template, request, redirect, url_for, R
 import requests
 import secrets
 import json
+import time
 from fake_useragent import UserAgent
 import os
 from urllib.parse import urlparse, urljoin
@@ -19,11 +20,43 @@ def logger(ip_addr,request_url):
     return "logged!"
 
 
+#def jsongen(url):
+  #  headers = {"X-Signature-Version": "web2","X-Signature": secrets.token_hex(32),'User-Agent': UserAgent().random}
+  #  res = requests.get(url, headers=headers)
+  #  y = json.loads(res.text)
+  #  return y
+
+
 def jsongen(url):
-    headers = {"X-Signature-Version": "web2","X-Signature": secrets.token_hex(32),'User-Agent': UserAgent().random}
+    # generate fake headers
+    ua = UserAgent().random
+    
+    # dynamic timestamp
+    xtime = str(int(time.time()))
+    
+    headers = {
+        "User-Agent": ua,
+        "Accept": "application/json, text/plain, */*",
+        "Origin": "https://hanime.tv",
+        "Referer": "https://hanime.tv/",
+        "x-signature-version": "web2",
+        
+        # ⚠️ This is not correct yet — we need the real hash algo
+        # for now we just generate a random hex to test request
+        "x-signature": secrets.token_hex(32),
+        
+        "x-time": xtime,
+        "x-token": "null",
+    }
+    
     res = requests.get(url, headers=headers)
-    y = json.loads(res.text)
-    return y
+    print("Status:", res.status_code)
+    try:
+        return res.json()
+    except Exception:
+        print("Response text:", res.text[:300])
+        return {}
+
 
 
 def gettrending(time,page):
@@ -311,6 +344,7 @@ def internal_server_error(e):
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0",port="8000")
+
 
 
 
