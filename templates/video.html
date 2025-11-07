@@ -120,7 +120,7 @@
 <div class="card">
   <div class="row no-gutters d-flex flex-wrap">
     <div class="col-md-6">
-      <img class="card-img" src="{{ video['cover_url'] }}" alt="{{ video['name'] }}">
+      <img class="card-img" src="/proxy?url={{ video['cover_url'] }}" alt="{{ video['name'] }}">
     </div>
     <div class="col-md-6 p-4">
       <h4 class="card-title mb-3">{{ video['name'] }}</h4>
@@ -211,7 +211,7 @@
           <div class="badge bg-black text-white position-absolute" style="top: 0.5rem; right: 0.5rem">
             <i class="fa-solid fa-eye"></i>{{ e['views'] }}
           </div>
-          <img class="card-img-top" src="{{ e['cover_url'] }}" alt="{{ e['name'] }}" />
+          <img class="card-img-top" src="/proxy?url={{ e['cover_url'] }}" alt="{{ e['name'] }}" />
           <div class="card-body p-4">
             <div class="text-center">
               <h5 class="fw-bolder">{{ e['name'] }}</h5>
@@ -423,4 +423,5 @@ function playVideo(link) {
 
 
 {% endblock %}
+
 
