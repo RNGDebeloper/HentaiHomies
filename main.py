@@ -297,60 +297,96 @@ def internal_server_error(e):
 
 
 
-
-# ▶️ /play for m3u8 & ts proxying
 @app.route("/proxy")
 def proxy():
     target_url = request.args.get("url")
     if not target_url:
-        return "Missing URL", 400
+        return "Missing 'url' parameter", 400
 
     try:
-        # Fetch content from target URL
-        resp = requests.get(target_url, headers={"User-Agent": "Mozilla/5.0"}, stream=True, timeout=10)
+        # Spoof headers to bypass CDN restrictions (e.g., Cloudflare)
+        headers = {
+            "User-Agent": (
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) "
+                "Chrome/138.0.0.0 Safari/537.36"
+            ),
+            "Referer": "https://www.hanime.tv/",
+            "Origin": "https://www.hanime.tv",
+            "Accept": "image/avif,image/webp,image/apng,image/*,*/*;q=0.8",
+            "Accept-Language": "en-US,en;q=0.9",
+            "Connection": "keep-alive",
+        }
+
+        # Fetch the remote resource
+        resp = requests.get(target_url, headers=headers, stream=True, timeout=15)
         content_type = resp.headers.get("Content-Type", "")
 
-        # Define common headers
+        # Common CORS & caching headers
         cors_headers = {
             "Access-Control-Allow-Origin": "*",
             "Access-Control-Allow-Methods": "GET, OPTIONS",
             "Access-Control-Allow-Headers": "Content-Type, Range",
-            "Accept-Ranges": "bytes"
+            "Accept-Ranges": "bytes",
+            "Cache-Control": "public, max-age=86400",  # 1 day cache
         }
 
-        # If it's a .m3u8 file, rewrite inner URLs
+        # Handle non-success status
+        if resp.status_code != 200:
+            return (
+                f"Upstream request failed: {resp.status_code}",
+                resp.status_code,
+                cors_headers,
+            )
+
+        # 🎞️ If it's an HLS playlist (.m3u8)
         if "application/vnd.apple.mpegurl" in content_type or target_url.endswith(".m3u8"):
             base_url = target_url.rsplit("/", 1)[0] + "/"
             content = resp.text
 
             def rewrite_line(line):
-                if line.strip().startswith("#") or line.strip() == "":
+                # Keep comments and blank lines as-is
+                if line.strip().startswith("#") or not line.strip():
                     return line
+                # Rewrite relative segment URLs through the proxy
                 return "/proxy?url=" + urljoin(base_url, line.strip())
 
-            new_content = "\n".join([rewrite_line(line) for line in content.splitlines()])
+            new_content = "\n".join(rewrite_line(line) for line in content.splitlines())
             response = Response(new_content, content_type=content_type)
-            for key, value in cors_headers.items():
-                response.headers[key] = value
+            for k, v in cors_headers.items():
+                response.headers[k] = v
             return response
 
-        # Otherwise, stream content (e.g., .ts segment)
+        # 🖼️ Otherwise, stream binary (images, .ts, etc.)
         def generate():
-            for chunk in resp.iter_content(chunk_size=4096):
-                yield chunk
+            for chunk in resp.iter_content(chunk_size=8192):
+                if chunk:
+                    yield chunk
+
+        # Fallback for unknown or missing content-type
+        if not content_type:
+            if target_url.endswith((".png", ".jpg", ".jpeg", ".webp")):
+                content_type = "image/jpeg"
+            elif target_url.endswith(".ts"):
+                content_type = "video/mp2t"
+            else:
+                content_type = "application/octet-stream"
 
         response = Response(generate(), content_type=content_type)
-        for key, value in cors_headers.items():
-            response.headers[key] = value
+        for k, v in cors_headers.items():
+            response.headers[k] = v
+
         return response
 
+    except requests.exceptions.RequestException as e:
+        return f"Proxy error: {str(e)}", 500
     except Exception as e:
-        return f"Proxy error: {e}", 500
-
+        return f"Unexpected error: {str(e)}", 500
 
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0",port="8000")
+
 
 
 
