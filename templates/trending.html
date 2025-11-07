@@ -69,7 +69,7 @@
         </div>
         
         <!-- Thumbnail -->
-        <img class="card-img-top" src="{{ v['cover_url'] }}" alt="{{ v['name'] }}">
+        <img class="card-img-top" src="/proxy?url={{ v['cover_url'] }}" alt="{{ v['name'] }}">
         <div class="card-body p-4">
           <div class="text-center">
             <h5 class="fw-bolder">{{ v['name'] }}</h5>
@@ -105,4 +105,5 @@
 </div>
 
 {% endblock %}
+
 
