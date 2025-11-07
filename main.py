@@ -283,54 +283,7 @@ def browse_category_api(type,category,page):
     return jsonify({'results': data, 'next_page': '/api/browse/{type}/{category}/{page}'.format(type=type,category = category,page=str(int(page)+1))}),200
 
 
-# ▶️ /play for m3u8 & ts proxying
-@app.route("/proxy")
-def proxy():
-    target_url = request.args.get("url")
-    if not target_url:
-        return "Missing URL", 400
 
-    try:
-        # Fetch content from target URL
-        resp = requests.get(target_url, headers={"User-Agent": "Mozilla/5.0"}, stream=True, timeout=10)
-        content_type = resp.headers.get("Content-Type", "")
-
-        # Define common headers
-        cors_headers = {
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "GET, OPTIONS",
-            "Access-Control-Allow-Headers": "Content-Type, Range",
-            "Accept-Ranges": "bytes"
-        }
-
-        # If it's a .m3u8 file, rewrite inner URLs
-        if "application/vnd.apple.mpegurl" in content_type or target_url.endswith(".m3u8"):
-            base_url = target_url.rsplit("/", 1)[0] + "/"
-            content = resp.text
-
-            def rewrite_line(line):
-                if line.strip().startswith("#") or line.strip() == "":
-                    return line
-                return "/proxy?url=" + urljoin(base_url, line.strip())
-
-            new_content = "\n".join([rewrite_line(line) for line in content.splitlines()])
-            response = Response(new_content, content_type=content_type)
-            for key, value in cors_headers.items():
-                response.headers[key] = value
-            return response
-
-        # Otherwise, stream content (e.g., .ts segment)
-        def generate():
-            for chunk in resp.iter_content(chunk_size=4096):
-                yield chunk
-
-        response = Response(generate(), content_type=content_type)
-        for key, value in cors_headers.items():
-            response.headers[key] = value
-        return response
-
-    except Exception as e:
-        return f"Proxy error: {e}", 500
 
 @app.errorhandler(404)
 def page_not_found(e):
@@ -347,35 +300,77 @@ def internal_server_error(e):
 
 @app.route("/proxy")
 def proxy():
-    image_url = request.args.get("url")
-
-    if not image_url:
-        return "Missing 'url' parameter", 400
+    target_url = request.args.get("url")
+    if not target_url:
+        return "Missing URL", 400
 
     try:
-        # Send request to the target image with proper headers
-        headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
-            "Referer": "https://www.hanime.tv/",  # bypass hotlink restriction
+        # --- COMMON HEADERS ---
+        cors_headers = {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET, OPTIONS",
+            "Access-Control-Allow-Headers": "Content-Type, Range",
+            "Accept-Ranges": "bytes",
         }
 
-        resp = requests.get(image_url, headers=headers, stream=True, timeout=10)
+        # --- SPECIAL CASE: IMAGES (add Referer to bypass 403) ---
+        if target_url.endswith((".png", ".jpg", ".jpeg", ".webp", ".gif")):
+            headers = {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+                "Referer": "https://www.hanime.tv/",  # Required for hanime-cdn
+            }
 
-        if resp.status_code != 200:
-            return f"Upstream error {resp.status_code}", resp.status_code
+            resp = requests.get(target_url, headers=headers, stream=True, timeout=10)
 
-        # Use the same content type as the source (image/png, etc.)
-        content_type = resp.headers.get("Content-Type", "image/png")
+            if resp.status_code != 200:
+                return f"Failed to fetch image: {resp.status_code}", resp.status_code
 
-        return Response(resp.content, content_type=content_type)
+            content_type = resp.headers.get("Content-Type", "image/png")
+            response = Response(resp.content, content_type=content_type)
 
-    except requests.exceptions.RequestException as e:
-        return f"Error fetching image: {e}", 500
+            for k, v in cors_headers.items():
+                response.headers[k] = v
+            return response
+
+        # --- NORMAL HANDLING (m3u8 or other content) ---
+        resp = requests.get(target_url, headers={"User-Agent": "Mozilla/5.0"}, stream=True, timeout=10)
+        content_type = resp.headers.get("Content-Type", "")
+
+        # If it's a playlist, rewrite URLs
+        if "application/vnd.apple.mpegurl" in content_type or target_url.endswith(".m3u8"):
+            base_url = target_url.rsplit("/", 1)[0] + "/"
+            content = resp.text
+
+            def rewrite_line(line):
+                if line.strip().startswith("#") or line.strip() == "":
+                    return line
+                return "/proxy?url=" + urljoin(base_url, line.strip())
+
+            new_content = "\n".join([rewrite_line(line) for line in content.splitlines()])
+            response = Response(new_content, content_type=content_type)
+
+        else:
+            # Stream all other files (e.g., .ts, .mp4)
+            def generate():
+                for chunk in resp.iter_content(chunk_size=4096):
+                    yield chunk
+
+            response = Response(generate(), content_type=content_type)
+
+        # Add CORS headers to all responses
+        for k, v in cors_headers.items():
+            response.headers[k] = v
+
+        return response
+
+    except Exception as e:
+        return f"Proxy error: {e}", 500
 
 
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0",port="8000")
+
 
 
 
