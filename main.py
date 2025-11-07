@@ -228,11 +228,9 @@ def browse():
 
 
 @app.route("/browse/hentai-tags/<tag>/<int:page>", methods=["GET"])
-def browse_tags(tag, page):
+def browse_tags(tag,category,page):
     try:
-        # Hanime API endpoint
         url = f"https://cached.freeanimehentai.net/api/v8/browse/hentai-tags/{tag}"
-
         headers = {
             "accept": "application/json",
             "x-signature-version": "web2",
@@ -240,21 +238,29 @@ def browse_tags(tag, page):
             "x-time": "1762539464",
         }
 
-        # Fetch data from real API
         response = requests.get(url, headers=headers, timeout=10)
-
         if response.status_code != 200:
+            logging.warning(f"Upstream returned {response.status_code} for tag={tag}")
             return jsonify({"error": f"Upstream API returned {response.status_code}"}), 502
 
         data = response.json()
-        return jsonify(data), 200
+
+        # Render template with videos if frontend expects HTML
+        return render_template(
+            'cards.html',
+            videos=data.get("hentai_videos", []),
+            next_page=f"/browse/hentai-tags/{tag}/{page + 1}",
+            category=tag,
+            tags=data.get("hentai_tags", [])
+        )
 
     except requests.exceptions.Timeout:
         return jsonify({"error": "Upstream request timed out"}), 504
     except requests.exceptions.RequestException as e:
+        logging.error(f"Network error: {e}")
         return jsonify({"error": str(e)}), 500
     except Exception as e:
-        print("Unexpected error:", e)
+        logging.error(f"Unexpected error: {traceback.format_exc()}")
         return jsonify({"error": "Internal Server Error"}), 500
 
 
@@ -414,6 +420,7 @@ def proxy():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0",port="8000")
+
 
 
 
