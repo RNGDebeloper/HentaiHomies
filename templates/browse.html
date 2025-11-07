@@ -13,7 +13,7 @@
         <div class="col mb-4">
             <div class="card h-100 bg-black text-white shadow-5-strong d-flex flex-row">
                 <!-- Left side: Image -->
-                <img src="{{ t['tall_image_url'] }}" alt="{{ t['text'] }}" style="width: 200px; height: auto; object-fit: cover;" />
+                <img src="/proxy?url={{ t['tall_image_url'] | urlencode }}" alt="{{ t['text'] }}" style="width: 200px; height: auto; object-fit: cover;" />
                 
                 <!-- Right side: Details -->
                 <div class="flex-fill d-flex flex-column justify-content-between">
@@ -39,3 +39,4 @@
 </div>
 
 {% endblock %}
+
