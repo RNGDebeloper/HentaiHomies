@@ -298,6 +298,7 @@ def internal_server_error(e):
 
 
 
+# ▶️ /play for m3u8 & ts proxying
 @app.route("/proxy")
 def proxy():
     target_url = request.args.get("url")
@@ -305,38 +306,19 @@ def proxy():
         return "Missing URL", 400
 
     try:
-        # --- COMMON HEADERS ---
+        # Fetch content from target URL
+        resp = requests.get(target_url, headers={"User-Agent": "Mozilla/5.0"}, stream=True, timeout=10)
+        content_type = resp.headers.get("Content-Type", "")
+
+        # Define common headers
         cors_headers = {
             "Access-Control-Allow-Origin": "*",
             "Access-Control-Allow-Methods": "GET, OPTIONS",
             "Access-Control-Allow-Headers": "Content-Type, Range",
-            "Accept-Ranges": "bytes",
+            "Accept-Ranges": "bytes"
         }
 
-        # --- SPECIAL CASE: IMAGES (add Referer to bypass 403) ---
-        if target_url.endswith((".png", ".jpg", ".jpeg", ".webp", ".gif")):
-            headers = {
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
-                "Referer": "https://www.hanime.tv/",  # Required for hanime-cdn
-            }
-
-            resp = requests.get(target_url, headers=headers, stream=True, timeout=10)
-
-            if resp.status_code != 200:
-                return f"Failed to fetch image: {resp.status_code}", resp.status_code
-
-            content_type = resp.headers.get("Content-Type", "image/png")
-            response = Response(resp.content, content_type=content_type)
-
-            for k, v in cors_headers.items():
-                response.headers[k] = v
-            return response
-
-        # --- NORMAL HANDLING (m3u8 or other content) ---
-        resp = requests.get(target_url, headers={"User-Agent": "Mozilla/5.0"}, stream=True, timeout=10)
-        content_type = resp.headers.get("Content-Type", "")
-
-        # If it's a playlist, rewrite URLs
+        # If it's a .m3u8 file, rewrite inner URLs
         if "application/vnd.apple.mpegurl" in content_type or target_url.endswith(".m3u8"):
             base_url = target_url.rsplit("/", 1)[0] + "/"
             content = resp.text
@@ -348,19 +330,18 @@ def proxy():
 
             new_content = "\n".join([rewrite_line(line) for line in content.splitlines()])
             response = Response(new_content, content_type=content_type)
+            for key, value in cors_headers.items():
+                response.headers[key] = value
+            return response
 
-        else:
-            # Stream all other files (e.g., .ts, .mp4)
-            def generate():
-                for chunk in resp.iter_content(chunk_size=4096):
-                    yield chunk
+        # Otherwise, stream content (e.g., .ts segment)
+        def generate():
+            for chunk in resp.iter_content(chunk_size=4096):
+                yield chunk
 
-            response = Response(generate(), content_type=content_type)
-
-        # Add CORS headers to all responses
-        for k, v in cors_headers.items():
-            response.headers[k] = v
-
+        response = Response(generate(), content_type=content_type)
+        for key, value in cors_headers.items():
+            response.headers[key] = value
         return response
 
     except Exception as e:
@@ -370,6 +351,7 @@ def proxy():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0",port="8000")
+
 
 
 
