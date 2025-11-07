@@ -342,8 +342,41 @@ def internal_server_error(e):
 
 
 
+
+
+
+@app.route("/proxy")
+def proxy():
+    image_url = request.args.get("url")
+
+    if not image_url:
+        return "Missing 'url' parameter", 400
+
+    try:
+        # Send request to the target image with proper headers
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+            "Referer": "https://www.hanime.tv/",  # bypass hotlink restriction
+        }
+
+        resp = requests.get(image_url, headers=headers, stream=True, timeout=10)
+
+        if resp.status_code != 200:
+            return f"Upstream error {resp.status_code}", resp.status_code
+
+        # Use the same content type as the source (image/png, etc.)
+        content_type = resp.headers.get("Content-Type", "image/png")
+
+        return Response(resp.content, content_type=content_type)
+
+    except requests.exceptions.RequestException as e:
+        return f"Error fetching image: {e}", 500
+
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0",port="8000")
+
 
 
 
