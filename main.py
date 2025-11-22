@@ -157,6 +157,10 @@ def privacy():
 def robots():
     return send_from_directory(app.static_folder, 'robots.txt')
 
+@app.route('/hub.png')
+def hub():
+    return send_from_directory(app.static_folder, 'hub.png')
+
 @app.route('/sitemap_index.xml')
 def sitemap():
     return send_from_directory(app.static_folder, 'sitemap_index.xml')
@@ -389,6 +393,7 @@ def proxy():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0",port="8000")
+
 
 
 
