@@ -62,7 +62,7 @@ def jsongen(url):
 def gettrending(time,page):
     jsondata  = []
     page = page
-    trending_url = "https://hanime-python-api-eta.vercel.app/getLanding/recent?time={time}&page={page}&order_by=views&ordering=desc".format(time=time,page=str(page))
+    trending_url = "https://hanime-python-api-eta.vercel.app/getLanding/recent".format(time=time,page=str(page))
     url = trending_url
     urldata = jsongen(url)
     for x in urldata["hentai_videos"]:
@@ -161,12 +161,12 @@ def robots():
 def sitemap():
     return send_from_directory(app.static_folder, 'sitemap_index.xml')
 
-@app.route('/trending')
+@app.route('/getLanding/recent')
 def trending():
     ip_addr = request.remote_addr
     request_url = request.url
     logger(ip_addr,request_url)
-    return redirect("/trending/month/0")
+    return redirect("/getLanding/recent")
 
 @app.route('/search', methods=['GET', 'POST'])
 def search():
