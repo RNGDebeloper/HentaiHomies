@@ -62,7 +62,7 @@ def jsongen(url):
 def gettrending(time,page):
     jsondata  = []
     page = page
-    trending_url = "https://hanime.tv/api/v8/browse-trending?time={time}&page={page}&order_by=views&ordering=desc".format(time=time,page=str(page))
+    trending_url = "https://hanime-python-api-eta.vercel.app/getLanding/recent?time={time}&page={page}&order_by=views&ordering=desc".format(time=time,page=str(page))
     url = trending_url
     urldata = jsongen(url)
     for x in urldata["hentai_videos"]:
@@ -72,7 +72,7 @@ def gettrending(time,page):
 
 def getvideo(slug):
     jsondata = []
-    video_api_url = "https://hanime.tv/api/v8/video?id="
+    video_api_url = "https://hanime-python-api-eta.vercel.app/getVideo"
     video_data_url = video_api_url + slug
     video_data = jsongen(video_data_url)
     tags = []
@@ -92,12 +92,12 @@ def getvideo(slug):
     return jsondata
 
 def getbrowse():
-    browse_url  = "https://hanime.tv/api/v8/browse"
+    browse_url  = "https://hanime-python-api-eta.vercel.app/browse"
     data  = jsongen(browse_url)
     return data
     
 def getbrowsevideos(type,category,page):
-    browse_url  = f"https://hanime.tv/api/v8/browse/{type}/{category}?page={page}&order_by=views&ordering=desc"
+    browse_url  = f"https://hanime-python-api-eta.vercel.app/browse/{type}/{category}?page={page}&order_by=views&ordering=desc"
     browsedata = jsongen(browse_url)
     jsondata = []
     for x in browsedata["hentai_videos"]:
