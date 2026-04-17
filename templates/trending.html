@@ -1,109 +1,41 @@
 {% extends "base.html" %}
 {% block metatitle %}Trending | hantai on hanime{% endblock metatitle %}
 {% block metadescription %}Trending Free Hentai Video Streams Online in 720p, 1080p HD{% endblock metadescription %}
-{% block metakeywords %} {% for v in videos %} {{ v['name'] }} , {% endfor %}  {% endblock metakeywords %}
+{% block metakeywords %}{% for v in videos %} {{ v['name'] }} , {% endfor %}{% endblock metakeywords %}
 {% block title %}Trending |{% endblock %}
 {% block content %}
 
-
-<div class="my-10"> ` </div>
-<div class="container px-4 px-lg-5 mt-5">
-
-  <!-- Notice Bar -->
-<div class="alert alert-info text-center mb-4" role="alert" 
-  style="background: #0d6efd; color: #fff; border: none; border-radius: 0.8rem;">
-  🚨 New videos added daily! Enjoy censored and uncensored content safely.
-</div>
-
-  <!-- 🔥 High-engagement ad slot 
-  <div class="ads-slot">
-    <strong>Your Ad Here</strong><br>
-    (Place your high CPM ad code)
-  </div> -->
-
-  <!-- Trending Filter & Video Grid -->
-  <div class="d-flex flex-wrap align-items-center mb-4 gap-2">
-    <button class="btn btn-light btn-sm">Trending : {{ time }}</button>
-    <div class="btn-group flex-wrap" role="group">
-      <a href="/trending/day/0" class="btn btn-outline-light btn-sm filter-btn">Daily</a>
-      <a href="/trending/week/0" class="btn btn-outline-light btn-sm filter-btn">Weekly</a>
-      <a href="/trending/month/0" class="btn btn-outline-light btn-sm filter-btn">Monthly</a>
-      <a href="/trending/year/0" class="btn btn-outline-light btn-sm filter-btn">Yearly</a>
+<section class="frost-card p-3 p-md-4 mb-4">
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+    <h1 class="h4 mb-0">Trending: <span class="text-capitalize">{{ time }}</span></h1>
+    <div class="btn-group flex-wrap" role="group" aria-label="Trending range">
+      <a href="/trending/day/0" class="btn btn-sm filter-btn {% if time=='day' %}active{% endif %}" data-loading>Daily</a>
+      <a href="/trending/week/0" class="btn btn-sm filter-btn {% if time=='week' %}active{% endif %}" data-loading>Weekly</a>
+      <a href="/trending/month/0" class="btn btn-sm filter-btn {% if time=='month' %}active{% endif %}" data-loading>Monthly</a>
+      <a href="/trending/year/0" class="btn btn-sm filter-btn {% if time=='year' %}active{% endif %}" data-loading>Yearly</a>
     </div>
   </div>
+</section>
 
-  <style>
-    .filter-btn {
-      border-radius: 50px;
-      background: #111;
-      border: 1px solid #333;
-      color: #fff;
-      padding: 6px 16px;
-      transition: all 0.3s ease;
-    }
-
-    .ads-slot {
-    background: #333;
-    text-align: center;
-    color: #fff;
-    padding: 20px;
-    margin: 20px 0;
-    border-radius: 10px;
-  }
-
-    .filter-btn:hover {
-      background: #0d6efd;
-      color: #fff;
-    }
-  </style>
-
-  <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
-    {% for v in videos %}
-    <div class="col mb-5">
-      <div class="card h-100 bg-black text-white shadow-5-strong position-relative">
-
-
-        <!-- Views Badge -->
-        <div class="badge bg-black text-white position-absolute" style="top: 0.5rem; right: 0.5rem">
-          <i class="fa-solid fa-eye"></i> {{ v['views'] }}
-        </div>
-        
-        <!-- Thumbnail -->
-        <img class="card-img-top" src="/proxy?url={{ v['cover_url'] }}" alt="{{ v['name'] }}">
-        <div class="card-body p-4">
-          <div class="text-center">
-            <h5 class="fw-bolder">{{ v['name'] }}</h5>
-          </div>
-        </div>
-        <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-          <div class="text-center">
-            <a class="btn btn-outline-info" href="{{ v['url'] }}">
-              <i class="fa-solid fa-fire fa-xl"></i>
-            </a>
-          </div>
-        </div>
+<div class="row gx-4 gy-4 surface-listing row-cols-2 row-cols-md-3 row-cols-xl-4">
+  {% for v in videos %}
+  <div class="col">
+    <article class="card h-100 position-relative">
+      <span class="badge badge-views"><i class="fa-solid fa-eye"></i> {{ v['views'] }}</span>
+      <img class="card-img-top" src="/proxy?url={{ v['cover_url'] }}" alt="{{ v['name'] }}">
+      <div class="card-body">
+        <h2 class="h6 mb-0">{{ v['name'] }}</h2>
       </div>
-    </div>
-    {% endfor %}
+      <div class="card-footer border-0 bg-transparent">
+        <a class="btn btn-cta btn-sm" href="{{ v['url'] }}" data-loading><i class="fa-solid fa-play me-1"></i>Watch</a>
+      </div>
+    </article>
   </div>
-
-  <!-- 🔥 High-engagement ad slot 
-  <div class="ads-slot">
-    <strong>Your Ad Here</strong><br>
-    (Place your high CPM ad code)
-  </div> -->
-
-  <div class="text-center">
-    <button onclick="history.back()" class="btn btn-white mx-2">
-      <i class="fa-solid fa-backward"></i>
-    </button>
-    <a href="{{ next_page }}" class="btn btn-white mx-2">
-      <i class="fa-solid fa-forward"></i>
-    </a>
-  </div>
-
+  {% endfor %}
 </div>
 
+<div class="text-center mt-4">
+  <button onclick="history.back()" class="btn btn-outline-light mx-2"><i class="fa-solid fa-backward"></i></button>
+  <a href="{{ next_page }}" class="btn btn-cta mx-2" data-loading><i class="fa-solid fa-forward"></i></a>
+</div>
 {% endblock %}
-
-
