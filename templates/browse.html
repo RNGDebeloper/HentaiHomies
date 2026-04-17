@@ -1,28 +1,52 @@
 {% extends "base.html" %}
 {% block title %}Browse · Hanime Homies{% endblock %}
 {% block content %}
-<h1 class="h4 mb-3">Browse Categories</h1>
-{% if error %}<div class="alert alert-warning">{{ error }} <button class="btn btn-sm btn-outline-dark" data-retry-url="/browse">Retry</button></div>{% endif %}
-<div class="row g-3">
-  <div class="col-lg-8">
-    <div class="panel p-3">
-      <h2 class="h6">Tags</h2>
-      {% if tags %}
-      <div class="d-flex flex-wrap gap-2">
-        {% for t in tags %}<a class="btn btn-sm btn-outline-light" href="/browse/hentai-tags/{{ t['text'] }}/0">{{ t['text'] }}</a>{% endfor %}
-      </div>
-      {% else %}<div class="state-box">No tags available.</div>{% endif %}
+<section class="hero-card p-4 mb-4">
+  <h1 class="h4 mb-2">Browse Library</h1>
+  <p class="meta mb-0">Brands, tags, categories, and full browse metadata loaded from the Hanime Browse API.</p>
+</section>
+
+<div id="browseApp" data-browse-app>
+  <div id="browseLoading" class="panel p-3 mb-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <strong>Loading browse data...</strong>
+      <span class="spinner-border spinner-border-sm text-light"></span>
+    </div>
+    <div class="skeleton-grid">
+      {% for _ in range(8) %}
+      <div class="skeleton-card"></div>
+      {% endfor %}
     </div>
   </div>
-  <div class="col-lg-4">
-    <div class="panel p-3">
-      <h2 class="h6">Brands</h2>
-      {% if brands %}
-      <div class="d-flex flex-wrap gap-2">
-        {% for b in brands %}<a class="btn btn-sm btn-outline-info" href="/browse/brands/{{ b['slug'] }}/0">{{ b['name'] }}</a>{% endfor %}
-      </div>
-      {% else %}<div class="state-box">No brands available.</div>{% endif %}
+
+  <div id="browseError" class="alert alert-warning d-none"></div>
+
+  <section id="browseMeta" class="panel p-3 mb-4 d-none"></section>
+
+  <section class="panel p-3 mb-4 d-none" id="brandsSection">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h2 class="h5 mb-0">Brands</h2>
+      <button class="btn btn-sm btn-outline-light" id="refreshBrowseBtn">Refresh</button>
     </div>
-  </div>
+    <div class="browse-grid" id="brandsGrid"></div>
+    <div id="brandsEmpty" class="state-box d-none">No brands available.</div>
+  </section>
+
+  <section class="panel p-3 mb-4 d-none" id="tagsSection">
+    <h2 class="h5">Tags</h2>
+    <div id="tagsGrid" class="d-flex flex-wrap gap-2"></div>
+    <div id="tagsEmpty" class="state-box d-none">No tags available.</div>
+  </section>
+
+  <section class="panel p-3 mb-4 d-none" id="categoriesSection">
+    <h2 class="h5">Categories</h2>
+    <div id="categoriesGroup"></div>
+    <div id="categoriesEmpty" class="state-box d-none">No category data available.</div>
+  </section>
+
+  <section class="panel p-3 mb-2 d-none" id="rawSection">
+    <h2 class="h6">Raw JSON Snapshot</h2>
+    <pre id="rawJson" class="json-box"></pre>
+  </section>
 </div>
 {% endblock %}

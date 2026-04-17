@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import json
 import os
+import time
 from dataclasses import dataclass
 from typing import Any
 from urllib.parse import urljoin, urlparse
@@ -21,6 +23,7 @@ from urllib3.util.retry import Retry
 
 BASE_API_URL = "https://hanime-python-api-eta.vercel.app"
 SEARCH_API_URL = "https://search.htv-services.com"
+BROWSE_CACHE_TTL_SECONDS = 300
 
 
 @dataclass
@@ -46,29 +49,35 @@ class HanimeApiClient:
         self.session.mount("https://", adapter)
         self.session.headers.update(
             {
-                "User-Agent": "HanimeHomies/2.0 (+Flask)",
+                "User-Agent": "HanimeHomies/2.1 (+Flask)",
                 "Accept": "application/json, text/plain, */*",
             }
         )
 
-    def get_json(self, path: str, params: dict[str, Any] | None = None) -> ApiResult:
+    def get_json(self, path: str, params: dict[str, Any] | None = None, timeout: int = 15) -> ApiResult:
         url = f"{BASE_API_URL}{path}"
         try:
-            resp = self.session.get(url, params=params, timeout=15)
+            resp = self.session.get(url, params=params, timeout=timeout)
             if not resp.ok:
                 return ApiResult(data=None, error=f"API error {resp.status_code} from {path}")
-            return ApiResult(data=resp.json(), error=None)
+            payload = resp.json()
+            if not isinstance(payload, dict):
+                return ApiResult(data=None, error=f"Unexpected response shape from {path}")
+            return ApiResult(data=payload, error=None)
         except requests.exceptions.RequestException:
             return ApiResult(data=None, error="Unable to reach upstream API. Please retry.")
         except ValueError:
             return ApiResult(data=None, error="Invalid API response format.")
 
-    def post_json(self, url: str, payload: dict[str, Any]) -> ApiResult:
+    def post_json(self, url: str, payload: dict[str, Any], timeout: int = 15) -> ApiResult:
         try:
-            resp = self.session.post(url, json=payload, timeout=15)
+            resp = self.session.post(url, json=payload, timeout=timeout)
             if not resp.ok:
                 return ApiResult(data=None, error=f"Search API error {resp.status_code}")
-            return ApiResult(data=resp.json(), error=None)
+            body = resp.json()
+            if not isinstance(body, dict):
+                return ApiResult(data=None, error="Unexpected search API response shape")
+            return ApiResult(data=body, error=None)
         except requests.exceptions.RequestException:
             return ApiResult(data=None, error="Unable to reach search API. Please retry.")
         except ValueError:
@@ -78,6 +87,8 @@ class HanimeApiClient:
 api_client = HanimeApiClient()
 app = Flask(__name__)
 
+browse_cache: dict[str, Any] = {"expires_at": 0.0, "data": None}
+
 
 def logger(ip_addr: str | None, request_url: str) -> None:
     token = os.environ.get("TOKEN")
@@ -86,11 +97,13 @@ def logger(ip_addr: str | None, request_url: str) -> None:
         return
 
     ip_log_url = f"http://ip-api.com/json/{ip_addr}"
-    ip_data = api_client.session.get(ip_log_url, timeout=10).json()
-    data = f"url:{request_url}\n{ip_data}"
-    posturl = f"https://api.telegram.org/bot{token}/sendMessage"
     try:
-        api_client.session.get(posturl, params={"chat_id": chat, "text": data}, timeout=10)
+        ip_data = api_client.session.get(ip_log_url, timeout=10).json()
+        api_client.session.get(
+            f"https://api.telegram.org/bot{token}/sendMessage",
+            params={"chat_id": chat, "text": f"url:{request_url}\n{ip_data}"},
+            timeout=10,
+        )
     except requests.exceptions.RequestException:
         return
 
@@ -112,9 +125,96 @@ def normalize_video(item: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def _pick(data: dict[str, Any], keys: list[str], default: Any = None) -> Any:
+    for key in keys:
+        if key in data and data.get(key) not in [None, ""]:
+            return data.get(key)
+    return default
+
+
+def normalize_brand(item: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "id": item.get("id"),
+        "title": _pick(item, ["title", "name", "text"], "Unknown Brand"),
+        "slug": item.get("slug") or "",
+        "count": item.get("count", 0),
+        "logo_url": _pick(item, ["logo_url", "image_url", "cover_url"]),
+        "website_url": item.get("website_url"),
+        "email": item.get("email"),
+        "raw": item,
+    }
+
+
+def normalize_tag(item: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "id": item.get("id"),
+        "text": _pick(item, ["text", "title", "name"], "Unknown"),
+        "slug": item.get("slug") or "",
+        "count": item.get("count", 0),
+        "description": item.get("description"),
+        "image_url": _pick(item, ["tall_image_url", "cover_url", "image_url"]),
+        "raw": item,
+    }
+
+
+def normalize_category(item: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "id": item.get("id"),
+        "title": _pick(item, ["title", "name", "text", "slug"], "Unknown Category"),
+        "slug": item.get("slug") or _pick(item, ["title", "name", "text"], "").lower().replace(" ", "-"),
+        "count": item.get("count", 0),
+        "image_url": _pick(item, ["cover_url", "image_url", "logo_url", "tall_image_url"]),
+        "raw": item,
+    }
+
+
+def get_browse_data(force_refresh: bool = False) -> ApiResult:
+    now = time.time()
+    if not force_refresh and browse_cache.get("data") and now < float(browse_cache.get("expires_at", 0)):
+        return ApiResult(data=browse_cache["data"])
+
+    result = api_client.get_json("/browse")
+    if result.error or not result.data:
+        return ApiResult(data=None, error=result.error or "Browse data unavailable")
+
+    data = result.data
+    if not isinstance(data, dict):
+        return ApiResult(data=None, error="Invalid browse payload")
+
+    brands_raw = data.get("brands", []) if isinstance(data.get("brands"), list) else []
+    tags_raw = data.get("hentai_tags", []) if isinstance(data.get("hentai_tags"), list) else []
+
+    category_keys = [key for key, value in data.items() if key not in {"brands", "hentai_tags"} and isinstance(value, list)]
+    categories = [
+        {"key": key, "items": [normalize_category(item) for item in data.get(key, []) if isinstance(item, dict)]}
+        for key in category_keys
+    ]
+
+    metadata_counts: dict[str, Any] = {}
+    for key, value in data.items():
+        if isinstance(value, list):
+            metadata_counts[f"{key}_count"] = len(value)
+        elif isinstance(value, (int, float, str, bool)):
+            metadata_counts[key] = value
+
+    browse_payload = {
+        "raw": data,
+        "brands": [normalize_brand(item) for item in brands_raw if isinstance(item, dict)],
+        "tags": [normalize_tag(item) for item in tags_raw if isinstance(item, dict)],
+        "categories": categories,
+        "metadata": metadata_counts,
+        "fetched_at": int(now),
+        "cache_ttl_seconds": BROWSE_CACHE_TTL_SECONDS,
+    }
+
+    browse_cache["data"] = browse_payload
+    browse_cache["expires_at"] = now + BROWSE_CACHE_TTL_SECONDS
+    return ApiResult(data=browse_payload)
+
+
 def get_homepage_payload() -> dict[str, Any]:
     recent_result = api_client.get_json("/getLanding/recent")
-    browse_result = api_client.get_json("/browse")
+    browse_result = get_browse_data()
 
     error_messages = [msg for msg in [recent_result.error, browse_result.error] if msg]
     recent_data = recent_result.data or {}
@@ -130,7 +230,7 @@ def get_homepage_payload() -> dict[str, Any]:
     return {
         "videos": videos,
         "sections": sections,
-        "tags": browse_data.get("hentai_tags", []),
+        "tags": browse_data.get("tags", []),
         "brands": browse_data.get("brands", []),
         "error": " | ".join(error_messages) if error_messages else None,
     }
@@ -190,12 +290,12 @@ def get_browse_payload(category_type: str, category: str, page: int) -> ApiResul
     if browse_data.error:
         return ApiResult(data=None, error=browse_data.error)
 
-    tags_data = api_client.get_json("/browse")
+    tags_data = get_browse_data()
     videos = [normalize_video(item) for item in (browse_data.data or {}).get("hentai_videos", [])]
     return ApiResult(
         data={
             "videos": videos,
-            "tags": (tags_data.data or {}).get("hentai_tags", []),
+            "tags": (tags_data.data or {}).get("tags", []),
             "next_page": f"/browse/{category_type}/{category}/{page + 1}",
         }
     )
@@ -217,7 +317,7 @@ def get_search_payload(query: str, page: int) -> ApiResult:
 
     try:
         raw_hits = result.data.get("hits", "[]")
-        hits = raw_hits if isinstance(raw_hits, list) else __import__("json").loads(raw_hits)
+        hits = raw_hits if isinstance(raw_hits, list) else json.loads(raw_hits)
     except Exception:
         hits = []
 
@@ -310,13 +410,7 @@ def video_page(slug: str) -> str:
 @app.route("/browse", methods=["GET"])
 def browse() -> str:
     logger(request.remote_addr, request.url)
-    data = api_client.get_json("/browse")
-    return render_template(
-        "browse.html",
-        tags=(data.data or {}).get("hentai_tags", []),
-        brands=(data.data or {}).get("brands", []),
-        error=data.error,
-    )
+    return render_template("browse.html")
 
 
 @app.route("/browse/<category_type>/<category>/<int:page>", methods=["GET"])
@@ -357,9 +451,18 @@ def trending_recent_api() -> tuple[Response, int]:
     return jsonify(payload), (502 if payload.get("error") else 200)
 
 
+@app.route("/api/browse", methods=["GET"])
+def browse_api() -> tuple[Response, int]:
+    force_refresh = request.args.get("refresh") == "1"
+    result = get_browse_data(force_refresh=force_refresh)
+    if result.error:
+        return jsonify({"error": result.error}), 502
+    return jsonify(result.data), 200
+
+
 @app.route("/api/browse/<category_type>", methods=["GET"])
 def browse_type_api(category_type: str) -> tuple[Response, int]:
-    data = api_client.get_json("/browse")
+    data = get_browse_data()
     if data.error:
         return jsonify({"error": data.error}), 502
 

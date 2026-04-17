@@ -78,7 +78,7 @@
       {% if brands %}
       <div class="d-flex flex-wrap gap-2">
         {% for b in brands[:20] %}
-        <a class="btn btn-sm btn-outline-info" href="/browse/brands/{{ b['slug'] }}/0">{{ b['name'] }}</a>
+        <a class="btn btn-sm btn-outline-info" href="/browse/brands/{{ b['slug'] }}/0">{{ b['title'] }}</a>
         {% endfor %}
       </div>
       {% else %}
