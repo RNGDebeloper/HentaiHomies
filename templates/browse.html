@@ -1,42 +1,28 @@
 {% extends "base.html" %}
-{% block metatitle %}Browse | Hanime on hanime{% endblock metatitle %}
-{% block ogtitle %}Browse | Hanime on hanime{% endblock ogtitle %}
-{% block metadescription %}Browse Free Hentai Video Streams Online in 720p, 1080p HD{% endblock metadescription %}
-{% block metakeywords %}hentai, hentai api, hentai porn api, browse porn, browse, {% for t in tags %}{{ t['text'] }},{% endfor %}{% endblock metakeywords %}
-{% block title %}Browse |{% endblock %}
+{% block title %}Browse · Hanime Homies{% endblock %}
 {% block content %}
-
-<div class="my-10"> ` </div>
-<div class="container px-4 px-lg-5 mt-5">    
-    <div class="row gx-4 gx-lg-5 row-cols-1">
-        {% for t in tags %}
-        <div class="col mb-4">
-            <div class="card h-100 bg-black text-white shadow-5-strong d-flex flex-row">
-                <!-- Left side: Image -->
-                <img src="/proxy?url={{ t['tall_image_url'] | urlencode }}" alt="{{ t['text'] }}" style="width: 200px; height: auto; object-fit: cover;" />
-                
-                <!-- Right side: Details -->
-                <div class="flex-fill d-flex flex-column justify-content-between">
-                    <div class="badge bg-black text-white position-absolute" style="top: 0.5rem; right: 0.5rem">
-                        <i class="fa-solid fa-eye"></i>{{ t['count'] }}
-                    </div>
-                    <div class="card-body p-4">
-                        <h5 class="fw-bolder">{{ t['text'] }}</h5>
-                        <p>{{ t['description'] }}</p>
-                    </div>
-                    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                        <div class="text-center">
-                            <a class="btn btn-outline-info" href="/browse/hentai-tags/{{ t['text'] }}/0">
-                                <i class="fa-solid fa-fire fa-xl"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% endfor %}
+<h1 class="h4 mb-3">Browse Categories</h1>
+{% if error %}<div class="alert alert-warning">{{ error }} <button class="btn btn-sm btn-outline-dark" data-retry-url="/browse">Retry</button></div>{% endif %}
+<div class="row g-3">
+  <div class="col-lg-8">
+    <div class="panel p-3">
+      <h2 class="h6">Tags</h2>
+      {% if tags %}
+      <div class="d-flex flex-wrap gap-2">
+        {% for t in tags %}<a class="btn btn-sm btn-outline-light" href="/browse/hentai-tags/{{ t['text'] }}/0">{{ t['text'] }}</a>{% endfor %}
+      </div>
+      {% else %}<div class="state-box">No tags available.</div>{% endif %}
     </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="panel p-3">
+      <h2 class="h6">Brands</h2>
+      {% if brands %}
+      <div class="d-flex flex-wrap gap-2">
+        {% for b in brands %}<a class="btn btn-sm btn-outline-info" href="/browse/brands/{{ b['slug'] }}/0">{{ b['name'] }}</a>{% endfor %}
+      </div>
+      {% else %}<div class="state-box">No brands available.</div>{% endif %}
+    </div>
+  </div>
 </div>
-
 {% endblock %}
-

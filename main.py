@@ -1,404 +1,440 @@
-from flask import Flask, jsonify, render_template, request, redirect, url_for, Response, stream_with_context, send_from_directory
-import requests
-import secrets
-import json
-import time
-from fake_useragent import UserAgent
-import os
-from urllib.parse import urlparse, urljoin
+from __future__ import annotations
 
-def logger(ip_addr,request_url):
+import os
+from dataclasses import dataclass
+from typing import Any
+from urllib.parse import urljoin, urlparse
+
+import requests
+from flask import (
+    Flask,
+    Response,
+    jsonify,
+    redirect,
+    render_template,
+    request,
+    send_from_directory,
+    url_for,
+)
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
+
+BASE_API_URL = "https://hanime-python-api-eta.vercel.app"
+SEARCH_API_URL = "https://search.htv-services.com"
+
+
+@dataclass
+class ApiResult:
+    data: dict[str, Any] | None
+    error: str | None = None
+
+
+class HanimeApiClient:
+    def __init__(self) -> None:
+        self.session = requests.Session()
+        retry = Retry(
+            total=3,
+            connect=3,
+            read=3,
+            backoff_factor=0.6,
+            status_forcelist=[429, 500, 502, 503, 504],
+            allowed_methods=frozenset(["GET", "POST"]),
+            raise_on_status=False,
+        )
+        adapter = HTTPAdapter(max_retries=retry)
+        self.session.mount("http://", adapter)
+        self.session.mount("https://", adapter)
+        self.session.headers.update(
+            {
+                "User-Agent": "HanimeHomies/2.0 (+Flask)",
+                "Accept": "application/json, text/plain, */*",
+            }
+        )
+
+    def get_json(self, path: str, params: dict[str, Any] | None = None) -> ApiResult:
+        url = f"{BASE_API_URL}{path}"
+        try:
+            resp = self.session.get(url, params=params, timeout=15)
+            if not resp.ok:
+                return ApiResult(data=None, error=f"API error {resp.status_code} from {path}")
+            return ApiResult(data=resp.json(), error=None)
+        except requests.exceptions.RequestException:
+            return ApiResult(data=None, error="Unable to reach upstream API. Please retry.")
+        except ValueError:
+            return ApiResult(data=None, error="Invalid API response format.")
+
+    def post_json(self, url: str, payload: dict[str, Any]) -> ApiResult:
+        try:
+            resp = self.session.post(url, json=payload, timeout=15)
+            if not resp.ok:
+                return ApiResult(data=None, error=f"Search API error {resp.status_code}")
+            return ApiResult(data=resp.json(), error=None)
+        except requests.exceptions.RequestException:
+            return ApiResult(data=None, error="Unable to reach search API. Please retry.")
+        except ValueError:
+            return ApiResult(data=None, error="Invalid search API response format.")
+
+
+api_client = HanimeApiClient()
+app = Flask(__name__)
+
+
+def logger(ip_addr: str | None, request_url: str) -> None:
     token = os.environ.get("TOKEN")
     chat = os.environ.get("CHAT")
+    if not token or not chat or not ip_addr:
+        return
+
     ip_log_url = f"http://ip-api.com/json/{ip_addr}"
-    data = f"url:{request_url}\n{str(jsongen(ip_log_url))}"
-    posturl = f"https://api.telegram.org/bot{token}/sendMessage?chat_id={chat}&text={data}"
+    ip_data = api_client.session.get(ip_log_url, timeout=10).json()
+    data = f"url:{request_url}\n{ip_data}"
+    posturl = f"https://api.telegram.org/bot{token}/sendMessage"
     try:
-        requests.get(posturl)
-    except:
-        pass
-    return "logged!"
+        api_client.session.get(posturl, params={"chat_id": chat, "text": data}, timeout=10)
+    except requests.exceptions.RequestException:
+        return
 
 
-#def jsongen(url):
-  #  headers = {"X-Signature-Version": "web2","X-Signature": secrets.token_hex(32),'User-Agent': UserAgent().random}
-  #  res = requests.get(url, headers=headers)
-  #  y = json.loads(res.text)
-  #  return y
-
-
-def jsongen(url):
-    # generate fake headers
-    ua = UserAgent().random
-    
-    # dynamic timestamp
-    xtime = str(int(time.time()))
-    
-    headers = {
-        "User-Agent": ua,
-        "Accept": "application/json, text/plain, */*",
-        "Origin": "https://hanime.tv",
-        "Referer": "https://hanime.tv/",
-        "x-signature-version": "web2",
-        
-        # ⚠️ This is not correct yet — we need the real hash algo
-        # for now we just generate a random hex to test request
-        "x-signature": secrets.token_hex(32),
-        
-        "x-time": xtime,
-        "x-token": "null",
+def normalize_video(item: dict[str, Any]) -> dict[str, Any]:
+    slug = item.get("slug", "")
+    return {
+        "id": item.get("id"),
+        "name": item.get("name", "Untitled"),
+        "slug": slug,
+        "url": f"/video/{slug}" if slug else "#",
+        "cover_url": item.get("cover_url") or item.get("poster_url") or "",
+        "poster_url": item.get("poster_url") or item.get("cover_url") or "",
+        "views": item.get("views", 0),
+        "likes": item.get("likes", 0),
+        "duration_in_ms": item.get("duration_in_ms"),
+        "released_at": item.get("released_at"),
+        "brand": (item.get("brand") or {}).get("name") if isinstance(item.get("brand"), dict) else item.get("brand"),
     }
-    
-    res = requests.get(url, headers=headers)
-    print("Status:", res.status_code)
-    try:
-        return res.json()
-    except Exception:
-        print("Response text:", res.text[:300])
-        return {}
 
 
+def get_homepage_payload() -> dict[str, Any]:
+    recent_result = api_client.get_json("/getLanding/recent")
+    browse_result = api_client.get_json("/browse")
 
-def gettrending(time,page):
-    jsondata  = []
-    page = page
-    trending_url = "https://hanime-python-api-eta.vercel.app/getLanding/recent".format(time=time,page=str(page))
-    url = trending_url
-    urldata = jsongen(url)
-    for x in urldata["hentai_videos"]:
-        json_data = {'id': x['id'] , 'name' : x['name'],'slug' : x['slug'],'url': "/video/"+x['slug'] , 'cover_url': x['cover_url'], 'views' : x['views'], 'link': f"/api/video/{x['slug']}"}
-        jsondata.append(json_data)
-    return jsondata
+    error_messages = [msg for msg in [recent_result.error, browse_result.error] if msg]
+    recent_data = recent_result.data or {}
+    browse_data = browse_result.data or {}
 
-def getvideo(slug):
-    jsondata = []
-    video_api_url = "https://hanime-python-api-eta.vercel.app/getVideo"
-    video_data_url = video_api_url + slug
-    video_data = jsongen(video_data_url)
-    tags = []
-    for t in video_data['hentai_tags']:
-        tag_data = {'name' : t['text'], 'link' : f"/browse/hentai-tags/{t['text']}/0"}
-        tags.append(tag_data)
-    streams = []
-    for s in video_data['videos_manifest']['servers'][0]['streams']:
-        stream_data = {'width' : s['width'],'height' : s['height'],'size_mbs' : s['filesize_mbs'],'url' : s['url'],'link': s['url']}
-        streams.append(stream_data)
-    episodes = []
-    for e in video_data['hentai_franchise_hentai_videos']:
-        episodes_data = {'id': e['id'] , 'name' : e['name'],'slug' : e['slug'], 'cover_url': e['cover_url'], 'views' : e['views'], 'link': f"/api/video/{e['slug']}"} 
-        episodes.append(episodes_data)  
-    json_data = {'id': video_data["hentai_video"]['id'] , 'name' : video_data["hentai_video"]['name'],'description': video_data["hentai_video"]['description'], 'poster_url': video_data["hentai_video"]['poster_url'],'cover_url': video_data["hentai_video"]['cover_url'], 'views' : video_data["hentai_video"]['views'], 'streams': streams, 'tags': tags , 'episodes' : episodes}
-    jsondata.append(json_data)
-    return jsondata
+    videos = [normalize_video(item) for item in recent_data.get("hentai_videos", [])]
+    sections = []
+    for key in ["latest_updates", "trending", "most_viewed"]:
+        raw_list = recent_data.get(key, [])
+        if isinstance(raw_list, list) and raw_list:
+            sections.append({"title": key.replace("_", " ").title(), "items": [normalize_video(v) for v in raw_list]})
 
-def getbrowse():
-    browse_url  = "https://hanime-python-api-eta.vercel.app/browse"
-    data  = jsongen(browse_url)
-    return data
-    
-def getbrowsevideos(type,category,page):
-    browse_url  = f"https://hanime-python-api-eta.vercel.app/browse/{type}/{category}?page={page}&order_by=views&ordering=desc"
-    browsedata = jsongen(browse_url)
-    jsondata = []
-    for x in browsedata["hentai_videos"]:
-        json_data = {'id': x['id'] , 'name' : x['name'],'slug' : x['slug'], 'cover_url': x['cover_url'], 'views' : x['views'], 'link': f"/api/video/{x['slug']}"}
-        jsondata.append(json_data)
-    return jsondata
+    return {
+        "videos": videos,
+        "sections": sections,
+        "tags": browse_data.get("hentai_tags", []),
+        "brands": browse_data.get("brands", []),
+        "error": " | ".join(error_messages) if error_messages else None,
+    }
 
-def getsearch(query, page):
-    res = {
+
+def get_video_payload(slug: str) -> ApiResult:
+    video_result = api_client.get_json(f"/getVideo/{slug}")
+    if video_result.error or not video_result.data:
+        return ApiResult(data=None, error=video_result.error or "Video not found.")
+
+    data = video_result.data
+    hentai_video = data.get("hentai_video", {})
+
+    tags = [
+        {
+            "name": tag.get("text", "Unknown"),
+            "link": f"/browse/hentai-tags/{tag.get('text', '')}/0",
+        }
+        for tag in data.get("hentai_tags", [])
+        if tag.get("text")
+    ]
+
+    streams: list[dict[str, Any]] = []
+    for server in (data.get("videos_manifest", {}) or {}).get("servers", []):
+        for stream in server.get("streams", []):
+            streams.append(
+                {
+                    "width": stream.get("width"),
+                    "height": stream.get("height"),
+                    "size_mbs": stream.get("filesize_mbs"),
+                    "url": stream.get("url"),
+                }
+            )
+
+    episodes = [normalize_video(item) for item in data.get("hentai_franchise_hentai_videos", [])]
+    payload = {
+        "id": hentai_video.get("id"),
+        "name": hentai_video.get("name", "Untitled"),
+        "description": hentai_video.get("description") or "No description available.",
+        "poster_url": hentai_video.get("poster_url") or hentai_video.get("cover_url") or "",
+        "cover_url": hentai_video.get("cover_url") or hentai_video.get("poster_url") or "",
+        "views": hentai_video.get("views", 0),
+        "likes": hentai_video.get("likes", 0),
+        "released_at": hentai_video.get("released_at"),
+        "tags": tags,
+        "streams": sorted(streams, key=lambda s: int(s.get("height") or 0), reverse=True),
+        "episodes": episodes,
+    }
+    return ApiResult(data=payload)
+
+
+def get_browse_payload(category_type: str, category: str, page: int) -> ApiResult:
+    browse_data = api_client.get_json(
+        f"/browse/{category_type}/{category}",
+        params={"page": page, "order_by": "views", "ordering": "desc"},
+    )
+    if browse_data.error:
+        return ApiResult(data=None, error=browse_data.error)
+
+    tags_data = api_client.get_json("/browse")
+    videos = [normalize_video(item) for item in (browse_data.data or {}).get("hentai_videos", [])]
+    return ApiResult(
+        data={
+            "videos": videos,
+            "tags": (tags_data.data or {}).get("hentai_tags", []),
+            "next_page": f"/browse/{category_type}/{category}/{page + 1}",
+        }
+    )
+
+
+def get_search_payload(query: str, page: int) -> ApiResult:
+    payload = {
         "search_text": query,
-        "tags":
-            [],
-        "brands":
-            [],
-        "blacklist":
-            [],
-        "order_by": 
-            [],
-        "ordering": 
-            [],
+        "tags": [],
+        "brands": [],
+        "blacklist": [],
+        "order_by": "views",
+        "ordering": "desc",
         "page": page,
     }
-    headers = {
-        "Content-Type": "application/json; charset=utf-8"
-    }
-    x = requests.post("https://search.htv-services.com", headers=headers, json=res)
-    data = x.json()
-    videos = json.loads(data['hits'])
-    total_pages = data['nbPages']
-    data = {'total_pages':total_pages,'videos':videos}
-    jsondata = []
-    for x in data["videos"]:
-        json_data = {'id': x['id'] , 'name' : x['name'],'slug' : x['slug'],'url': "/video/"+x['slug'], 'cover_url': x['cover_url'], 'views' : x['views'], 'link': f"/api/video/{x['slug']}"}
-        jsondata.append(json_data)
-    return jsondata
+    result = api_client.post_json(SEARCH_API_URL, payload)
+    if result.error or not result.data:
+        return ApiResult(data=None, error=result.error)
 
-app = Flask(__name__)
-#added home
-# if above not works, / in the trending place
+    try:
+        raw_hits = result.data.get("hits", "[]")
+        hits = raw_hits if isinstance(raw_hits, list) else __import__("json").loads(raw_hits)
+    except Exception:
+        hits = []
+
+    videos = [normalize_video(item) for item in hits]
+    total_pages = int(result.data.get("nbPages", 0))
+    return ApiResult(data={"videos": videos, "total_pages": total_pages})
+
+
 @app.route("/")
-def home():
-    return render_template("hm.html")
+@app.route("/home")
+def home() -> str:
+    logger(request.remote_addr, request.url)
+    payload = get_homepage_payload()
+    return render_template("home.html", **payload)
+
 
 @app.route("/logo3.png")
-def public():
-    return render_template("logo3.png")
+def public() -> Response:
+    return send_from_directory(app.static_folder, "logo3.png")
 
-@app.route('/terms')
-def terms():
+
+@app.route("/terms")
+def terms() -> str:
     return render_template("terms.html")
 
-@app.route('/privacy')
-def privacy():
+
+@app.route("/privacy")
+def privacy() -> str:
     return render_template("privacy.html")
 
-@app.route('/robots.txt')
-def robots():
-    return send_from_directory(app.static_folder, 'robots.txt')
 
-@app.route('/sitemap_index.xml')
-def sitemap():
-    return send_from_directory(app.static_folder, 'sitemap_index.xml')
-
-@app.route('/getLanding/recent')
-def trending():
-    ip_addr = request.remote_addr
-    request_url = request.url
-    logger(ip_addr,request_url)
-    return redirect("/getLanding/recent")
-
-@app.route('/search', methods=['GET', 'POST'])
-def search():
-    if request.method == 'POST':
-        search_query = request.form['search_query']
-        redirect_url = url_for('search', query=search_query, page=0)
-        return redirect(redirect_url)
-    query = request.args.get('query')
-    page = request.args.get('page', default=0, type=int)
-    ip_addr = request.remote_addr
-    request_url = request.url
-    logger(ip_addr,request_url)
-    videos = getsearch(query,page)
-    next_page = f'/search?query={query}&page={int(page)+1}'
-    return render_template('search.html',videos=videos, next_page = next_page, query = query)
+@app.route("/robots.txt")
+def robots() -> Response:
+    return send_from_directory(app.static_folder, "robots.txt")
 
 
-@app.route('/api')
-def api():
-    ip_addr = request.remote_addr
-    request_url = request.url
-    logger(ip_addr,request_url)
-    return render_template('api.html')
-
-@app.route('/trending/<time>/<page>', methods = ["GET"])
-def trending_page(time,page):
-    ip_addr = request.remote_addr
-    request_url = request.url
-    logger(ip_addr,request_url)
-    videos = gettrending(time,page)
-    next_page = '/trending/{time}/{page}'.format(time=time,page=str(int(page)+1))
-    return render_template('trending.html',videos=videos, next_page = next_page, time=time)
-
-@app.route('/video/<slug>', methods = ["GET"])
-def video_page(slug):
-    ip_addr = request.remote_addr
-    request_url = request.url
-    logger(ip_addr,request_url)
-    video = getvideo(slug)[0]
-    return render_template('video.html',video=video)
-
-@app.route('/play')
-def m3u8():
-    ip_addr = request.remote_addr
-    request_url = request.url
-    logger(ip_addr,request_url)
-    link = request.args.get('link')
-    return render_template('play.html', link=link)
-
-@app.route('/browse',methods = ['GET'])
-def browse():
-    ip_addr = request.remote_addr
-    request_url = request.url
-    logger(ip_addr,request_url)
-    data  = getbrowse()
-    return render_template('browse.html', tags = data['hentai_tags'])
+@app.route("/sitemap_index.xml")
+def sitemap() -> Response:
+    return send_from_directory(app.static_folder, "sitemap_index.xml")
 
 
-@app.route('/browse/<type>/<category>/<page>', methods= ["GET"])
-def browse_category(type,category,page):
-    ip_addr = request.remote_addr
-    request_url = request.url
-    logger(ip_addr,request_url)
-    videos = getbrowsevideos(type, category, page)
-    data  = getbrowse()
-    next_page = '/browse/{type}/{category}/{page}'.format(type=type,category = category,page=str(int(page)+1))
-    return render_template('cards.html',videos = videos, next_page = next_page, category = category,  tags = data['hentai_tags'])
+@app.route("/search", methods=["GET", "POST"])
+def search() -> str:
+    if request.method == "POST":
+        search_query = request.form.get("search_query", "").strip()
+        if not search_query:
+            return redirect(url_for("search"))
+        return redirect(url_for("search", query=search_query, page=0))
+
+    query = (request.args.get("query") or "").strip()
+    page = request.args.get("page", default=0, type=int)
+    logger(request.remote_addr, request.url)
+
+    if not query:
+        return render_template("search.html", videos=[], next_page=None, query="", error=None)
+
+    result = get_search_payload(query, page)
+    videos = (result.data or {}).get("videos", [])
+    next_page = f"/search?query={query}&page={page + 1}" if videos else None
+    return render_template(
+        "search.html",
+        videos=videos,
+        next_page=next_page,
+        query=query,
+        error=result.error,
+    )
 
 
+@app.route("/trending/<time>/<int:page>", methods=["GET"])
+def trending_page(time: str, page: int) -> str:
+    logger(request.remote_addr, request.url)
+    result = api_client.get_json(f"/getLanding/{time}")
+    if result.error:
+        return render_template("trending.html", videos=[], next_page=None, time=time, error=result.error)
+
+    videos = [normalize_video(item) for item in (result.data or {}).get("hentai_videos", [])]
+    next_page = f"/trending/{time}/{page + 1}"
+    return render_template("trending.html", videos=videos, next_page=next_page, time=time, error=None)
 
 
-# api
-@app.route('/api/video/<slug>', methods = ["GET"])
-def video_api(slug):
-    ip_addr = request.remote_addr
-    request_url = request.url
-    logger(ip_addr,request_url)
-    jsondata = getvideo(slug)
-    return jsonify({'results': jsondata}),200
-
-@app.route('/api/trending/<time>/<page>', methods=["GET"])
-def trending_api(time, page):
-    ip_addr = request.remote_addr
-    request_url = request.url
-    logger(ip_addr,request_url)
-    jsondata = gettrending(time,page)
-    return jsonify({'results': jsondata, 'next_page': '/api/trending/{time}/{page}'.format(time=time,page=str(int(page)+1))}),200
-
-@app.route('/api/browse/<type>',methods = ["GET"])
-def browse_type_api(type):
-    ip_addr = request.remote_addr
-    request_url = request.url
-    logger(ip_addr,request_url)
-    data = getbrowse()
-    jsondata = data[type]
-    if type == 'hentai_tags':
-        for x in data[type]:
-            x.update({'url' : f"/api/browse/hentai-tags/{x['text']}/0"})
-    elif type == 'brands':
-        for x in data[type]:
-            x.update({'url' : f"/api/browse/brands/{x['slug']}/0"})
-    return jsonify({'results': jsondata}),200
-
-@app.route('/api/browse',methods = ["GET"])
-def browse_api():
-    ip_addr = request.remote_addr
-    request_url = request.url
-    logger(ip_addr,request_url)
-    return jsonify({'tags' : '/api/browse/hentai_tags','brands' : '/api/browse/brands'}),200
-
-@app.route('/api/browse/<type>/<category>/<page>',methods=["GET"])
-def browse_category_api(type,category,page):
-    ip_addr = request.remote_addr
-    request_url = request.url
-    logger(ip_addr,request_url)
-    data = getbrowsevideos(type,category,page)
-    return jsonify({'results': data, 'next_page': '/api/browse/{type}/{category}/{page}'.format(type=type,category = category,page=str(int(page)+1))}),200
+@app.route("/video/<slug>", methods=["GET"])
+def video_page(slug: str) -> str:
+    logger(request.remote_addr, request.url)
+    result = get_video_payload(slug)
+    if result.error:
+        return render_template("video.html", video=None, error=result.error)
+    return render_template("video.html", video=result.data, error=None)
 
 
+@app.route("/browse", methods=["GET"])
+def browse() -> str:
+    logger(request.remote_addr, request.url)
+    data = api_client.get_json("/browse")
+    return render_template(
+        "browse.html",
+        tags=(data.data or {}).get("hentai_tags", []),
+        brands=(data.data or {}).get("brands", []),
+        error=data.error,
+    )
+
+
+@app.route("/browse/<category_type>/<category>/<int:page>", methods=["GET"])
+def browse_category(category_type: str, category: str, page: int) -> str:
+    logger(request.remote_addr, request.url)
+    result = get_browse_payload(category_type, category, page)
+    if result.error:
+        return render_template(
+            "cards.html",
+            videos=[],
+            next_page=None,
+            category=category,
+            tags=[],
+            error=result.error,
+        )
+
+    return render_template(
+        "cards.html",
+        videos=result.data["videos"],
+        next_page=result.data["next_page"],
+        category=category,
+        tags=result.data["tags"],
+        error=None,
+    )
+
+
+@app.route("/api/video/<slug>", methods=["GET"])
+def video_api(slug: str) -> tuple[Response, int]:
+    result = get_video_payload(slug)
+    if result.error:
+        return jsonify({"error": result.error}), 502
+    return jsonify({"result": result.data}), 200
+
+
+@app.route("/api/trending/recent", methods=["GET"])
+def trending_recent_api() -> tuple[Response, int]:
+    payload = get_homepage_payload()
+    return jsonify(payload), (502 if payload.get("error") else 200)
+
+
+@app.route("/api/browse/<category_type>", methods=["GET"])
+def browse_type_api(category_type: str) -> tuple[Response, int]:
+    data = api_client.get_json("/browse")
+    if data.error:
+        return jsonify({"error": data.error}), 502
+
+    values = (data.data or {}).get(category_type, [])
+    return jsonify({"results": values}), 200
+
+
+@app.route("/api/browse/<category_type>/<category>/<int:page>", methods=["GET"])
+def browse_category_api(category_type: str, category: str, page: int) -> tuple[Response, int]:
+    data = get_browse_payload(category_type, category, page)
+    if data.error:
+        return jsonify({"error": data.error}), 502
+    return jsonify({"results": data.data["videos"], "next_page": data.data["next_page"]}), 200
 
 
 @app.errorhandler(404)
-def page_not_found(e):
-    return render_template('404.html'), 404
+def page_not_found(_e: Exception) -> tuple[str, int]:
+    return render_template("404.html"), 404
+
 
 @app.errorhandler(500)
-def internal_server_error(e):
-    return render_template('500.html'), 500
-
-
-
+def internal_server_error(_e: Exception) -> tuple[str, int]:
+    return render_template("500.html"), 500
 
 
 @app.route("/proxy")
-def proxy():
-    target_url = request.args.get("url")
+def proxy() -> Response | tuple[str, int] | tuple[str, int, dict[str, str]]:
+    target_url = request.args.get("url", "")
     if not target_url:
         return "Missing 'url' parameter", 400
 
+    parsed = urlparse(target_url)
+    if parsed.scheme not in {"http", "https"}:
+        return "Invalid target URL", 400
+
     try:
-        # Spoof headers to bypass CDN restrictions (e.g., Cloudflare)
         headers = {
-            "User-Agent": (
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                "AppleWebKit/537.36 (KHTML, like Gecko) "
-                "Chrome/138.0.0.0 Safari/537.36"
-            ),
+            "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
             "Referer": "https://www.hanime.tv/",
             "Origin": "https://www.hanime.tv",
-            "Accept": "image/avif,image/webp,image/apng,image/*,*/*;q=0.8",
-            "Accept-Language": "en-US,en;q=0.9",
+            "Accept": "*/*",
             "Connection": "keep-alive",
         }
+        resp = api_client.session.get(target_url, headers=headers, stream=True, timeout=20)
 
-        # Fetch the remote resource
-        resp = requests.get(target_url, headers=headers, stream=True, timeout=15)
-        content_type = resp.headers.get("Content-Type", "")
-
-        # Common CORS & caching headers
         cors_headers = {
             "Access-Control-Allow-Origin": "*",
             "Access-Control-Allow-Methods": "GET, OPTIONS",
             "Access-Control-Allow-Headers": "Content-Type, Range",
             "Accept-Ranges": "bytes",
-            "Cache-Control": "public, max-age=86400",  # 1 day cache
+            "Cache-Control": "public, max-age=3600",
         }
 
-        # Handle non-success status
-        if resp.status_code != 200:
-            return (
-                f"Upstream request failed: {resp.status_code}",
-                resp.status_code,
-                cors_headers,
-            )
+        if resp.status_code >= 400:
+            return f"Upstream request failed: {resp.status_code}", resp.status_code, cors_headers
 
-        # 🎞️ If it's an HLS playlist (.m3u8)
+        content_type = resp.headers.get("Content-Type", "application/octet-stream")
         if "application/vnd.apple.mpegurl" in content_type or target_url.endswith(".m3u8"):
             base_url = target_url.rsplit("/", 1)[0] + "/"
-            content = resp.text
+            body = "\n".join(
+                line
+                if line.strip().startswith("#") or not line.strip()
+                else "/proxy?url=" + urljoin(base_url, line.strip())
+                for line in resp.text.splitlines()
+            )
+            response = Response(body, content_type=content_type)
+        else:
+            response = Response(resp.iter_content(chunk_size=8192), content_type=content_type)
 
-            def rewrite_line(line):
-                # Keep comments and blank lines as-is
-                if line.strip().startswith("#") or not line.strip():
-                    return line
-                # Rewrite relative segment URLs through the proxy
-                return "/proxy?url=" + urljoin(base_url, line.strip())
-
-            new_content = "\n".join(rewrite_line(line) for line in content.splitlines())
-            response = Response(new_content, content_type=content_type)
-            for k, v in cors_headers.items():
-                response.headers[k] = v
-            return response
-
-        # 🖼️ Otherwise, stream binary (images, .ts, etc.)
-        def generate():
-            for chunk in resp.iter_content(chunk_size=8192):
-                if chunk:
-                    yield chunk
-
-        # Fallback for unknown or missing content-type
-        if not content_type:
-            if target_url.endswith((".png", ".jpg", ".jpeg", ".webp")):
-                content_type = "image/jpeg"
-            elif target_url.endswith(".ts"):
-                content_type = "video/mp2t"
-            else:
-                content_type = "application/octet-stream"
-
-        response = Response(generate(), content_type=content_type)
         for k, v in cors_headers.items():
             response.headers[k] = v
-
         return response
-
-    except requests.exceptions.RequestException as e:
-        return f"Proxy error: {str(e)}", 500
-    except Exception as e:
-        return f"Unexpected error: {str(e)}", 500
+    except requests.exceptions.RequestException as exc:
+        return f"Proxy error: {exc}", 502
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0",port="8000")
-
-
-
-
-
-
-
-
-
-
-
-
-
+    app.run(host="0.0.0.0", port=8000)

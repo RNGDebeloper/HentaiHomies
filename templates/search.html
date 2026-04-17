@@ -1,70 +1,15 @@
 {% extends "base.html" %}
-{% block metatitle %}Search | hantai on hanime{% endblock metatitle %}
-{% block ogtitle %}Search | hantai on hanime{% endblock ogtitle %}
-{% block metadescription %}Trending Free Hentai Video Streams Online in 720p, 1080p HD{% endblock metadescription %}
-{% block metakeywords %} {% for v in videos %} {{ v['name'] }} , {% endfor %}  {% endblock metakeywords %}
-{% block title %}Search |{% endblock %}
+{% block title %}Search · Hanime Homies{% endblock %}
 {% block content %}
-
-{% if videos == [] %}
-<div class="container my-5">
-  <div class="card bg-dark text-light shadow-lg rounded-4 p-4">
-    <h1 class="text-center mb-4 neon">I’m innocent, but my browser history isn’t. 🧑‍💻</h1>
-    <form method="post" action="/search" class="d-flex flex-column flex-md-row gap-3">
-      <input 
-        type="text" 
-        name="search_query" 
-        class="form-control neon-border rounded-pill px-4 py-2" 
-        placeholder="Aah~ wait… Onii-chan, not there! 👉🍑😳"
-      >
-      <button type="submit" class="btn btn-white border border-info rounded-pill px-4"><i class="fas fa-search"></i> Search</button>
-    </form>
-  </div>
-</div>
-
-<div class="container my-5 mb-5">
-  <div class="alert alert-info bg-dark text-light border border-info rounded-4 p-4 shadow-lg">
-    <h4 class="alert-heading neon mb-3">🔥 Notice :</h4>
-    <p>🔍 Enter your search above. If you see an error, double-check your spelling or try a different keyword.</p>
-    <hr class="border-info">
-    <p class="mb-2">Having issues? Contact support or refresh the page. 🧑‍💻</p>
-  </div>
-</div>
-
-
-{% else %}
-
-<div class="container px-4 px-lg-5 mt-5">
-    <div class="navbar navbar-expand-lg">
-        <button class="btn-white btn btn-sm m-3">Search : {{ query }}</button>
-    </div>
-    <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
-        {% for v in videos %}
-        <div class="col mb-5 ">
-            <div class="card h-100 bg-black text-white shadow-5-strong">
-                <div class="badge bg-black text-white position-absolute" style="top: 0.5rem; right: 0.5rem"><i
-                        class="fa-solid fa-eye"></i>{{ v['views'] }}</div>
-                <img class="card-img-top" src=/proxy?url={{ v['cover_url'] }} alt={{ v['name'] }} />
-                <div class="card-body p-4 ">
-                    <div class="text-center">
-                        <h5 class="fw-bolder">{{ v['name'] }}</h5>
-                    </div>
-                </div>
-                <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                    <div class="text-center"><a class="btn btn-outline-info" href="{{ v['url'] }}"><i
-                                class="fa-solid fa-fire fa-xl"></i></a></div>
-                </div>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-    <div class="text-center">
-        <button onclick="history.back()" class="btn btn-white mx-2"><i class="fa-solid fa-backward"></i></button><a
-            href="{{ next_page }}" class="btn btn-white mx-2"><i class="fa-solid fa-forward"></i></a>
-    </div>
-
-</div>
-
+<h1 class="h4 mb-3">Search</h1>
+<form method="post" action="/search" class="d-flex gap-2 mb-3">
+  <input class="form-control" type="text" name="search_query" value="{{ query }}" placeholder="Search..." required>
+  <button class="btn btn-primary" type="submit">Search</button>
+</form>
+{% if error %}<div class="alert alert-warning">{{ error }} <button class="btn btn-sm btn-outline-dark" data-retry-url="{{ request.full_path }}">Retry</button></div>{% endif %}
+{% if query and not videos %}<div class="state-box">No results found for <strong>{{ query }}</strong>.</div>{% endif %}
+{% if videos %}
+<div class="video-grid mb-3">{% for v in videos %}<a class="video-tile text-decoration-none" href="{{ v['url'] }}"><img src="/proxy?url={{ v['cover_url']|urlencode }}" alt="{{ v['name'] }}"><div class="content"><div class="small text-light">{{ v['name'] }}</div><div class="meta">{{ v['views'] }} views</div></div></a>{% endfor %}</div>
 {% endif %}
-
+{% if next_page %}<a class="btn btn-primary" href="{{ next_page }}">Next Results</a>{% endif %}
 {% endblock %}

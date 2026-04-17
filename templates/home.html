@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}Home · Hanime Homies{% endblock %}
+{% block metadescription %}Recent releases, trending picks, and tag discovery powered by Hanime API.{% endblock %}
+{% block content %}
+<section class="hero-card p-4 mb-4">
+  <h1 class="h3 mb-2">Discover the latest releases</h1>
+  <p class="meta mb-0">Live data from <code>/getLanding/recent</code> with robust error/empty handling.</p>
+</section>
+
+{% if error %}
+<div class="alert alert-warning d-flex justify-content-between align-items-center" role="alert">
+  <span>{{ error }}</span>
+  <button class="btn btn-sm btn-outline-dark" data-retry-url="/home">Retry</button>
+</div>
+{% endif %}
+
+<section class="mb-5">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="h5 mb-0">Recent Videos</h2>
+    <a class="btn btn-sm btn-outline-light" href="/trending/recent/0">View more</a>
+  </div>
+
+  {% if videos %}
+  <div class="video-grid">
+    {% for v in videos %}
+    <article class="video-tile">
+      <a href="{{ v['url'] }}"><img loading="lazy" src="/proxy?url={{ v['cover_url']|urlencode }}" alt="{{ v['name'] }}"></a>
+      <div class="content">
+        <a class="text-decoration-none" href="{{ v['url'] }}"><h3 class="h6 mb-1">{{ v['name'] }}</h3></a>
+        <div class="meta"><i class="fa-solid fa-eye"></i> {{ v['views'] }} · {{ v['brand'] or 'Unknown brand' }}</div>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="state-box">No videos available right now.</div>
+  {% endif %}
+</section>
+
+{% if sections %}
+<section class="mb-5">
+  {% for section in sections %}
+  <div class="panel p-3 mb-3">
+    <h3 class="h6">{{ section['title'] }}</h3>
+    <div class="video-grid">
+      {% for v in section['items'][:6] %}
+      <a class="video-tile text-decoration-none" href="{{ v['url'] }}">
+        <img loading="lazy" src="/proxy?url={{ v['cover_url']|urlencode }}" alt="{{ v['name'] }}">
+        <div class="content">
+          <div class="small text-light">{{ v['name'] }}</div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+  {% endfor %}
+</section>
+{% endif %}
+
+<section class="row g-3">
+  <div class="col-lg-6">
+    <div class="panel p-3 h-100">
+      <h3 class="h6">Top Tags</h3>
+      {% if tags %}
+      <div class="d-flex flex-wrap gap-2">
+        {% for t in tags[:25] %}
+        <a class="btn btn-sm btn-outline-light" href="/browse/hentai-tags/{{ t['text'] }}/0">{{ t['text'] }}</a>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="state-box">Tag data unavailable.</div>
+      {% endif %}
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="panel p-3 h-100">
+      <h3 class="h6">Brands</h3>
+      {% if brands %}
+      <div class="d-flex flex-wrap gap-2">
+        {% for b in brands[:20] %}
+        <a class="btn btn-sm btn-outline-info" href="/browse/brands/{{ b['slug'] }}/0">{{ b['name'] }}</a>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="state-box">Brand data unavailable.</div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}
